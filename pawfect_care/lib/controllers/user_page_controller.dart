@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:pawfect_care/pages/user/home_page.dart';
 import 'package:pawfect_care/pages/user/appointment_page.dart';
+import 'package:pawfect_care/pages/user/store_page.dart';
 import 'package:pawfect_care/pages/user/more_page.dart';
 
 class UserPageController extends StatefulWidget {
@@ -18,24 +19,28 @@ class _UserPageControllerState extends State<UserPageController>
   final List<Widget> _pages = const [
     HomePage(),
     AppointmentPage(),
+    StorePage(),
     MorePage(),
   ];
 
   final List<PreferredSizeWidget> _appBars = const [
     HomePageAppBar(),
     AppointmentPageAppBar(),
+    StorePageAppBar(),
     MorePageAppBar(),
   ];
 
   final List<Widget> _floatingActionButtons = const [
     HomePageFloatingActionButton(),
     AppointmentPageFloatingActionButton(),
+    StorePageFloatingActionButton(),
     MorePageFloatingActionButton(),
   ];
 
   final List<Widget> _navigationDestination = const [
     HomePageNavigationDestination(),
     AppointmentPageNavigationDestination(),
+    StorePageNavigationDestination(),
     MorePageNavigationDestination(),
   ];
 
