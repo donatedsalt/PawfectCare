@@ -35,7 +35,7 @@ class HomePage extends StatelessWidget {
           child: Text(
             "Welcome, $userName! User Home Page",
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 24),
           ),
         ),
       ],

@@ -41,10 +41,7 @@ class MorePage extends StatelessWidget {
               Text(
                 "Welcome, ${user?.displayName ?? 'User'}!",
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: const TextStyle(fontSize: 24),
               ),
             ],
           ),
