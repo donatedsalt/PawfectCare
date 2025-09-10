@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:pawfect_care/pages/user/home_page.dart';
+import 'package:pawfect_care/pages/user/appointment_page.dart';
 import 'package:pawfect_care/pages/user/more_page.dart';
 
 class UserPageController extends StatefulWidget {
@@ -14,20 +15,27 @@ class _UserPageControllerState extends State<UserPageController>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
 
-  final List<Widget> _pages = const [HomePage(), MorePage()];
+  final List<Widget> _pages = const [
+    HomePage(),
+    AppointmentPage(),
+    MorePage(),
+  ];
 
   final List<PreferredSizeWidget> _appBars = const [
     HomePageAppBar(),
+    AppointmentPageAppBar(),
     MorePageAppBar(),
   ];
 
   final List<Widget> _floatingActionButtons = const [
     HomePageFloatingActionButton(),
+    AppointmentPageFloatingActionButton(),
     MorePageFloatingActionButton(),
   ];
 
   final List<Widget> _navigationDestination = const [
     HomePageNavigationDestination(),
+    AppointmentPageNavigationDestination(),
     MorePageNavigationDestination(),
   ];
 
