@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -59,9 +58,9 @@ class AdoptPageNavigationDestination extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NavigationDestination(
-      icon: const Icon(CupertinoIcons.heart),
+      icon: const Icon(Icons.favorite_outline),
       selectedIcon: Icon(
-        CupertinoIcons.heart_fill,
+        Icons.favorite,
         color: Theme.of(context).colorScheme.primary,
       ),
       label: "Adopt",
