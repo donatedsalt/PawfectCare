@@ -1,0 +1,385 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
+
+import 'package:pawfect_care/services/image_service.dart';
+import 'package:pawfect_care/services/email_update_service.dart';
+
+import 'package:pawfect_care/utils/context_extension.dart';
+
+import 'package:pawfect_care/pages/common/loading_screen.dart';
+
+class EditProfilePage extends StatefulWidget {
+  const EditProfilePage({super.key});
+
+  @override
+  State<EditProfilePage> createState() => _EditProfilePageState();
+}
+
+class _EditProfilePageState extends State<EditProfilePage> {
+  final _auth = FirebaseAuth.instance;
+  final _firestore = FirebaseFirestore.instance;
+  final _formKey = GlobalKey<FormState>();
+  final _imageService = ImageService();
+  final _emailUpdateService = EmailUpdateService();
+
+  late final TextEditingController _nameController;
+  late final TextEditingController _emailController;
+  late String _role;
+
+  Uint8List? _imageBytes;
+  bool _isSubmitting = false;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final user = _auth.currentUser;
+    _nameController = TextEditingController(text: user?.displayName ?? '');
+    _emailController = TextEditingController(text: user?.email ?? '');
+    _fetchUserData();
+  }
+
+  Future<void> _fetchUserData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final user = _auth.currentUser;
+    if (user != null) {
+      final userData = await _firestore.collection('users').doc(user.uid).get();
+      if (userData.exists) {
+        final data = userData.data();
+        setState(() {
+          _role = data?['role'] ?? 'N/A';
+        });
+      }
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  Future<void> _reauthenticateUser() async {
+    final passwordController = TextEditingController();
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Re-authenticate'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'This is a sensitive operation. Please re-enter your password to continue.',
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: passwordController,
+                decoration: const InputDecoration(
+                  labelText: 'Password',
+                  border: OutlineInputBorder(),
+                ),
+                obscureText: true,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () async {
+                try {
+                  final user = _auth.currentUser;
+                  if (user == null || user.email == null) return;
+                  final cred = EmailAuthProvider.credential(
+                    email: user.email!,
+                    password: passwordController.text.trim(),
+                  );
+                  await user.reauthenticateWithCredential(cred);
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                  }
+                  _updateProfile();
+                } on FirebaseAuthException catch (e) {
+                  if (context.mounted) {
+                    context.showSnackBar(
+                      'Authentication failed: ${e.message}',
+                      theme: SnackBarTheme.error,
+                    );
+                  }
+                  if (kDebugMode) {
+                    print(e);
+                  }
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                  }
+                }
+              },
+              child: const Text('Submit'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _updateProfile() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isSubmitting = true;
+      });
+
+      try {
+        context.showSnackBar("Updating profile...");
+
+        final user = _auth.currentUser;
+        if (user != null) {
+          String? photoUrl;
+          if (_imageBytes != null) {
+            photoUrl = await _imageService.uploadImageToFirebase(
+              _imageBytes!,
+              'profile_pictures/${user.uid}',
+            );
+            if (photoUrl != null) {
+              await user.updatePhotoURL(photoUrl);
+            }
+          }
+
+          if (_emailController.text.trim() != (user.email ?? '')) {
+            await _emailUpdateService.updateEmail(
+              newEmail: _emailController.text.trim(),
+            );
+          }
+
+          await user.updateDisplayName(_nameController.text.trim());
+
+          await _firestore.collection('users').doc(user.uid).update({
+            'name': _nameController.text.trim(),
+            if (photoUrl != null) 'profilePictureUrl': photoUrl,
+          });
+        }
+
+        if (mounted) {
+          context.showSnackBar(
+            'Profile updated successfully!',
+            theme: SnackBarTheme.success,
+          );
+          Navigator.of(context).pop();
+        }
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'requires-recent-login' && mounted) {
+          _reauthenticateUser();
+        } else if (mounted) {
+          context.showSnackBar(
+            'Failed to update profile. Please try again.',
+            theme: SnackBarTheme.error,
+          );
+        }
+        if (kDebugMode) {
+          print(e);
+        }
+      } on PlatformException catch (e) {
+        if (mounted) {
+          if (e.code == 'network-request-failed') {
+            context.showSnackBar(
+              'A network error occurred. Please check your connection.',
+              theme: SnackBarTheme.error,
+            );
+          } else {
+            context.showSnackBar(
+              'An error occurred: ${e.message}',
+              theme: SnackBarTheme.error,
+            );
+          }
+        }
+        if (kDebugMode) {
+          print(e);
+        }
+      } catch (e) {
+        if (mounted) {
+          context.showSnackBar(
+            'An unexpected error occurred.',
+            theme: SnackBarTheme.error,
+          );
+        }
+        if (kDebugMode) {
+          print(e);
+        }
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isSubmitting = false;
+          });
+        }
+      }
+    }
+  }
+
+  Future<void> _pickImage() async {
+    final bytes = await _imageService.pickImageFromGallery();
+    if (bytes != null) {
+      setState(() {
+        _imageBytes = bytes;
+      });
+    }
+  }
+
+  ImageProvider? get _profileImage {
+    if (_imageBytes != null) {
+      return MemoryImage(_imageBytes!);
+    }
+    if (_auth.currentUser?.photoURL != null) {
+      return NetworkImage(_auth.currentUser!.photoURL!);
+    }
+    return null;
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) return const LoadingScreen();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Edit Profile'),
+        leading: IconButton(
+          onPressed: () {
+            _isSubmitting
+                ? context.showSnackBar("please wait...")
+                : Navigator.pop(context);
+          },
+          icon: const Icon(Icons.arrow_back),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              Center(
+                child: GestureDetector(
+                  onTap: _pickImage,
+                  child: CircleAvatar(
+                    radius: 48,
+                    foregroundImage: _profileImage,
+                    child: Icon(
+                      Icons.camera_alt,
+                      size: 32,
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              OutlinedButton(
+                onPressed: _pickImage,
+                style: const ButtonStyle(
+                  padding: WidgetStatePropertyAll(EdgeInsets.all(16)),
+                ),
+                child: const Text("Update image"),
+              ),
+              const SizedBox(height: 32),
+              TextFormField(
+                controller: _nameController,
+                decoration: const InputDecoration(
+                  labelText: 'Username',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a username';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 24.0),
+              TextFormField(
+                controller: _emailController,
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter an email';
+                  }
+                  if (!RegExp(
+                    r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
+                  ).hasMatch(value)) {
+                    return 'Please enter a valid email address';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 24.0),
+              TextFormField(
+                controller: TextEditingController(text: _role),
+                decoration: InputDecoration(
+                  labelText: 'Role',
+                  border: const OutlineInputBorder(),
+                  filled: true,
+                  fillColor: Colors.grey[300],
+                ),
+                readOnly: true,
+              ),
+              const SizedBox(height: 16.0),
+              Text("Role can not be changed once set."),
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            Expanded(
+              child: IconButton.outlined(
+                onPressed: () {
+                  _isSubmitting
+                      ? context.showSnackBar("please wait...")
+                      : Navigator.pop(context);
+                },
+                icon: const Icon(Icons.close),
+              ),
+            ),
+            const SizedBox(width: 16.0),
+            Expanded(
+              child: IconButton.filled(
+                onPressed: () {
+                  _isSubmitting
+                      ? context.showSnackBar("please wait...")
+                      : _updateProfile();
+                },
+                icon: _isSubmitting
+                    ? SizedBox(
+                        height: 16.0,
+                        width: 16.0,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                      )
+                    : const Icon(Icons.check),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

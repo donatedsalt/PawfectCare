@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'package:pawfect_care/widgets/account_profile.dart';
+
+import 'package:pawfect_care/pages/user/profile_page.dart';
+
 class MorePageAppBar extends StatefulWidget implements PreferredSizeWidget {
   const MorePageAppBar({super.key});
 
@@ -22,34 +26,42 @@ class MorePage extends StatelessWidget {
   const MorePage({super.key});
   @override
   Widget build(BuildContext context) {
-    // Get the current user from Firebase Auth
     final user = FirebaseAuth.instance.currentUser;
 
     return ListView(
       padding: const EdgeInsets.all(16.0),
       children: [
-        // welcome user and more icon
+        // welcome user
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 64.0),
-          child: Text(
-            "Welcome, ${user?.displayName ?? 'User'}!",
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          child: Column(
+            children: [
+              AccountProfile(user: user?.displayName, imageURL: user?.photoURL),
+              SizedBox(height: 16),
+              Text(
+                "Welcome, ${user?.displayName ?? 'User'}!",
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
         ),
 
         // Settings header and list of settings
         Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "Settings",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
             ListTile(
               leading: const Icon(Icons.person),
               title: const Text("Profile"),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProfilePage()),
+                );
+              },
             ),
             ListTile(
               leading: const Icon(Icons.notifications),
