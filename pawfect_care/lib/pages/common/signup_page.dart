@@ -49,15 +49,15 @@ class _SignupPageState extends State<SignupPage> {
             .collection('users')
             .doc(userCredential.user!.uid)
             .set({
-              'name': userCredential.user?.displayName,
-              'email': userCredential.user?.email,
+              'name': _usernameController.text.trim(),
+              'email': _emailController.text.trim(),
               'role': _selectedRole,
               'createdAt': FieldValue.serverTimestamp(),
             });
 
         if (mounted) {
           context.showSnackBar(
-            'Sign up successful! You can now sign in.',
+            'Sign up successful!',
             theme: SnackBarTheme.success,
           );
           _emailController.clear();
