@@ -112,12 +112,7 @@ class _SignupPageState extends State<SignupPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'Sign Up',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
+        appBar: AppBar(title: const Text('Sign Up')),
         body: Form(
           key: _formKey,
           child: Center(
@@ -126,9 +121,9 @@ class _SignupPageState extends State<SignupPage> {
               shrinkWrap: true,
               children: [
                 const Text(
-                  'Sign up with your email and password',
+                  'Sign up to Pawfect Care',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16.0),
+                  style: TextStyle(fontSize: 24.0),
                 ),
                 const SizedBox(height: 24),
                 TextFormField(

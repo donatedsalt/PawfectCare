@@ -86,13 +86,7 @@ class _SigninPageState extends State<SigninPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'Sign In',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          backgroundColor: Theme.of(context).colorScheme.primaryFixed,
-        ),
+        appBar: AppBar(title: const Text('Sign In')),
         body: Form(
           key: _formKey,
           child: Center(
@@ -101,9 +95,9 @@ class _SigninPageState extends State<SigninPage> {
               shrinkWrap: true,
               children: [
                 const Text(
-                  'Sign in with your email and password',
+                  'Sign in to Pawfect Care',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16.0),
+                  style: TextStyle(fontSize: 24.0),
                 ),
                 const SizedBox(height: 24),
                 TextFormField(
