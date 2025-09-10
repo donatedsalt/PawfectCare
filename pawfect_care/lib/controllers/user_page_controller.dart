@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pawfect_care/pages/user/home_page.dart';
 import 'package:pawfect_care/pages/user/appointment_page.dart';
 import 'package:pawfect_care/pages/user/store_page.dart';
+import 'package:pawfect_care/pages/user/adopt_page.dart';
 import 'package:pawfect_care/pages/user/more_page.dart';
 
 class UserPageController extends StatefulWidget {
@@ -20,6 +21,7 @@ class _UserPageControllerState extends State<UserPageController>
     HomePage(),
     AppointmentPage(),
     StorePage(),
+    AdoptPage(),
     MorePage(),
   ];
 
@@ -27,6 +29,7 @@ class _UserPageControllerState extends State<UserPageController>
     HomePageAppBar(),
     AppointmentPageAppBar(),
     StorePageAppBar(),
+    AdoptPageAppBar(),
     MorePageAppBar(),
   ];
 
@@ -34,6 +37,7 @@ class _UserPageControllerState extends State<UserPageController>
     HomePageFloatingActionButton(),
     AppointmentPageFloatingActionButton(),
     StorePageFloatingActionButton(),
+    AdoptPageFloatingActionButton(),
     MorePageFloatingActionButton(),
   ];
 
@@ -41,6 +45,7 @@ class _UserPageControllerState extends State<UserPageController>
     HomePageNavigationDestination(),
     AppointmentPageNavigationDestination(),
     StorePageNavigationDestination(),
+    AdoptPageNavigationDestination(),
     MorePageNavigationDestination(),
   ];
 
