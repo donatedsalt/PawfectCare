@@ -1,21 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class AdoptPageAppBar extends StatefulWidget implements PreferredSizeWidget {
+class AdoptPageAppBar extends StatelessWidget implements PreferredSizeWidget {
   const AdoptPageAppBar({super.key});
 
-  @override
-  State<AdoptPageAppBar> createState() => _AdoptPageAppBarState();
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
-}
-
-class _AdoptPageAppBarState extends State<AdoptPageAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(title: const Text('Adopt'));
   }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
 
 class AdoptPage extends StatelessWidget {

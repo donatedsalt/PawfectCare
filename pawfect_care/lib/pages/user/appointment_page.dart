@@ -1,21 +1,16 @@
 import 'package:flutter/material.dart';
 
-class AppointmentPageAppBar extends StatefulWidget
+class AppointmentPageAppBar extends StatelessWidget
     implements PreferredSizeWidget {
   const AppointmentPageAppBar({super.key});
 
   @override
-  State<AppointmentPageAppBar> createState() => _AppointmentPageAppBarState();
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
-}
-
-class _AppointmentPageAppBarState extends State<AppointmentPageAppBar> {
-  @override
   Widget build(BuildContext context) {
     return AppBar(title: const Text('Appointment'));
   }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
 
 class AppointmentPage extends StatelessWidget {

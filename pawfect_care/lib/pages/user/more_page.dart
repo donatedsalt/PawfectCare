@@ -5,21 +5,16 @@ import 'package:pawfect_care/widgets/account_profile.dart';
 
 import 'package:pawfect_care/pages/user/profile_page.dart';
 
-class MorePageAppBar extends StatefulWidget implements PreferredSizeWidget {
+class MorePageAppBar extends StatelessWidget implements PreferredSizeWidget {
   const MorePageAppBar({super.key});
 
-  @override
-  State<MorePageAppBar> createState() => _MorePageAppBarState();
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
-}
-
-class _MorePageAppBarState extends State<MorePageAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(title: const Text('More'));
   }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
 
 class MorePage extends StatelessWidget {

@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
 
-class StorePageAppBar extends StatefulWidget implements PreferredSizeWidget {
+class StorePageAppBar extends StatelessWidget implements PreferredSizeWidget {
   const StorePageAppBar({super.key});
 
-  @override
-  State<StorePageAppBar> createState() => _StorePageAppBarState();
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
-}
-
-class _StorePageAppBarState extends State<StorePageAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(title: const Text('Store'));
   }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
 
 class StorePage extends StatelessWidget {
