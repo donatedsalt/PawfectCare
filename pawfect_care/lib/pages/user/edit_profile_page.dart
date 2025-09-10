@@ -266,7 +266,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
           child: ListView(
@@ -307,7 +307,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   return null;
                 },
               ),
-              const SizedBox(height: 24.0),
+              const SizedBox(height: 24),
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(
@@ -326,7 +326,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   return null;
                 },
               ),
-              const SizedBox(height: 24.0),
+              const SizedBox(height: 24),
               TextFormField(
                 controller: TextEditingController(text: _role),
                 decoration: InputDecoration(
@@ -337,14 +337,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ),
                 readOnly: true,
               ),
-              const SizedBox(height: 16.0),
+              const SizedBox(height: 16),
               Text("Role can not be changed once set."),
             ],
           ),
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Row(
           children: [
             Expanded(
@@ -357,7 +357,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 icon: const Icon(Icons.close),
               ),
             ),
-            const SizedBox(width: 16.0),
+            const SizedBox(width: 16),
             Expanded(
               child: IconButton.filled(
                 onPressed: () {

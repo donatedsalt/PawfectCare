@@ -58,11 +58,11 @@ class _ProfilePageState extends State<ProfilePage> {
         return Scaffold(
           appBar: AppBar(title: const Text('Profile')),
           body: ListView(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16),
             children: [
               // avatar & name
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 64.0),
+                padding: const EdgeInsets.symmetric(vertical: 64),
                 child: Column(
                   children: [
                     AccountProfile(user: name, imageURL: user?.photoURL),

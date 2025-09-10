@@ -27,11 +27,11 @@ class HomePage extends StatelessWidget {
     final userName = user?.displayName ?? 'User';
 
     return ListView(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16),
       children: [
         // Welcome user
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 32.0),
+          padding: const EdgeInsets.symmetric(vertical: 32),
           child: Text(
             "Welcome, $userName! User Shelter Page",
             textAlign: TextAlign.center,

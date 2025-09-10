@@ -91,13 +91,13 @@ class _SigninPageState extends State<SigninPage> {
           key: _formKey,
           child: Center(
             child: ListView(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16),
               shrinkWrap: true,
               children: [
                 const Text(
                   'Sign in to Pawfect Care',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 24.0),
+                  style: TextStyle(fontSize: 24),
                 ),
                 const SizedBox(height: 24),
                 TextFormField(

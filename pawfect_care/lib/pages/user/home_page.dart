@@ -27,17 +27,20 @@ class HomePage extends StatelessWidget {
     final userName = user?.displayName ?? 'User';
 
     return ListView(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16),
       children: [
         // Welcome user
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 32.0),
+          padding: const EdgeInsets.symmetric(vertical: 32),
           child: Text(
             "Welcome, $userName!",
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 24),
           ),
         ),
+
+        Text('Popular Products', style: TextStyle(fontSize: 16)),
+        Text('Stories', style: TextStyle(fontSize: 16)),
       ],
     );
   }

@@ -24,11 +24,11 @@ class AppointmentPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16),
       children: [
         // Welcome user
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 32.0),
+          padding: const EdgeInsets.symmetric(vertical: 32),
           child: Text(
             "User Appointment Page",
             textAlign: TextAlign.center,

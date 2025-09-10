@@ -26,11 +26,11 @@ class MorePage extends StatelessWidget {
     final user = FirebaseAuth.instance.currentUser;
 
     return ListView(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16),
       children: [
         // welcome user and more icon
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 64.0),
+          padding: const EdgeInsets.symmetric(vertical: 64),
           child: Text(
             "Welcome, ${user?.displayName ?? 'User'}!",
             textAlign: TextAlign.center,

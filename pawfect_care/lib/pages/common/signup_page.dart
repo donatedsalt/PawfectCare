@@ -117,13 +117,13 @@ class _SignupPageState extends State<SignupPage> {
           key: _formKey,
           child: Center(
             child: ListView(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16),
               shrinkWrap: true,
               children: [
                 const Text(
                   'Sign up to Pawfect Care',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 24.0),
+                  style: TextStyle(fontSize: 24),
                 ),
                 const SizedBox(height: 24),
                 TextFormField(
