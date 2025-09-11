@@ -76,7 +76,7 @@ class AuthGate extends StatelessWidget {
                 switch (userRole) {
                   case 'user':
                     return const UserPageController();
-                  case 'vet':
+                  case 'veterinarian':
                     return const VetPageController();
                   case 'store':
                     return const StorePageController();

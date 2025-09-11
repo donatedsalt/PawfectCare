@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import 'package:pawfect_care/pages/vet/CalendarPage.dart';
+import 'package:pawfect_care/pages/vet/PatientMedicalRecordsPage.dart';
 import 'package:pawfect_care/pages/vet/home_page.dart';
 import 'package:pawfect_care/pages/vet/more_page.dart';
 
@@ -14,15 +15,17 @@ class _VetPageControllerState extends State<VetPageController>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
 
-  final List<Widget> _pages = const [HomePage(), MorePage()];
-
-  final List<PreferredSizeWidget> _appBars = const [
-    HomePageAppBar(),
-    MorePageAppBar(),
+  final List<Widget> _pages = const [
+    HomePage(),
+    CalendarPage(),
+    PatientMedicalRecordsPage(),
+    MorePage(),
   ];
 
   final List<Widget> _floatingActionButtons = const [
-    HomePageFloatingActionButton(),
+    HomePageFloatingActionButtonExpanded(),
+    SizedBox.shrink(), // Calendar page ke liye empty FAB
+    SizedBox.shrink(), // Records page ke liye empty FAB
     MorePageFloatingActionButton(),
   ];
 
@@ -31,7 +34,9 @@ class _VetPageControllerState extends State<VetPageController>
     super.initState();
     _tabController = TabController(length: _pages.length, vsync: this);
     _tabController.addListener(() {
-      setState(() {});
+      if (_tabController.indexIsChanging) {
+        setState(() {}); // Refresh FAB
+      }
     });
   }
 
@@ -45,15 +50,18 @@ class _VetPageControllerState extends State<VetPageController>
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: _appBars[_tabController.index],
-        body: TabBarView(controller: _tabController, children: _pages),
-        bottomNavigationBar: customNavigationBar(context),
+        body: TabBarView(
+          controller: _tabController,
+          physics: const NeverScrollableScrollPhysics(),
+          children: _pages,
+        ),
+        bottomNavigationBar: _customNavigationBar(context),
         floatingActionButton: _floatingActionButtons[_tabController.index],
       ),
     );
   }
 
-  Widget customNavigationBar(BuildContext context) {
+  Widget _customNavigationBar(BuildContext context) {
     return NavigationBar(
       selectedIndex: _tabController.index,
       onDestinationSelected: (int index) {
@@ -69,20 +77,20 @@ class _VetPageControllerState extends State<VetPageController>
           label: "Home",
         ),
         NavigationDestination(
-          icon: const Icon(Icons.pin_drop_outlined),
+          icon: const Icon(Icons.calendar_today_outlined),
           selectedIcon: Icon(
-            Icons.pin_drop_rounded,
+            Icons.calendar_today_rounded,
             color: Theme.of(context).colorScheme.primary,
           ),
-          label: "Trips",
+          label: "Appointments",
         ),
         NavigationDestination(
-          icon: const Icon(Icons.monetization_on_outlined),
+          icon: const Icon(Icons.folder_open_outlined),
           selectedIcon: Icon(
-            Icons.monetization_on,
+            Icons.folder_open,
             color: Theme.of(context).colorScheme.primary,
           ),
-          label: "Expenses",
+          label: "Records",
         ),
         NavigationDestination(
           icon: const Icon(Icons.more_horiz),
