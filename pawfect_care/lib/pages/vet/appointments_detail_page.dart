@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:pawfect_care/pages/vet/home_page.dart'; // For BrandColors
+
+import 'package:pawfect_care/pages/vet/home_page.dart';
 
 class AppointmentsDetailPage extends StatelessWidget {
   const AppointmentsDetailPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final appointmentsRef = FirebaseFirestore.instance.collection('appointments');
+    final appointmentsRef = FirebaseFirestore.instance.collection(
+      'appointments',
+    );
 
     return Scaffold(
       backgroundColor: BrandColors.darkBackground,
@@ -60,7 +63,6 @@ class AppointmentsDetailPage extends StatelessWidget {
 
           const SizedBox(height: 16),
 
-
           // 📋 Appointments List
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
@@ -105,29 +107,40 @@ class AppointmentsDetailPage extends StatelessWidget {
                     return Card(
                       color: BrandColors.cardBlue,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14)),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
                       margin: const EdgeInsets.symmetric(vertical: 8),
                       elevation: 4,
                       child: ListTile(
                         contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                         leading: CircleAvatar(
-                          backgroundColor:
-                              BrandColors.accentGreen.withOpacity(0.3),
-                          child: const Icon(Icons.pets, color: BrandColors.textWhite),
+                          backgroundColor: BrandColors.accentGreen.withOpacity(
+                            0.3,
+                          ),
+                          child: const Icon(
+                            Icons.pets,
+                            color: BrandColors.textWhite,
+                          ),
                         ),
                         title: Text(
                           "${data['petName']}",
                           style: const TextStyle(
-                              color: BrandColors.textWhite,
-                              fontWeight: FontWeight.w600),
+                            color: BrandColors.textWhite,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                         subtitle: Text(
                           "${data['ownerName']}",
                           style: const TextStyle(color: BrandColors.textGrey),
                         ),
-                        trailing: const Icon(Icons.arrow_forward_ios,
-                            color: BrandColors.textGrey, size: 16),
+                        trailing: const Icon(
+                          Icons.arrow_forward_ios,
+                          color: BrandColors.textGrey,
+                          size: 16,
+                        ),
                         onTap: () {
                           // Optional: Navigate to appointment detail page
                         },
@@ -136,53 +149,6 @@ class AppointmentsDetailPage extends StatelessWidget {
                   },
                 );
               },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _bannerItem(String title, String imagePath) {
-    return Container(
-      width: 250,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        gradient: const LinearGradient(
-          colors: [BrandColors.accentGreen, BrandColors.primaryBlue],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 6,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: Image.asset(
-              imagePath,
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: double.infinity,
-              color: Colors.black26,
-              colorBlendMode: BlendMode.darken,
-            ),
-          ),
-          Center(
-            child: Text(
-              title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: BrandColors.textWhite,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
             ),
           ),
         ],

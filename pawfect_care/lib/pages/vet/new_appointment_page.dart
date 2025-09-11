@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'home_page.dart'; // For BrandColors
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:pawfect_care/pages/vet/home_page.dart';
 
 class NewAppointmentPage extends StatefulWidget {
   const NewAppointmentPage({super.key});

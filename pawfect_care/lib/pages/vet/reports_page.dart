@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:http/http.dart' as http;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:http/http.dart' as http;
-import 'home_page.dart'; // BrandColors
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:pawfect_care/pages/vet/home_page.dart';
 
 class ReportsPage extends StatefulWidget {
   const ReportsPage({super.key});
@@ -22,8 +24,8 @@ class _ReportsPageState extends State<ReportsPage>
   final TextEditingController _fromDateController = TextEditingController();
   final TextEditingController _toDateController = TextEditingController();
 
-  List<PlatformFile> _selectedFiles = [];
-  List<String> _uploadedFileUrls = [];
+  final List<PlatformFile> _selectedFiles = [];
+  final List<String> _uploadedFileUrls = [];
 
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
@@ -43,8 +45,10 @@ class _ReportsPageState extends State<ReportsPage>
       vsync: this,
       duration: const Duration(milliseconds: 800),
     );
-    _fadeAnimation =
-        CurvedAnimation(parent: _animationController, curve: Curves.easeInOut);
+    _fadeAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    );
     _animationController.forward();
   }
 
@@ -91,17 +95,12 @@ class _ReportsPageState extends State<ReportsPage>
   }
 
   Future<String> _uploadFileToCloudinary(PlatformFile file) async {
-    var uri =
-        Uri.parse("https://api.cloudinary.com/v1_1/du1fl4tjc/upload");
+    var uri = Uri.parse("https://api.cloudinary.com/v1_1/du1fl4tjc/upload");
 
     var request = http.MultipartRequest('POST', uri);
     if (kIsWeb) {
       request.files.add(
-        http.MultipartFile.fromBytes(
-          'file',
-          file.bytes!,
-          filename: file.name,
-        ),
+        http.MultipartFile.fromBytes('file', file.bytes!, filename: file.name),
       );
     } else {
       request.files.add(
@@ -148,7 +147,8 @@ class _ReportsPageState extends State<ReportsPage>
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text("Report generated and uploaded successfully!")),
+          content: Text("Report generated and uploaded successfully!"),
+        ),
       );
 
       _formKey.currentState!.reset();
@@ -161,9 +161,9 @@ class _ReportsPageState extends State<ReportsPage>
         _uploadedFileUrls.clear();
       });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error uploading files: $e")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error uploading files: $e")));
     } finally {
       setState(() => _isUploading = false);
     }
@@ -418,7 +418,7 @@ class _ReportsPageState extends State<ReportsPage>
                                         image: kIsWeb
                                             ? MemoryImage(file.bytes!)
                                             : FileImage(File(file.path!))
-                                                as ImageProvider,
+                                                  as ImageProvider,
                                         fit: BoxFit.cover,
                                       ),
                               ),

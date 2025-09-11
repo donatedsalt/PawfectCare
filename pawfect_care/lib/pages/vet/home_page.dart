@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:pawfect_care/pages/vet/add_patient_page.dart';
 import 'package:pawfect_care/pages/vet/appointments_detail_page.dart';
 import 'package:pawfect_care/pages/vet/new_appointment_page.dart';

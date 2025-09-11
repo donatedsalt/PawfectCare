@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pawfect_care/pages/vet/CalendarPage.dart';
-import 'package:pawfect_care/pages/vet/PatientMedicalRecordsPage.dart';
 import 'package:pawfect_care/pages/vet/home_page.dart';
+import 'package:pawfect_care/pages/vet/calendar_page.dart';
+import 'package:pawfect_care/pages/vet/medical_records_page.dart';
 import 'package:pawfect_care/pages/vet/more_page.dart';
 
 class VetPageController extends StatefulWidget {
@@ -18,7 +18,7 @@ class _VetPageControllerState extends State<VetPageController>
   final List<Widget> _pages = const [
     HomePage(),
     CalendarPage(),
-    PatientMedicalRecordsPage(),
+    MedicalRecordsPage(),
     MorePage(),
   ];
 

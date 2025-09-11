@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../vet/home_page.dart'; // For BrandColors
+
+import 'package:pawfect_care/pages/vet/home_page.dart';
 
 class AddPatientPage extends StatefulWidget {
   const AddPatientPage({super.key});
@@ -71,7 +72,9 @@ class _AddPatientPageState extends State<AddPatientPage>
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Patient '${_petNameController.text}' added successfully!"),
+            content: Text(
+              "Patient '${_petNameController.text}' added successfully!",
+            ),
             backgroundColor: BrandColors.accentGreen,
           ),
         );
@@ -108,10 +111,7 @@ class _AddPatientPageState extends State<AddPatientPage>
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(
-          color: BrandColors.accentGreen,
-          width: 2,
-        ),
+        borderSide: const BorderSide(color: BrandColors.accentGreen, width: 2),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
     );
@@ -138,7 +138,10 @@ class _AddPatientPageState extends State<AddPatientPage>
                       margin: const EdgeInsets.only(bottom: 20),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [BrandColors.accentGreen, BrandColors.primaryBlue],
+                          colors: [
+                            BrandColors.accentGreen,
+                            BrandColors.primaryBlue,
+                          ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
@@ -181,7 +184,12 @@ class _AddPatientPageState extends State<AddPatientPage>
                 const SizedBox(height: 16),
                 _animatedField(_ownerNameController, 'Owner Name', _ownerFocus),
                 const SizedBox(height: 16),
-                _animatedField(_ageController, 'Age', _ageFocus, isNumber: true),
+                _animatedField(
+                  _ageController,
+                  'Age',
+                  _ageFocus,
+                  isNumber: true,
+                ),
                 const SizedBox(height: 16),
                 _animatedField(_speciesController, 'Species', _speciesFocus),
                 const SizedBox(height: 30),
@@ -195,7 +203,12 @@ class _AddPatientPageState extends State<AddPatientPage>
     );
   }
 
-  Widget _animatedField(TextEditingController controller, String label, FocusNode focusNode, {bool isNumber = false}) {
+  Widget _animatedField(
+    TextEditingController controller,
+    String label,
+    FocusNode focusNode, {
+    bool isNumber = false,
+  }) {
     return TweenAnimationBuilder(
       tween: Tween<double>(begin: 0.0, end: 1.0),
       duration: const Duration(milliseconds: 600),
@@ -208,21 +221,30 @@ class _AddPatientPageState extends State<AddPatientPage>
       },
       child: MouseRegion(
         cursor: SystemMouseCursors.text,
-        child: StatefulBuilder(builder: (context, setState) {
-          focusNode.addListener(() => setState(() {}));
-          return TextFormField(
-            controller: controller,
-            focusNode: focusNode,
-            keyboardType: isNumber ? TextInputType.number : TextInputType.text,
-            decoration: _inputDecoration(label, isFocused: focusNode.hasFocus),
-            style: const TextStyle(color: BrandColors.textWhite),
-            validator: (value) {
-              if (value == null || value.isEmpty) return 'Please enter ${label.toLowerCase()}';
-              if (isNumber && int.tryParse(value) == null) return 'Please enter a valid number';
-              return null;
-            },
-          );
-        }),
+        child: StatefulBuilder(
+          builder: (context, setState) {
+            focusNode.addListener(() => setState(() {}));
+            return TextFormField(
+              controller: controller,
+              focusNode: focusNode,
+              keyboardType: isNumber
+                  ? TextInputType.number
+                  : TextInputType.text,
+              decoration: _inputDecoration(
+                label,
+                isFocused: focusNode.hasFocus,
+              ),
+              style: const TextStyle(color: BrandColors.textWhite),
+              validator: (value) {
+                if (value == null || value.isEmpty)
+                  return 'Please enter ${label.toLowerCase()}';
+                if (isNumber && int.tryParse(value) == null)
+                  return 'Please enter a valid number';
+                return null;
+              },
+            );
+          },
+        ),
       ),
     );
   }
@@ -240,48 +262,50 @@ class _AddPatientPageState extends State<AddPatientPage>
           child: Opacity(opacity: value, child: child),
         );
       },
-      child: StatefulBuilder(builder: (context, setState) {
-        return GestureDetector(
-          onTapDown: (_) => setState(() => _isPressed = true),
-          onTapUp: (_) {
-            setState(() => _isPressed = false);
-            _submitForm();
-          },
-          onTapCancel: () => setState(() => _isPressed = false),
-          child: AnimatedScale(
-            scale: _isPressed ? 0.95 : 1.0,
-            duration: const Duration(milliseconds: 100),
-            child: Container(
-              height: 56,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [BrandColors.accentGreen, BrandColors.primaryBlue],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black54,
-                    blurRadius: 12,
-                    offset: Offset(0, 6),
+      child: StatefulBuilder(
+        builder: (context, setState) {
+          return GestureDetector(
+            onTapDown: (_) => setState(() => _isPressed = true),
+            onTapUp: (_) {
+              setState(() => _isPressed = false);
+              _submitForm();
+            },
+            onTapCancel: () => setState(() => _isPressed = false),
+            child: AnimatedScale(
+              scale: _isPressed ? 0.95 : 1.0,
+              duration: const Duration(milliseconds: 100),
+              child: Container(
+                height: 56,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [BrandColors.accentGreen, BrandColors.primaryBlue],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
-                ],
-              ),
-              child: const Center(
-                child: Text(
-                  'Add Patient',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: BrandColors.textWhite,
-                    fontWeight: FontWeight.w600,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black54,
+                      blurRadius: 12,
+                      offset: Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: const Center(
+                  child: Text(
+                    'Add Patient',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: BrandColors.textWhite,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        );
-      }),
+          );
+        },
+      ),
     );
   }
 }

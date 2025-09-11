@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class HomePageAppBar extends StatefulWidget implements PreferredSizeWidget {
   const HomePageAppBar({super.key});
@@ -23,9 +22,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
-    final userName = user?.displayName ?? 'User';
-
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -33,7 +29,7 @@ class HomePage extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 32),
           child: Text(
-            "Welcome, $userName! Store Home Page",
+            "Store Home Page",
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),

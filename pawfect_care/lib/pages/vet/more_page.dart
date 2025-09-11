@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:pawfect_care/pages/vet/CalendarPage.dart';
-import 'package:pawfect_care/pages/vet/PatientMedicalRecordsPage.dart';
 
 /// 🎨 Brand Colors (HomePage theme)
 class BrandColors {
@@ -65,7 +63,9 @@ class MorePage extends StatelessWidget {
           // Profile Card
           Card(
             color: BrandColors.cardBlue,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
             elevation: 4,
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -77,7 +77,11 @@ class MorePage extends StatelessWidget {
                         ? NetworkImage(user!.photoURL!)
                         : null,
                     child: user?.photoURL == null
-                        ? const Icon(Icons.person, size: 40, color: BrandColors.textWhite)
+                        ? const Icon(
+                            Icons.person,
+                            size: 40,
+                            color: BrandColors.textWhite,
+                          )
                         : null,
                   ),
                   const SizedBox(width: 16),
@@ -107,7 +111,7 @@ class MorePage extends StatelessWidget {
           ),
 
           const SizedBox(height: 24),
-          
+
           const SizedBox(height: 24),
 
           // Settings Section
@@ -155,9 +159,10 @@ class MorePage extends StatelessWidget {
       child: Text(
         title,
         style: const TextStyle(
-            color: BrandColors.accentGreen,
-            fontSize: 16,
-            fontWeight: FontWeight.bold),
+          color: BrandColors.accentGreen,
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
@@ -177,7 +182,11 @@ class MorePage extends StatelessWidget {
       child: ListTile(
         leading: Icon(icon, color: iconColor),
         title: Text(title, style: TextStyle(color: textColor)),
-        trailing: const Icon(Icons.arrow_forward_ios, color: BrandColors.textGrey, size: 16),
+        trailing: const Icon(
+          Icons.arrow_forward_ios,
+          color: BrandColors.textGrey,
+          size: 16,
+        ),
         onTap: onTap,
       ),
     );
@@ -208,8 +217,14 @@ class MorePageFloatingActionButton extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   ListTile(
-                    leading: const Icon(Icons.person, color: BrandColors.textWhite),
-                    title: const Text("Edit Profile", style: TextStyle(color: BrandColors.textWhite)),
+                    leading: const Icon(
+                      Icons.person,
+                      color: BrandColors.textWhite,
+                    ),
+                    title: const Text(
+                      "Edit Profile",
+                      style: TextStyle(color: BrandColors.textWhite),
+                    ),
                     onTap: () {
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -218,8 +233,14 @@ class MorePageFloatingActionButton extends StatelessWidget {
                     },
                   ),
                   ListTile(
-                    leading: const Icon(Icons.pets, color: BrandColors.textWhite),
-                    title: const Text("Add New Pet", style: TextStyle(color: BrandColors.textWhite)),
+                    leading: const Icon(
+                      Icons.pets,
+                      color: BrandColors.textWhite,
+                    ),
+                    title: const Text(
+                      "Add New Pet",
+                      style: TextStyle(color: BrandColors.textWhite),
+                    ),
                     onTap: () {
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(

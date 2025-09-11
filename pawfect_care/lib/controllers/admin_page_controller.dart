@@ -26,6 +26,11 @@ class _AdminPageControllerState extends State<AdminPageController>
     MorePageFloatingActionButton(),
   ];
 
+  final List<Widget> _navigationDestination = const [
+    HomePageNavigationDestination(),
+    MorePageNavigationDestination(),
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -59,40 +64,7 @@ class _AdminPageControllerState extends State<AdminPageController>
       onDestinationSelected: (int index) {
         _tabController.animateTo(index);
       },
-      destinations: [
-        NavigationDestination(
-          icon: const Icon(Icons.home_outlined),
-          selectedIcon: Icon(
-            Icons.home_rounded,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          label: "Home",
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.pin_drop_outlined),
-          selectedIcon: Icon(
-            Icons.pin_drop_rounded,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          label: "Trips",
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.monetization_on_outlined),
-          selectedIcon: Icon(
-            Icons.monetization_on,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          label: "Expenses",
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.more_horiz),
-          selectedIcon: Icon(
-            Icons.more,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          label: "More",
-        ),
-      ],
+      destinations: _navigationDestination,
     );
   }
 }

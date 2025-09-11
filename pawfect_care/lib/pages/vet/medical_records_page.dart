@@ -11,15 +11,14 @@ class BrandColors {
   static const Color fabGreen = Color(0xFF32C48D);
 }
 
-class PatientMedicalRecordsPage extends StatefulWidget {
-  const PatientMedicalRecordsPage({super.key});
+class MedicalRecordsPage extends StatefulWidget {
+  const MedicalRecordsPage({super.key});
 
   @override
-  State<PatientMedicalRecordsPage> createState() =>
-      _PatientMedicalRecordsPageState();
+  State<MedicalRecordsPage> createState() => _MedicalRecordsPageState();
 }
 
-class _PatientMedicalRecordsPageState extends State<PatientMedicalRecordsPage> {
+class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
   final List<Map<String, String>> _records = [
     {
       "petName": "Bella",
