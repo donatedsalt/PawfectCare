@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:pawfect_care/pages/store/home_page.dart';
 import 'package:pawfect_care/pages/store/more_page.dart';
+import 'package:pawfect_care/pages/store/orders_page.dart';
+import 'package:pawfect_care/pages/store/products_page.dart';
 
 class StorePageController extends StatefulWidget {
   const StorePageController({super.key});
@@ -14,20 +16,31 @@ class _StorePageControllerState extends State<StorePageController>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
 
-  final List<Widget> _pages = const [HomePage(), MorePage()];
+  final List<Widget> _pages = const [
+    HomePage(),
+    ProductsPage(),
+    OrdersPage(),
+    MorePage(),
+  ];
 
   final List<PreferredSizeWidget> _appBars = const [
     HomePageAppBar(),
+    ProductsPageAppBar(),
+    OrdersPageAppBar(),
     MorePageAppBar(),
   ];
 
   final List<Widget> _floatingActionButtons = const [
     HomePageFloatingActionButton(),
+    ProductsPageFloatingActionButton(),
+    OrdersPageFloatingActionButton(),
     MorePageFloatingActionButton(),
   ];
 
   final List<Widget> _navigationDestination = const [
     HomePageNavigationDestination(),
+    ProductsPageNavigationDestination(),
+    OrdersPageNavigationDestination(),
     MorePageNavigationDestination(),
   ];
 
