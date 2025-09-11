@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:pawfect_care/pages/shelter/home_page.dart';
+import 'package:pawfect_care/pages/shelter/pets_page.dart';
+import 'package:pawfect_care/pages/shelter/blogs_page.dart';
+import 'package:pawfect_care/pages/shelter/contacts_page.dart';
 import 'package:pawfect_care/pages/shelter/more_page.dart';
 
 class ShelterPageController extends StatefulWidget {
@@ -14,20 +17,35 @@ class _ShelterPageControllerState extends State<ShelterPageController>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
 
-  final List<Widget> _pages = const [HomePage(), MorePage()];
+  final List<Widget> _pages = const [
+    HomePage(),
+    PetsPage(),
+    BlogsPage(),
+    ContactsPage(),
+    MorePage(),
+  ];
 
   final List<PreferredSizeWidget> _appBars = const [
     HomePageAppBar(),
+    PetsPageAppBar(),
+    BlogsPageAppBar(),
+    ContactsPageAppBar(),
     MorePageAppBar(),
   ];
 
   final List<Widget> _floatingActionButtons = const [
     HomePageFloatingActionButton(),
+    PetsPageFloatingActionButton(),
+    BlogsPageFloatingActionButton(),
+    ContactsPageFloatingActionButton(),
     MorePageFloatingActionButton(),
   ];
 
   final List<Widget> _navigationDestination = const [
     HomePageNavigationDestination(),
+    PetsPageNavigationDestination(),
+    BlogsPageNavigationDestination(),
+    ContactsPageNavigationDestination(),
     MorePageNavigationDestination(),
   ];
 
