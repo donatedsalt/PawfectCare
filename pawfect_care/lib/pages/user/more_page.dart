@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pawfect_care/widgets/account_profile.dart';
 
 import 'package:pawfect_care/pages/user/profile_page.dart';
+import 'package:pawfect_care/pages/user/pets_page.dart';
 
 class MorePageAppBar extends StatelessWidget implements PreferredSizeWidget {
   const MorePageAppBar({super.key});
@@ -52,6 +53,16 @@ class MorePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const ProfilePage()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.pets),
+              title: const Text("Pets"),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const PetsPage()),
                 );
               },
             ),

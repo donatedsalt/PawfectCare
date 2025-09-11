@@ -357,33 +357,39 @@ class _EditProfilePageState extends State<EditProfilePage> {
         child: Row(
           children: [
             Expanded(
-              child: IconButton.outlined(
-                onPressed: () {
-                  _isSubmitting
-                      ? context.showSnackBar("please wait...")
-                      : Navigator.pop(context);
-                },
-                icon: const Icon(Icons.close),
+              child: SizedBox(
+                height: 50,
+                child: IconButton.outlined(
+                  onPressed: () {
+                    _isSubmitting
+                        ? context.showSnackBar("please wait...")
+                        : Navigator.pop(context);
+                  },
+                  icon: const Icon(Icons.close),
+                ),
               ),
             ),
             const SizedBox(width: 16),
             Expanded(
-              child: IconButton.filled(
-                onPressed: () {
-                  _isSubmitting
-                      ? context.showSnackBar("please wait...")
-                      : _updateProfile();
-                },
-                icon: _isSubmitting
-                    ? SizedBox(
-                        height: 16.0,
-                        width: 16.0,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.5,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
-                      )
-                    : const Icon(Icons.check),
+              child: SizedBox(
+                height: 50,
+                child: IconButton.filled(
+                  onPressed: () {
+                    _isSubmitting
+                        ? context.showSnackBar("please wait...")
+                        : _updateProfile();
+                  },
+                  icon: _isSubmitting
+                      ? SizedBox(
+                          height: 16.0,
+                          width: 16.0,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                        )
+                      : const Icon(Icons.check),
+                ),
               ),
             ),
           ],
