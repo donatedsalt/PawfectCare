@@ -22,12 +22,19 @@ class _SignupPageState extends State<SignupPage> {
 
   String? _selectedRole;
   final List<String> _roles = [
-    'User',
+    'user',
     'veterinarian',
     'animal shelter',
     'pet store',
-    'Admin',
+    'admin',
   ];
+  late List<bool> _isSelected;
+
+  @override
+  void initState() {
+    super.initState();
+    _isSelected = List.filled(_roles.length, false);
+  }
 
   Future<void> _signUp() async {
     if (_formKey.currentState!.validate()) {
@@ -35,6 +42,18 @@ class _SignupPageState extends State<SignupPage> {
         setState(() {
           _isLoading = true;
         });
+
+        int selectedIndex = _isSelected.indexOf(true);
+        if (selectedIndex != -1) {
+          _selectedRole = _roles[selectedIndex];
+        } else {
+          context.showSnackBar(
+            'Please select a role.',
+            theme: SnackBarTheme.error,
+          );
+          return;
+        }
+
         final userCredential = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(
               email: _emailController.text.trim(),
@@ -125,7 +144,7 @@ class _SignupPageState extends State<SignupPage> {
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 24),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 32),
                 TextFormField(
                   controller: _usernameController,
                   decoration: const InputDecoration(
@@ -141,7 +160,7 @@ class _SignupPageState extends State<SignupPage> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 24),
                 TextFormField(
                   controller: _emailController,
                   decoration: const InputDecoration(
@@ -161,7 +180,7 @@ class _SignupPageState extends State<SignupPage> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 24),
                 TextFormField(
                   controller: _passwordController,
                   decoration: InputDecoration(
@@ -198,41 +217,50 @@ class _SignupPageState extends State<SignupPage> {
                     if (!value.contains(RegExp(r'[0-9]'))) {
                       return 'Password must contain at least one number.';
                     }
-                    if (!value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+                    if (!value.contains(RegExp(r'[!@#\$%^&*(),.?":{}|<>]'))) {
                       return 'Password must contain at least one special character.';
                     }
                     return null;
                   },
                 ),
-                const SizedBox(height: 12),
-                DropdownButtonFormField<String>(
-                  initialValue: _selectedRole,
-                  decoration: const InputDecoration(
-                    labelText: 'Role',
-                    border: OutlineInputBorder(),
-                  ),
-                  items: _roles.map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedRole = newValue;
-                    });
-                  },
-                  validator: (value) {
-                    if (value == null) {
-                      return 'Please select a role';
-                    }
-                    return null;
-                  },
-                ),
                 const SizedBox(height: 24),
+                const Text(
+                  'Select Your Role',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: ToggleButtons(
+                    isSelected: _isSelected,
+                    onPressed: (int newIndex) {
+                      setState(() {
+                        for (int i = 0; i < _isSelected.length; i++) {
+                          _isSelected[i] = i == newIndex;
+                        }
+                      });
+                    },
+                    borderRadius: BorderRadius.circular(8),
+                    selectedColor: Theme.of(context).colorScheme.onPrimary,
+                    fillColor: Theme.of(context).colorScheme.primary,
+                    children: _roles.map((role) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(role, style: const TextStyle(fontSize: 16)),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                const SizedBox(height: 32),
                 ElevatedButton(
                   onPressed: _isLoading ? null : _signUp,
-                  child: Text(_isLoading ? 'Loading...' : 'Sign Up'),
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 16.0,
+                          width: 16.0,
+                          child: CircularProgressIndicator(strokeWidth: 2.5),
+                        )
+                      : const Text('Sign Up'),
                 ),
                 const SizedBox(height: 16),
                 TextButton(

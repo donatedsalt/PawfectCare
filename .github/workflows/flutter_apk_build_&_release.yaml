@@ -26,7 +26,6 @@ jobs:
         with:
           channel: "stable"
 
-      # 🔹 Step to restore google-services.json
       - name: Restore Firebase google-services.json
         run: echo "${{ secrets.FIREBASE_OPTIONS }}" | base64 --decode > pawfect_care/android/app/google-services.json
 

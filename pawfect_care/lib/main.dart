@@ -78,9 +78,9 @@ class AuthGate extends StatelessWidget {
                     return const UserPageController();
                   case 'veterinarian':
                     return const VetPageController();
-                  case 'store':
+                  case 'pet store':
                     return const StorePageController();
-                  case 'shelter':
+                  case 'animal shelter':
                     return const ShelterPageController();
                   case 'admin':
                     return const AdminPageController();

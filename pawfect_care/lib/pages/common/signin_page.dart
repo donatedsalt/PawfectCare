@@ -99,7 +99,7 @@ class _SigninPageState extends State<SigninPage> {
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 24),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 32),
                 TextFormField(
                   controller: _emailController,
                   decoration: const InputDecoration(
@@ -119,7 +119,7 @@ class _SigninPageState extends State<SigninPage> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 24),
                 TextFormField(
                   controller: _passwordController,
                   decoration: InputDecoration(
@@ -150,7 +150,7 @@ class _SigninPageState extends State<SigninPage> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 32),
                 ElevatedButton(
                   onPressed: _isLoading ? null : _signIn,
                   child: Text(_isLoading ? 'Loading...' : 'Sign In'),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/services.dart';
 
 import 'package:pawfect_care/services/image_service.dart';
 import 'package:pawfect_care/services/email_update_service.dart';
@@ -27,6 +27,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   late final TextEditingController _nameController;
   late final TextEditingController _emailController;
+  late final TextEditingController _roleController;
   late String _role;
 
   Uint8List? _imageBytes;
@@ -39,6 +40,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     final user = _auth.currentUser;
     _nameController = TextEditingController(text: user?.displayName ?? '');
     _emailController = TextEditingController(text: user?.email ?? '');
+    _roleController = TextEditingController();
     _fetchUserData();
   }
 
@@ -54,6 +56,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         final data = userData.data();
         setState(() {
           _role = data?['role'] ?? 'N/A';
+          _roleController.text = _role;
         });
       }
     }
@@ -160,6 +163,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           }
 
           await user.updateDisplayName(_nameController.text.trim());
+          await user.reload();
 
           await _firestore.collection('users').doc(user.uid).update({
             'name': _nameController.text.trim(),
@@ -232,7 +236,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
   }
 
-  ImageProvider? get _profileImage {
+  ImageProvider? _getProfileImage() {
     if (_imageBytes != null) {
       return MemoryImage(_imageBytes!);
     }
@@ -246,6 +250,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
+    _roleController.dispose();
     super.dispose();
   }
 
@@ -274,26 +279,30 @@ class _EditProfilePageState extends State<EditProfilePage> {
               Center(
                 child: GestureDetector(
                   onTap: _pickImage,
-                  child: CircleAvatar(
-                    radius: 48,
-                    foregroundImage: _profileImage,
-                    child: Icon(
-                      Icons.camera_alt,
-                      size: 32,
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    ),
+                  child: Stack(
+                    alignment: Alignment.bottomRight,
+                    children: [
+                      CircleAvatar(
+                        radius: 48,
+                        backgroundImage: _getProfileImage(),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.camera_alt,
+                          size: 20,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
-              OutlinedButton(
-                onPressed: _pickImage,
-                style: const ButtonStyle(
-                  padding: WidgetStatePropertyAll(EdgeInsets.all(16)),
-                ),
-                child: const Text("Update image"),
-              ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 48),
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(
@@ -328,7 +337,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
               const SizedBox(height: 24),
               TextFormField(
-                controller: TextEditingController(text: _role),
+                controller: _roleController,
                 decoration: InputDecoration(
                   labelText: 'Role',
                   border: const OutlineInputBorder(),
@@ -338,7 +347,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 readOnly: true,
               ),
               const SizedBox(height: 16),
-              Text("Role can not be changed once set."),
+              const Text("Role can not be changed once set."),
             ],
           ),
         ),
