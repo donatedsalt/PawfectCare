@@ -139,6 +139,8 @@ class _SignupPageState extends State<SignupPage> {
               padding: const EdgeInsets.all(16),
               shrinkWrap: true,
               children: [
+                Image.asset('assets/images/logo.png', height: 160),
+                const SizedBox(height: 24),
                 const Text(
                   'Sign up to Pawfect Care',
                   textAlign: TextAlign.center,
