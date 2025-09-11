@@ -131,7 +131,7 @@ class _SignupPageState extends State<SignupPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(title: const Text('Sign Up')),
+        appBar: AppBar(title: const Text('Sign Up'), centerTitle: true),
         body: Form(
           key: _formKey,
           child: Center(
@@ -252,15 +252,14 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                 ),
                 const SizedBox(height: 32),
-                ElevatedButton(
-                  onPressed: _isLoading ? null : _signUp,
-                  child: _isLoading
-                      ? const SizedBox(
-                          height: 16.0,
-                          width: 16.0,
-                          child: CircularProgressIndicator(strokeWidth: 2.5),
-                        )
-                      : const Text('Sign Up'),
+                SizedBox(
+                  height: 50,
+                  child: FilledButton(
+                    onPressed: _isLoading ? null : _signUp,
+                    child: _isLoading
+                        ? CircularProgressIndicator()
+                        : const Text('Sign Up'),
+                  ),
                 ),
                 const SizedBox(height: 16),
                 TextButton(

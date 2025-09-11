@@ -86,7 +86,7 @@ class _SigninPageState extends State<SigninPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(title: const Text('Sign In')),
+        appBar: AppBar(title: const Text('Sign In'), centerTitle: true),
         body: Form(
           key: _formKey,
           child: Center(
@@ -151,9 +151,12 @@ class _SigninPageState extends State<SigninPage> {
                   },
                 ),
                 const SizedBox(height: 32),
-                ElevatedButton(
-                  onPressed: _isLoading ? null : _signIn,
-                  child: Text(_isLoading ? 'Loading...' : 'Sign In'),
+                SizedBox(
+                  height: 50,
+                  child: FilledButton(
+                    onPressed: _isLoading ? null : _signIn,
+                    child: Text(_isLoading ? 'Loading...' : 'Sign In'),
+                  ),
                 ),
                 const SizedBox(height: 16),
                 TextButton(
