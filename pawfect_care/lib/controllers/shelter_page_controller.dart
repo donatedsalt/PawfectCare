@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:pawfect_care/pages/user/home_page.dart';
-import 'package:pawfect_care/pages/user/more_page.dart';
+import 'package:pawfect_care/pages/shelter/home_page.dart';
+import 'package:pawfect_care/pages/shelter/more_page.dart';
 
 class ShelterPageController extends StatefulWidget {
   const ShelterPageController({super.key});

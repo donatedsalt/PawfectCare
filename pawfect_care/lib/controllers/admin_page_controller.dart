@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:pawfect_care/pages/store/home_page.dart';
-import 'package:pawfect_care/pages/store/more_page.dart';
+import 'package:pawfect_care/pages/admin/home_page.dart';
+import 'package:pawfect_care/pages/admin/more_page.dart';
 
 class AdminPageController extends StatefulWidget {
   const AdminPageController({super.key});

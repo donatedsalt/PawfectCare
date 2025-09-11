@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:pawfect_care/pages/user/home_page.dart';
-import 'package:pawfect_care/pages/user/more_page.dart';
+import 'package:pawfect_care/pages/vet/home_page.dart';
+import 'package:pawfect_care/pages/vet/more_page.dart';
 
 class VetPageController extends StatefulWidget {
   const VetPageController({super.key});
