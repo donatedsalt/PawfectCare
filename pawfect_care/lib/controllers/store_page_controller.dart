@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
-
-import 'package:pawfect_care/pages/store/home_page.dart';
 import 'package:pawfect_care/pages/store/more_page.dart';
+import 'package:pawfect_care/pages/store/home_page.dart';
 import 'package:pawfect_care/pages/store/orders_page.dart';
 import 'package:pawfect_care/pages/store/products_page.dart';
 
+// Brand Colors (like Vet UI)
+class BrandColors {
+  static const Color primaryBlue = Color.fromRGBO(38, 49, 100, 1);
+  static const Color accentGreen = Color(0xFF32C48D);
+  static const Color darkBackground = Color.fromRGBO(222, 239, 255, 1);
+  static const Color cardBlue = Color.fromRGBO(38, 49, 100, 0.9);
+  static const Color textWhite = Color(0xFFFFFFFF);
+  static const Color textGrey = Color(0xFFC5C6C7);
+}
+
+// -------------------- Main Controller -------------------- //
 class StorePageController extends StatefulWidget {
   const StorePageController({super.key});
 
@@ -17,40 +27,19 @@ class _StorePageControllerState extends State<StorePageController>
   late final TabController _tabController;
 
   final List<Widget> _pages = const [
-    HomePage(),
-    ProductsPage(),
-    OrdersPage(),
-    MorePage(),
+    HomePageStore(),
+    ProductsPageStore(),
+    OrdersPageStore(),
+    MorePageStore(),
   ];
 
-  final List<PreferredSizeWidget> _appBars = const [
-    HomePageAppBar(),
-    ProductsPageAppBar(),
-    OrdersPageAppBar(),
-    MorePageAppBar(),
-  ];
-
-  final List<Widget> _floatingActionButtons = const [
-    HomePageFloatingActionButton(),
-    ProductsPageFloatingActionButton(),
-    OrdersPageFloatingActionButton(),
-    MorePageFloatingActionButton(),
-  ];
-
-  final List<Widget> _navigationDestination = const [
-    HomePageNavigationDestination(),
-    ProductsPageNavigationDestination(),
-    OrdersPageNavigationDestination(),
-    MorePageNavigationDestination(),
-  ];
+  final List<String> _titles = ["Home", "Products", "Orders", "More"];
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: _pages.length, vsync: this);
-    _tabController.addListener(() {
-      setState(() {});
-    });
+    _tabController.addListener(() => setState(() {}));
   }
 
   @override
@@ -61,23 +50,91 @@ class _StorePageControllerState extends State<StorePageController>
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: _appBars[_tabController.index],
-        body: TabBarView(controller: _tabController, children: _pages),
-        bottomNavigationBar: customNavigationBar(context),
-        floatingActionButton: _floatingActionButtons[_tabController.index],
+    return Scaffold(
+      backgroundColor: BrandColors.darkBackground,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+              child: Text(
+                _titles[_tabController.index],
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: BrandColors.primaryBlue,
+                ),
+              ),
+            ),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: _pages,
+              ),
+            ),
+          ],
+        ),
       ),
+      bottomNavigationBar: _buildNavigationBar(),
     );
   }
 
-  Widget customNavigationBar(BuildContext context) {
-    return NavigationBar(
-      selectedIndex: _tabController.index,
-      onDestinationSelected: (int index) {
-        _tabController.animateTo(index);
-      },
-      destinations: _navigationDestination,
+  Widget _buildNavigationBar() {
+    return NavigationBarTheme(
+      data: NavigationBarThemeData(
+        backgroundColor: BrandColors.primaryBlue,
+        indicatorColor: Colors.white.withOpacity(0.2),
+
+        // ✅ Icon theme set
+        iconTheme: MaterialStateProperty.resolveWith<IconThemeData>(
+          (states) {
+            if (states.contains(MaterialState.selected)) {
+              return const IconThemeData(color: Colors.white, size: 28);
+            }
+            return const IconThemeData(color: Colors.white, size: 24);
+          },
+        ),
+
+        labelTextStyle: MaterialStateProperty.resolveWith<TextStyle>(
+          (states) {
+            if (states.contains(MaterialState.selected)) {
+              return const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              );
+            }
+            return const TextStyle(
+              color: Colors.white,
+            );
+          },
+        ),
+      ),
+      child: NavigationBar(
+        selectedIndex: _tabController.index,
+        onDestinationSelected: (index) => _tabController.animateTo(index),
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home_rounded),
+            label: "Home",
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.shopping_bag_outlined),
+            selectedIcon: Icon(Icons.shopping_bag_rounded),
+            label: "Products",
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.receipt_long_outlined),
+            selectedIcon: Icon(Icons.receipt_long_rounded),
+            label: "Orders",
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.more_horiz),
+            selectedIcon: Icon(Icons.more_horiz),
+            label: "More",
+          ),
+        ],
+      ),
     );
   }
 }
