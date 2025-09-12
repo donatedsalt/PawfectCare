@@ -8,6 +8,7 @@ import 'package:pawfect_care/utils/context_extension.dart';
 import 'package:pawfect_care/services/image_service.dart';
 
 import 'package:pawfect_care/widgets/custom_app_bar.dart';
+import 'package:pawfect_care/widgets/action_buttons.dart';
 
 class AddPetPage extends StatefulWidget {
   const AddPetPage({super.key});
@@ -206,19 +207,15 @@ class _AddPetPageState extends State<AddPetPage> {
                   border: OutlineInputBorder(),
                 ),
               ),
-              const SizedBox(height: 32),
-              SizedBox(
-                height: 50,
-                child: FilledButton(
-                  onPressed: _isSubmitting ? null : _addPet,
-                  child: _isSubmitting
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text('Add Pet'),
-                ),
-              ),
             ],
           ),
         ),
+      ),
+
+      bottomNavigationBar: CustomActionButtons(
+        isSubmitting: _isSubmitting,
+        onCancel: () => Navigator.pop(context),
+        onSubmit: _addPet,
       ),
     );
   }

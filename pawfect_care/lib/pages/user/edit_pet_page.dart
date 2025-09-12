@@ -9,6 +9,7 @@ import 'package:pawfect_care/utils/context_extension.dart';
 import 'package:pawfect_care/services/image_service.dart';
 
 import 'package:pawfect_care/widgets/custom_app_bar.dart';
+import 'package:pawfect_care/widgets/action_buttons.dart';
 
 import 'package:pawfect_care/pages/common/loading_screen.dart';
 
@@ -240,44 +241,10 @@ class _EditPetPageState extends State<EditPetPage> {
           ),
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            Expanded(
-              child: SizedBox(
-                height: 50,
-                child: IconButton.outlined(
-                  onPressed: () {
-                    _isSubmitting
-                        ? context.showSnackBar("Please wait...")
-                        : Navigator.pop(context);
-                  },
-                  icon: const Icon(Icons.close),
-                ),
-              ),
-            ),
-            const SizedBox(width: 16.0),
-            Expanded(
-              child: SizedBox(
-                height: 50,
-                child: IconButton.filled(
-                  onPressed: _isSubmitting ? null : _updatePet,
-                  icon: _isSubmitting
-                      ? SizedBox(
-                          height: 16.0,
-                          width: 16.0,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.5,
-                            color: Theme.of(context).colorScheme.onPrimary,
-                          ),
-                        )
-                      : const Icon(Icons.check),
-                ),
-              ),
-            ),
-          ],
-        ),
+      bottomNavigationBar: CustomActionButtons(
+        isSubmitting: _isSubmitting,
+        onCancel: () => Navigator.pop(context),
+        onSubmit: _updatePet,
       ),
     );
   }
