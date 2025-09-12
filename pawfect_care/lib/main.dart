@@ -24,7 +24,7 @@ Future<void> main() async {
 }
 
 final customColorScheme = ColorScheme.fromSeed(
-  seedColor: const Color.fromRGBO(40, 50, 100, 1),
+  seedColor: const Color(0xFF0D1C5A),
 );
 
 final theme = ThemeData(
