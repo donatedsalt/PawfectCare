@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+
 import 'package:pawfect_care/pages/store/more_page.dart';
-import 'package:pawfect_care/pages/store/home_page.dart';
-import 'package:pawfect_care/pages/store/orders_page.dart';
 import 'package:pawfect_care/pages/store/products_page.dart';
+import 'package:pawfect_care/pages/store/orders_page.dart';
+import 'package:pawfect_care/pages/store/home_page.dart';
 
-
-// -------------------- Main Controller -------------------- //
 class StorePageController extends StatefulWidget {
   const StorePageController({super.key});
 
@@ -23,8 +22,6 @@ class _StorePageControllerState extends State<StorePageController>
     OrdersPageStore(),
     MorePage(),
   ];
-
-  final List<String> _titles = ["Home", "Products", "Orders", "More"];
 
   @override
   void initState() {

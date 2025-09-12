@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'brand_colors.dart';
-import 'product_detail_page.dart';
-import 'cart_bottom_sheet.dart';
+import 'package:pawfect_care/utils/context_extension.dart';
+
+import 'package:pawfect_care/pages/user/brand_colors.dart';
+import 'package:pawfect_care/pages/user/product_detail_page.dart';
+import 'package:pawfect_care/pages/user/cart_bottom_sheet.dart';
 
 class StorePageFloatingActionButton extends StatelessWidget {
   final int itemCount;
@@ -53,12 +55,7 @@ class _StorePageState extends State<StorePage> {
       }
     });
 
-    // ScaffoldMessenger.of(context).showSnackBar(
-    //   SnackBar(
-    //     content: Text("${product['name']} added to cart"),
-    //     duration: const Duration(seconds: 1),
-    //   ),
-    // );
+    context.showSnackBar("${product['name']} added to cart");
   }
 
   Future<void> checkout() async {
