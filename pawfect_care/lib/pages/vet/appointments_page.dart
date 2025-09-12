@@ -93,7 +93,7 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
                     gradient: const LinearGradient(
                       colors: [
                         BrandColors.accentGreen,
-                        BrandColors.primaryBlue
+                        BrandColors.primaryBlue,
                       ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
@@ -248,14 +248,13 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
                       final appointment = value[index];
                       return Card(
                         color: BrandColors.cardBlue,
-                        margin: const EdgeInsets.symmetric(
-                          vertical: 4,
-                        ),
+                        margin: const EdgeInsets.symmetric(vertical: 4),
                         child: ListTile(
                           title: Text(
                             appointment,
-                            style:
-                                const TextStyle(color: BrandColors.textWhite),
+                            style: const TextStyle(
+                              color: BrandColors.textWhite,
+                            ),
                           ),
                           trailing: IconButton(
                             icon: const Icon(Icons.delete, color: Colors.red),
@@ -332,10 +331,7 @@ class AppointmentsPageNavigationDestination extends StatelessWidget {
   Widget build(BuildContext context) {
     return NavigationDestination(
       icon: const Icon(Icons.calendar_today_outlined),
-      selectedIcon: Icon(
-        Icons.calendar_today_rounded,
-        color: Theme.of(context).colorScheme.primary,
-      ),
+      selectedIcon: Icon(Icons.calendar_today_rounded),
       label: "Appointments",
     );
   }

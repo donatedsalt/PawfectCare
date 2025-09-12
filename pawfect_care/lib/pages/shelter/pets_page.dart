@@ -55,10 +55,7 @@ class PetsPageNavigationDestination extends StatelessWidget {
   Widget build(BuildContext context) {
     return NavigationDestination(
       icon: const Icon(Icons.pets_outlined),
-      selectedIcon: Icon(
-        Icons.pets,
-        color: Theme.of(context).colorScheme.primary,
-      ),
+      selectedIcon: Icon(Icons.pets),
       label: "Pets",
     );
   }

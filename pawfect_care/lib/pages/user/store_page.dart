@@ -49,10 +49,7 @@ class StorePageNavigationDestination extends StatelessWidget {
   Widget build(BuildContext context) {
     return NavigationDestination(
       icon: const Icon(Icons.shopping_bag_outlined),
-      selectedIcon: Icon(
-        Icons.shopping_bag,
-        color: Theme.of(context).colorScheme.primary,
-      ),
+      selectedIcon: Icon(Icons.shopping_bag),
       label: "Store",
     );
   }

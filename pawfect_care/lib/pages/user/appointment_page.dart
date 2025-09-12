@@ -276,10 +276,7 @@ class AppointmentPageNavigationDestination extends StatelessWidget {
   Widget build(BuildContext context) {
     return NavigationDestination(
       icon: const Icon(Icons.local_hospital_outlined),
-      selectedIcon: Icon(
-        Icons.local_hospital,
-        color: Theme.of(context).colorScheme.primary,
-      ),
+      selectedIcon: Icon(Icons.local_hospital),
       label: "Appointment",
     );
   }

@@ -566,10 +566,7 @@ class HomePageNavigationDestination extends StatelessWidget {
   Widget build(BuildContext context) {
     return NavigationDestination(
       icon: const Icon(Icons.home_outlined),
-      selectedIcon: Icon(
-        Icons.home_rounded,
-        color: Theme.of(context).colorScheme.primary,
-      ),
+      selectedIcon: Icon(Icons.home_rounded),
       label: "Home",
     );
   }

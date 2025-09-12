@@ -54,10 +54,7 @@ class AdoptPageNavigationDestination extends StatelessWidget {
   Widget build(BuildContext context) {
     return NavigationDestination(
       icon: const Icon(Icons.favorite_outline),
-      selectedIcon: Icon(
-        Icons.favorite,
-        color: Theme.of(context).colorScheme.primary,
-      ),
+      selectedIcon: Icon(Icons.favorite),
       label: "Adopt",
     );
   }
