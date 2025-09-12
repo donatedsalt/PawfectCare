@@ -242,7 +242,7 @@ class _SignupPageState extends State<SignupPage> {
                         }
                       });
                     },
-                    borderColor: Theme.of(context).colorScheme.primary,
+                    borderColor: Theme.of(context).colorScheme.inverseSurface,
                     borderRadius: BorderRadius.circular(8),
                     selectedColor: Theme.of(context).colorScheme.onPrimary,
                     fillColor: Theme.of(context).colorScheme.primary,

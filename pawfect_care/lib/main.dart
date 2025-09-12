@@ -30,14 +30,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'PawfectCare',
       initialRoute: '/',
       routes: {
         '/signin': (context) => const SigninPage(),
         '/signup': (context) => const SignupPage(),
       },
       debugShowCheckedModeBanner: false,
-      title: 'PawfectCare',
       theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.light,
       home: const AuthGate(),
     );
   }
