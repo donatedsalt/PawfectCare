@@ -1,11 +1,11 @@
 import 'dart:io';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+
+import 'package:pawfect_care/utils/context_extension.dart';
 
 import 'package:pawfect_care/pages/vet/home_page.dart';
 
@@ -31,12 +31,6 @@ class _ReportsPageState extends State<ReportsPage>
   late Animation<double> _fadeAnimation;
   bool _isPressed = false;
   bool _isUploading = false;
-
-  // Cloudinary config
-  final String cloudinaryUploadPreset = "reports";
-  final String cloudinaryApiKey = "297295639963835";
-  final String cloudinaryApiSecret = "VI5wx0I23yqYtDylbdGlBaq_-vI";
-  final String cloudinaryCloudName = "du1fl4tjc";
 
   @override
   void initState() {
@@ -94,33 +88,24 @@ class _ReportsPageState extends State<ReportsPage>
     }
   }
 
-  Future<String> _uploadFileToCloudinary(PlatformFile file) async {
-    var uri = Uri.parse("https://api.cloudinary.com/v1_1/du1fl4tjc/upload");
+  Future<String> _uploadFileToFirebase(PlatformFile file) async {
+    try {
+      final storageRef = FirebaseStorage.instance.ref().child(
+          'reports/${DateTime.now().millisecondsSinceEpoch}_${file.name}');
 
-    var request = http.MultipartRequest('POST', uri);
-    if (kIsWeb) {
-      request.files.add(
-        http.MultipartFile.fromBytes('file', file.bytes!, filename: file.name),
-      );
-    } else {
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'file',
-          file.path!,
-          filename: file.name,
-        ),
-      );
-    }
+      UploadTask uploadTask;
 
-    request.fields['upload_preset'] = cloudinaryUploadPreset;
+      if (kIsWeb) {
+        uploadTask = storageRef.putData(file.bytes!);
+      } else {
+        uploadTask = storageRef.putFile(File(file.path!));
+      }
 
-    var response = await request.send();
-    var resBody = await response.stream.bytesToString();
-    var data = jsonDecode(resBody);
-    if (response.statusCode == 200) {
-      return data['secure_url'];
-    } else {
-      throw Exception("Cloudinary upload failed: ${data['error']}");
+      final snapshot = await uploadTask;
+      final downloadUrl = await snapshot.ref.getDownloadURL();
+      return downloadUrl;
+    } catch (e) {
+      throw Exception("Firebase upload failed: $e");
     }
   }
 
@@ -132,7 +117,7 @@ class _ReportsPageState extends State<ReportsPage>
 
     try {
       for (var file in _selectedFiles) {
-        String url = await _uploadFileToCloudinary(file);
+        String url = await _uploadFileToFirebase(file);
         _uploadedFileUrls.add(url);
       }
 
@@ -145,11 +130,9 @@ class _ReportsPageState extends State<ReportsPage>
         'createdAt': FieldValue.serverTimestamp(),
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Report generated and uploaded successfully!"),
-        ),
-      );
+      if (mounted) {
+        context.showSnackBar("Report generated and uploaded successfully!");
+      }
 
       _formKey.currentState!.reset();
       _petNameController.clear();
@@ -161,9 +144,9 @@ class _ReportsPageState extends State<ReportsPage>
         _uploadedFileUrls.clear();
       });
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Error uploading files: $e")));
+      if (mounted) {
+        context.showSnackBar("Error uploading files: $e");
+      }
     } finally {
       setState(() => _isUploading = false);
     }
@@ -275,7 +258,7 @@ class _ReportsPageState extends State<ReportsPage>
               surface: BrandColors.cardBlue,
               onSurface: Colors.white,
             ),
-            dialogBackgroundColor: BrandColors.cardBlue,
+            dialogTheme: DialogThemeData(backgroundColor: BrandColors.cardBlue),
           ),
           child: child!,
         );
@@ -418,7 +401,7 @@ class _ReportsPageState extends State<ReportsPage>
                                         image: kIsWeb
                                             ? MemoryImage(file.bytes!)
                                             : FileImage(File(file.path!))
-                                                  as ImageProvider,
+                                                as ImageProvider,
                                         fit: BoxFit.cover,
                                       ),
                               ),
