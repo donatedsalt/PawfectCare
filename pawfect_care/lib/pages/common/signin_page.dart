@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:pawfect_care/utils/context_extension.dart';
 
+import 'package:pawfect_care/widgets/custom_app_bar.dart';
+
 class SigninPage extends StatefulWidget {
   const SigninPage({super.key});
 
@@ -85,7 +87,10 @@ class _SigninPageState extends State<SigninPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Sign In'), centerTitle: true),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(120),
+        child: CustomAppBar("Sign Up"),
+      ),
       body: SafeArea(
         child: Form(
           key: _formKey,

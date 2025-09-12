@@ -7,6 +7,8 @@ import 'package:pawfect_care/utils/context_extension.dart';
 
 import 'package:pawfect_care/services/image_service.dart';
 
+import 'package:pawfect_care/widgets/custom_app_bar.dart';
+
 class AddPetPage extends StatefulWidget {
   const AddPetPage({super.key});
 
@@ -126,15 +128,11 @@ class _AddPetPageState extends State<AddPetPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Add a Pet'),
-        leading: IconButton(
-          onPressed: () {
-            _isSubmitting
-                ? context.showSnackBar("please wait...")
-                : Navigator.pop(context);
-          },
-          icon: const Icon(Icons.arrow_back),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(120),
+        child: CustomAppBar(
+          "Add a Pet",
+          showBack: _isSubmitting ? false : true,
         ),
       ),
       body: Padding(

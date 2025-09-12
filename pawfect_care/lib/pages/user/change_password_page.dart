@@ -7,6 +7,8 @@ import 'package:pawfect_care/utils/context_extension.dart';
 
 import 'package:pawfect_care/services/password_update_service.dart';
 
+import 'package:pawfect_care/widgets/custom_app_bar.dart';
+
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({super.key});
 
@@ -173,7 +175,13 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Change Password')),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(120),
+        child: CustomAppBar(
+          "Change Password",
+          showBack: _isSubmitting ? false : true,
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(

@@ -1,19 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:pawfect_care/widgets/custom_app_bar.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:pawfect_care/pages/user/add_appointment_page.dart';
-
-/// 🎨 Colors same as before (you can import BrandColors if already defined)
-class BrandColors {
-  static const Color primaryBlue = Color(0xFF0D1C5A);
-  static const Color accentGreen = Color(0xFF32C48D);
-  static const Color darkBackground = Color.fromARGB(255, 196, 255, 232);
-  static const Color cardBlue = Color(0xFF1B2A68);
-  static const Color textWhite = Color(0xFFFFFFFF);
-  static const Color textGrey = Color(0xFFC5C6C7);
-}
 
 class AppointmentPageAppBar extends StatelessWidget
     implements PreferredSizeWidget {
@@ -40,7 +31,6 @@ class _AppointmentPageState extends State<AppointmentPage> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
-  // Appointments fetched from Firestore
   Map<DateTime, List<String>> _appointments = {};
   late Future<void> _fetchAppointmentsFuture;
 
@@ -104,7 +94,11 @@ class _AppointmentPageState extends State<AppointmentPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: BrandColors.darkBackground,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(120),
+        child: CustomAppBar("Book Appointment"),
+      ),
+
       body: FutureBuilder(
         future: _fetchAppointmentsFuture,
         builder: (context, snapshot) {
@@ -120,7 +114,6 @@ class _AppointmentPageState extends State<AppointmentPage> {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                // 📅 Calendar
                 TableCalendar<String>(
                   firstDay: DateTime.utc(2023, 1, 1),
                   lastDay: DateTime.utc(2030, 12, 31),
@@ -130,36 +123,36 @@ class _AppointmentPageState extends State<AppointmentPage> {
                   eventLoader: _getAppointmentsForDay,
                   calendarStyle: CalendarStyle(
                     defaultDecoration: BoxDecoration(
-                      color: BrandColors.cardBlue,
+                      color: Theme.of(context).colorScheme.primary,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     weekendDecoration: BoxDecoration(
-                      color: BrandColors.cardBlue,
+                      color: Theme.of(context).colorScheme.primary,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    todayDecoration: const BoxDecoration(
-                      color: BrandColors.accentGreen,
+                    todayDecoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.secondary,
                       shape: BoxShape.circle,
                     ),
-                    selectedDecoration: const BoxDecoration(
-                      color: BrandColors.primaryBlue,
+                    selectedDecoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.secondary,
                       shape: BoxShape.circle,
                     ),
-                    defaultTextStyle: const TextStyle(
-                      color: BrandColors.textWhite,
+                    defaultTextStyle: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary,
                     ),
-                    weekendTextStyle: const TextStyle(
-                      color: BrandColors.textWhite,
+                    weekendTextStyle: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary,
                     ),
-                    outsideTextStyle: const TextStyle(
-                      color: BrandColors.textGrey,
+                    outsideTextStyle: TextStyle(
+                      color: Theme.of(context).colorScheme.outline,
                     ),
                   ),
-                  headerStyle: const HeaderStyle(
+                  headerStyle: HeaderStyle(
                     formatButtonVisible: false,
                     titleCentered: true,
                     titleTextStyle: TextStyle(
-                      color: BrandColors.accentGreen,
+                      color: Theme.of(context).colorScheme.primary,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -183,9 +176,9 @@ class _AppointmentPageState extends State<AppointmentPage> {
                           child: Container(
                             width: 6,
                             height: 6,
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Colors.redAccent,
+                              color: Theme.of(context).colorScheme.error,
                             ),
                           ),
                         );
@@ -197,13 +190,14 @@ class _AppointmentPageState extends State<AppointmentPage> {
 
                 const SizedBox(height: 12),
 
-                // 📋 Appointment List
                 Expanded(
                   child: _selectedDay == null
-                      ? const Center(
+                      ? Center(
                           child: Text(
                             "Select a date",
-                            style: TextStyle(color: BrandColors.textWhite),
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.surface,
+                            ),
                           ),
                         )
                       : Builder(
@@ -212,11 +206,13 @@ class _AppointmentPageState extends State<AppointmentPage> {
                               _selectedDay!,
                             );
                             if (appointments.isEmpty) {
-                              return const Center(
+                              return Center(
                                 child: Text(
                                   "No appointments on this day",
                                   style: TextStyle(
-                                    color: BrandColors.textWhite,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.surface,
                                   ),
                                 ),
                               );
@@ -225,15 +221,17 @@ class _AppointmentPageState extends State<AppointmentPage> {
                               itemCount: appointments.length,
                               itemBuilder: (context, index) {
                                 return Card(
-                                  color: BrandColors.cardBlue,
+                                  color: Theme.of(context).colorScheme.primary,
                                   margin: const EdgeInsets.symmetric(
                                     vertical: 4,
                                   ),
                                   child: ListTile(
                                     title: Text(
                                       appointments[index],
-                                      style: const TextStyle(
-                                        color: BrandColors.textWhite,
+                                      style: TextStyle(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.surface,
                                       ),
                                     ),
                                   ),

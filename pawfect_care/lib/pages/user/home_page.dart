@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:pawfect_care/widgets/custom_app_bar.dart';
 
 class HomePageAppBar extends StatelessWidget implements PreferredSizeWidget {
   const HomePageAppBar({super.key});
@@ -199,64 +200,65 @@ class HomePage extends StatelessWidget {
     final user = FirebaseAuth.instance.currentUser;
     final userName = user?.displayName ?? 'User';
 
-    return ListView(
-      padding: const EdgeInsets.all(16),
+    return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 32),
-          child: Text(
-            "Welcome, $userName!",
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 24),
+        CustomAppBar("Welcome, $userName!"),
+
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              // New Adoption section
+              const Text('Pets for Adoption', style: TextStyle(fontSize: 18)),
+              const SizedBox(height: 16),
+              SizedBox(
+                height: 160,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 5,
+                  padding: const EdgeInsets.all(8.0),
+                  itemBuilder: (context, index) {
+                    return _AdoptionListItem();
+                  },
+                ),
+              ),
+              const SizedBox(height: 32),
+
+              // Reusable section for Popular Products
+              _GridSection(
+                title: 'Popular Products',
+                height: 480,
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: List.generate(
+                    4,
+                    (index) => const _ProductGridItem(),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 32),
+
+              // Reusable section for Stories/Blogs
+              _GridSection(
+                title: 'Stories & Blogs',
+                height: 480,
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: List.generate(4, (index) => const _BlogGridItem()),
+                ),
+              ),
+
+              const SizedBox(height: 32),
+            ],
           ),
         ),
-        const SizedBox(height: 24),
-
-        // New Adoption section
-        const Text('Pets for Adoption', style: TextStyle(fontSize: 18)),
-        const SizedBox(height: 16),
-        SizedBox(
-          height: 160,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: 5,
-            padding: const EdgeInsets.all(8.0),
-            itemBuilder: (context, index) {
-              return _AdoptionListItem();
-            },
-          ),
-        ),
-        const SizedBox(height: 32),
-
-        // Reusable section for Popular Products
-        _GridSection(
-          title: 'Popular Products',
-          height: 480,
-          child: GridView.count(
-            crossAxisCount: 2,
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-            physics: const NeverScrollableScrollPhysics(),
-            children: List.generate(4, (index) => const _ProductGridItem()),
-          ),
-        ),
-
-        const SizedBox(height: 32),
-
-        // Reusable section for Stories/Blogs
-        _GridSection(
-          title: 'Stories & Blogs',
-          height: 480,
-          child: GridView.count(
-            crossAxisCount: 2,
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-            physics: const NeverScrollableScrollPhysics(),
-            children: List.generate(4, (index) => const _BlogGridItem()),
-          ),
-        ),
-
-        const SizedBox(height: 32),
       ],
     );
   }

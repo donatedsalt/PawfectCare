@@ -1,11 +1,15 @@
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/services.dart';
+
+import 'package:pawfect_care/utils/context_extension.dart';
 
 import 'package:pawfect_care/services/image_service.dart';
-import 'package:pawfect_care/utils/context_extension.dart';
+
+import 'package:pawfect_care/widgets/custom_app_bar.dart';
+
 import 'package:pawfect_care/pages/common/loading_screen.dart';
 
 // This page allows the user to edit a pet's details.
@@ -152,7 +156,10 @@ class _EditPetPageState extends State<EditPetPage> {
     if (_isLoading) return const LoadingScreen();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Edit Pet')),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(120),
+        child: CustomAppBar("Edit Pet", showBack: _isSubmitting ? false : true),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(

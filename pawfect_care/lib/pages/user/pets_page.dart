@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'package:pawfect_care/widgets/custom_app_bar.dart';
+
 import 'package:pawfect_care/pages/user/add_pet_page.dart';
 import 'package:pawfect_care/pages/user/edit_pet_page.dart';
 
@@ -51,10 +53,9 @@ class _PetsPageState extends State<PetsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("My Pets"),
-        centerTitle: true,
-        elevation: 2,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(120),
+        child: CustomAppBar("My Pet", showBack: true),
       ),
       body: userId == null
           ? const Center(child: Text('Please sign in to view your pets.'))

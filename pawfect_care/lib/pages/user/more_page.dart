@@ -5,6 +5,7 @@ import 'package:pawfect_care/widgets/account_profile.dart';
 
 import 'package:pawfect_care/pages/user/profile_page.dart';
 import 'package:pawfect_care/pages/user/pets_page.dart';
+import 'package:pawfect_care/widgets/custom_app_bar.dart';
 
 class MorePageAppBar extends StatelessWidget implements PreferredSizeWidget {
   const MorePageAppBar({super.key});
@@ -24,71 +25,86 @@ class MorePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
 
-    return ListView(
-      padding: const EdgeInsets.all(16),
+    return Column(
       children: [
-        // welcome user
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 64),
-          child: Column(
+        CustomAppBar("More Options"),
+
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.all(16),
             children: [
-              AccountProfile(user: user?.displayName, imageURL: user?.photoURL),
-              SizedBox(height: 16),
-              Text(
-                "Welcome, ${user?.displayName ?? 'User'}!",
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 24),
+              // welcome user
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 64),
+                child: Column(
+                  children: [
+                    AccountProfile(
+                      user: user?.displayName,
+                      imageURL: user?.photoURL,
+                    ),
+                    SizedBox(height: 16),
+                    Text(
+                      "Welcome, ${user?.displayName ?? 'User'}!",
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 24),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Settings header and list of settings
+              Column(
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.person),
+                    title: const Text("Profile"),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ProfilePage(),
+                        ),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.pets),
+                    title: const Text("Pets"),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PetsPage(),
+                        ),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.notifications),
+                    title: const Text("Notifications"),
+                    onTap: () {},
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.help),
+                    title: const Text("Help & Support"),
+                    onTap: () {},
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.bug_report),
+                    title: const Text("Report a Bug"),
+                    onTap: () {},
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.logout),
+                    title: const Text("Sign Out"),
+                    onTap: () {
+                      FirebaseAuth.instance.signOut();
+                    },
+                  ),
+                ],
               ),
             ],
           ),
-        ),
-
-        // Settings header and list of settings
-        Column(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text("Profile"),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ProfilePage()),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.pets),
-              title: const Text("Pets"),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const PetsPage()),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.notifications),
-              title: const Text("Notifications"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.help),
-              title: const Text("Help & Support"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.bug_report),
-              title: const Text("Report a Bug"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text("Sign Out"),
-              onTap: () {
-                FirebaseAuth.instance.signOut();
-              },
-            ),
-          ],
         ),
       ],
     );

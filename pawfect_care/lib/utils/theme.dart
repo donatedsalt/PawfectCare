@@ -140,8 +140,8 @@ class AppTheme {
       }),
     ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
-      backgroundColor: lightColorScheme.primary,
-      foregroundColor: lightColorScheme.onPrimary,
+      backgroundColor: lightColorScheme.secondary,
+      foregroundColor: lightColorScheme.onSecondary,
     ),
     filledButtonTheme: FilledButtonThemeData(
       style: ButtonStyle(
@@ -182,8 +182,8 @@ class AppTheme {
       }),
     ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
-      backgroundColor: darkColorScheme.primary,
-      foregroundColor: darkColorScheme.onPrimary,
+      backgroundColor: darkColorScheme.secondary,
+      foregroundColor: darkColorScheme.onSecondary,
     ),
     filledButtonTheme: FilledButtonThemeData(
       style: ButtonStyle(

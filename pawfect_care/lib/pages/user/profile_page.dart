@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pawfect_care/pages/user/change_password_page.dart';
 import 'package:pawfect_care/pages/user/edit_profile_page.dart';
 
+import 'package:pawfect_care/widgets/custom_app_bar.dart';
 import 'package:pawfect_care/widgets/account_profile.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -56,7 +57,10 @@ class _ProfilePageState extends State<ProfilePage> {
         final role = data?['role'] ?? 'N/A';
 
         return Scaffold(
-          appBar: AppBar(title: const Text('Profile')),
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(120),
+            child: CustomAppBar("Profile", showBack: true),
+          ),
           body: ListView(
             padding: const EdgeInsets.all(16),
             children: [

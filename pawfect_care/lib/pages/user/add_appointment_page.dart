@@ -5,6 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:pawfect_care/utils/context_extension.dart';
 
+import 'package:pawfect_care/widgets/custom_app_bar.dart';
+
 class AddAppointmentPage extends StatefulWidget {
   const AddAppointmentPage({super.key});
 
@@ -120,11 +122,9 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text(
-          "Book Your Appointment",
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(120),
+        child: CustomAppBar("Book Appointment", showBack: _isSubmitting ? false : true,
         ),
       ),
       body: ListView(

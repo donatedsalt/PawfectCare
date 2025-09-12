@@ -21,7 +21,7 @@ class StorePageFloatingActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton.extended(
-      backgroundColor: BrandColors.accentGreen,
+      backgroundColor: Theme.of(context).colorScheme.secondary,
       onPressed: onPressed,
       label: Text("Cart ($itemCount)"),
       icon: const Icon(Icons.shopping_cart),
@@ -85,7 +85,7 @@ class _StorePageState extends State<StorePage> {
   }
 
   int get cartItemCount {
-    return cart.fold<int>(0, (sum, item) => sum + (item['quantity'] as int));
+    return cart.fold<int>(0, (acc, item) => acc + (item['quantity'] as int));
   }
 
   void openCart() {
@@ -104,21 +104,18 @@ class _StorePageState extends State<StorePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xfff8f9fa),
       body: Column(
         children: [
-          // 🔥 Stylish Gradient Header
+          // appbar type thing
           Container(
-            padding: const EdgeInsets.only(
-              top: 50,
-              left: 16,
-              right: 16,
-              bottom: 20,
-            ),
-            width: double.infinity,
-            decoration: const BoxDecoration(
+            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary,
               gradient: LinearGradient(
-                colors: [Color(0xFF0D1C5A), Color.fromARGB(255, 49, 63, 119)],
+                colors: [
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.primary.withAlpha(200),
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -160,7 +157,6 @@ class _StorePageState extends State<StorePage> {
             ),
           ),
 
-          // 🏷 Category + Filter
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: Row(

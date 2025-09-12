@@ -4,10 +4,12 @@ import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'package:pawfect_care/utils/context_extension.dart';
+
 import 'package:pawfect_care/services/image_service.dart';
 import 'package:pawfect_care/services/email_update_service.dart';
 
-import 'package:pawfect_care/utils/context_extension.dart';
+import 'package:pawfect_care/widgets/custom_app_bar.dart';
 
 import 'package:pawfect_care/pages/common/loading_screen.dart';
 
@@ -259,15 +261,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
     if (_isLoading) return const LoadingScreen();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Edit Profile'),
-        leading: IconButton(
-          onPressed: () {
-            _isSubmitting
-                ? context.showSnackBar("please wait...")
-                : Navigator.pop(context);
-          },
-          icon: const Icon(Icons.arrow_back),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(120),
+        child: CustomAppBar(
+          "Edit Profile",
+          showBack: _isSubmitting ? false : true,
         ),
       ),
       body: Padding(

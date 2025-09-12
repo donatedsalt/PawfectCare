@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:pawfect_care/utils/context_extension.dart';
 
+import 'package:pawfect_care/widgets/custom_app_bar.dart';
+
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
 
@@ -130,7 +132,10 @@ class _SignupPageState extends State<SignupPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Sign Up'), centerTitle: true),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(120),
+        child: CustomAppBar("Sign Up", showBack: true),
+      ),
       body: SafeArea(
         child: Form(
           key: _formKey,
