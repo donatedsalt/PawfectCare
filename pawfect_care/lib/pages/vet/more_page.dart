@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:pawfect_care/pages/user/profile_page.dart';
 import 'package:pawfect_care/utils/context_extension.dart';
+
+import 'package:pawfect_care/pages/common/bug_report_page.dart';
+
+import 'package:pawfect_care/pages/user/profile_page.dart';
 
 class BrandColors {
   static const Color primaryBlue = Color(0xFF0D1C5A);
@@ -136,7 +139,12 @@ class MorePage extends StatelessWidget {
           _buildOptionCard(
             icon: Icons.bug_report,
             title: "Report a Bug",
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const BugReportPage()),
+              );
+            },
           ),
           _buildOptionCard(
             icon: Icons.logout,

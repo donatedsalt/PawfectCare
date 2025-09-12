@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pawfect_care/utils/context_extension.dart';
+
+import 'package:pawfect_care/pages/common/bug_report_page.dart';
+
 import 'package:pawfect_care/pages/store/profile_page.dart';
 import 'package:pawfect_care/pages/store/home_page.dart';
 
@@ -126,7 +129,12 @@ class MorePage extends StatelessWidget {
           _buildOptionCard(
             icon: Icons.bug_report,
             title: "Report a Bug",
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const BugReportPage()),
+              );
+            },
           ),
           _buildOptionCard(
             icon: Icons.logout,

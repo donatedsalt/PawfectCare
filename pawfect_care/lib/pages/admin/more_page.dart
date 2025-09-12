@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'package:pawfect_care/pages/common/bug_report_page.dart';
+
 class MorePageAppBar extends StatefulWidget implements PreferredSizeWidget {
   const MorePageAppBar({super.key});
 
@@ -64,7 +66,14 @@ class MorePage extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.bug_report),
               title: const Text("Report a Bug"),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const BugReportPage(),
+                  ),
+                );
+              },
             ),
             ListTile(
               leading: const Icon(Icons.logout),
