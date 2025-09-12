@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => const SignupPage(),
       },
       debugShowCheckedModeBanner: false,
-      title: 'Trip Budgeter',
+      title: 'PawfectCare',
       theme: theme,
       home: const AuthGate(),
     );
