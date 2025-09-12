@@ -32,16 +32,19 @@ final theme = ThemeData(
   useMaterial3: true,
   navigationBarTheme: NavigationBarThemeData(
     backgroundColor: customColorScheme.primary,
-    indicatorColor: customColorScheme.onPrimary,
+    indicatorColor: customColorScheme.onPrimary.withAlpha(40),
     iconTheme: WidgetStateProperty.resolveWith<IconThemeData>((states) {
       if (states.contains(WidgetState.selected)) {
-        return IconThemeData(color: customColorScheme.primary);
+        return IconThemeData(color: customColorScheme.onPrimary, size: 28);
       }
-      return IconThemeData(color: customColorScheme.onPrimary);
+      return IconThemeData(color: customColorScheme.onPrimary, size: 24);
     }),
     labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((states) {
       if (states.contains(WidgetState.selected)) {
-        return TextStyle(color: customColorScheme.onPrimary);
+        return TextStyle(
+          color: customColorScheme.onPrimary,
+          fontWeight: FontWeight.bold,
+        );
       }
       return TextStyle(color: customColorScheme.onPrimary);
     }),

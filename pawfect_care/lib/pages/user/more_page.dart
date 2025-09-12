@@ -111,10 +111,7 @@ class MorePageNavigationDestination extends StatelessWidget {
   Widget build(BuildContext context) {
     return NavigationDestination(
       icon: const Icon(Icons.more_horiz),
-      selectedIcon: Icon(
-        Icons.more,
-        color: Theme.of(context).colorScheme.primary,
-      ),
+      selectedIcon: Icon(Icons.more),
       label: 'More',
     );
   }

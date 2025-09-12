@@ -55,10 +55,7 @@ class BlogsPageNavigationDestination extends StatelessWidget {
   Widget build(BuildContext context) {
     return NavigationDestination(
       icon: const Icon(Icons.web_asset),
-      selectedIcon: Icon(
-        Icons.web,
-        color: Theme.of(context).colorScheme.primary,
-      ),
+      selectedIcon: Icon(Icons.web),
       label: "Blogs",
     );
   }

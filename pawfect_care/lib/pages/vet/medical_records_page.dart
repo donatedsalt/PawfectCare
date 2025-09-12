@@ -65,7 +65,7 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
                     gradient: const LinearGradient(
                       colors: [
                         BrandColors.accentGreen,
-                        BrandColors.primaryBlue
+                        BrandColors.primaryBlue,
                       ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
@@ -108,9 +108,7 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
                         final record = _records[index];
                         return Card(
                           color: BrandColors.cardBlue,
-                          margin: const EdgeInsets.symmetric(
-                            vertical: 6,
-                          ),
+                          margin: const EdgeInsets.symmetric(vertical: 6),
                           child: ListTile(
                             title: Text(
                               record['petName']!,
@@ -120,8 +118,9 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
                             ),
                             subtitle: Text(
                               "${record['diagnosis']} - ${record['treatment']}\nDate: ${record['date']}",
-                              style:
-                                  const TextStyle(color: BrandColors.textGrey),
+                              style: const TextStyle(
+                                color: BrandColors.textGrey,
+                              ),
                             ),
                             trailing: IconButton(
                               icon: const Icon(Icons.delete, color: Colors.red),
@@ -241,10 +240,7 @@ class MedicalRecordsPageNavigationDestination extends StatelessWidget {
   Widget build(BuildContext context) {
     return NavigationDestination(
       icon: const Icon(Icons.folder_open_outlined),
-      selectedIcon: Icon(
-        Icons.folder_open,
-        color: Theme.of(context).colorScheme.primary,
-      ),
+      selectedIcon: Icon(Icons.folder_open),
       label: "Records",
     );
   }

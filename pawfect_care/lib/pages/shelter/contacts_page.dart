@@ -55,10 +55,7 @@ class ContactsPageNavigationDestination extends StatelessWidget {
   Widget build(BuildContext context) {
     return NavigationDestination(
       icon: const Icon(Icons.contact_support_outlined),
-      selectedIcon: Icon(
-        Icons.contact_support,
-        color: Theme.of(context).colorScheme.primary,
-      ),
+      selectedIcon: Icon(Icons.contact_support),
       label: "Contacts",
     );
   }
