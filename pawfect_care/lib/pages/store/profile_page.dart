@@ -5,7 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pawfect_care/widgets/account_profile.dart';
 import 'package:pawfect_care/widgets/custom_app_bar.dart';
 
-import 'package:pawfect_care/pages/store/change_password_page.dart';
+import 'package:pawfect_care/pages/common/change_password_page.dart';
+
 import 'package:pawfect_care/pages/store/edit_profile_page.dart';
 
 class ProfilePage extends StatefulWidget {

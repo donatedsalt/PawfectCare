@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:pawfect_care/pages/user/change_password_page.dart';
+import 'package:pawfect_care/pages/common/change_password_page.dart';
 import 'package:pawfect_care/pages/user/edit_profile_page.dart';
 
 import 'package:pawfect_care/widgets/custom_app_bar.dart';
