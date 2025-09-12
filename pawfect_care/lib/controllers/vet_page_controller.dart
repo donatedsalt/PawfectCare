@@ -56,16 +56,16 @@ class _VetPageControllerState extends State<VetPageController>
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: TabBarView(
+    return Scaffold(
+      body: SafeArea(
+        child: TabBarView(
           controller: _tabController,
           physics: const NeverScrollableScrollPhysics(),
           children: _pages,
         ),
-        bottomNavigationBar: _customNavigationBar(context),
-        floatingActionButton: _floatingActionButtons[_tabController.index],
       ),
+      bottomNavigationBar: _customNavigationBar(context),
+      floatingActionButton: _floatingActionButtons[_tabController.index],
     );
   }
 

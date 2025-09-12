@@ -48,13 +48,13 @@ class _AdminPageControllerState extends State<AdminPageController>
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: _appBars[_tabController.index],
-        body: TabBarView(controller: _tabController, children: _pages),
-        bottomNavigationBar: customNavigationBar(context),
-        floatingActionButton: _floatingActionButtons[_tabController.index],
+    return Scaffold(
+      appBar: _appBars[_tabController.index],
+      body: SafeArea(
+        child: TabBarView(controller: _tabController, children: _pages),
       ),
+      bottomNavigationBar: customNavigationBar(context),
+      floatingActionButton: _floatingActionButtons[_tabController.index],
     );
   }
 

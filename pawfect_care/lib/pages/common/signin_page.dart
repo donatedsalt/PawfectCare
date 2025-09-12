@@ -84,10 +84,10 @@ class _SigninPageState extends State<SigninPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(title: const Text('Sign In'), centerTitle: true),
-        body: Form(
+    return Scaffold(
+      appBar: AppBar(title: const Text('Sign In'), centerTitle: true),
+      body: SafeArea(
+        child: Form(
           key: _formKey,
           child: Center(
             child: ListView(

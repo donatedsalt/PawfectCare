@@ -80,34 +80,30 @@ class _UserPageControllerState extends State<UserPageController>
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: TabBarView(
-          controller: _tabController,
-          children: _pages,
-        ),
-        // ✅ NavigationBar Theme add kiya
-        bottomNavigationBar: NavigationBarTheme(
-          data: NavigationBarThemeData(
-            backgroundColor: const Color(0xFF0D1C5A), // Dark blue
-            indicatorColor: Colors.white24, // Selected item ka halka sa glow
-            labelTextStyle: WidgetStateProperty.all(
-              const TextStyle(color: Colors.white),
-            ),
-            iconTheme: WidgetStateProperty.all(
-              const IconThemeData(color: Colors.white),
-            ),
-          ),
-          child: NavigationBar(
-            selectedIndex: _tabController.index,
-            onDestinationSelected: (int index) {
-              _tabController.animateTo(index);
-            },
-            destinations: _navigationDestinations,
-          ),
-        ),
-        floatingActionButton: _floatingActionButtons[_tabController.index],
+    return Scaffold(
+      body: SafeArea(
+        child: TabBarView(controller: _tabController, children: _pages),
       ),
+      bottomNavigationBar: NavigationBarTheme(
+        data: NavigationBarThemeData(
+          backgroundColor: const Color(0xFF0D1C5A), // Dark blue
+          indicatorColor: Colors.white24, // Selected item ka halka sa glow
+          labelTextStyle: WidgetStateProperty.all(
+            const TextStyle(color: Colors.white),
+          ),
+          iconTheme: WidgetStateProperty.all(
+            const IconThemeData(color: Colors.white),
+          ),
+        ),
+        child: NavigationBar(
+          selectedIndex: _tabController.index,
+          onDestinationSelected: (int index) {
+            _tabController.animateTo(index);
+          },
+          destinations: _navigationDestinations,
+        ),
+      ),
+      floatingActionButton: _floatingActionButtons[_tabController.index],
     );
   }
 }

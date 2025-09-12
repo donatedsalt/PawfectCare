@@ -129,10 +129,10 @@ class _SignupPageState extends State<SignupPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(title: const Text('Sign Up'), centerTitle: true),
-        body: Form(
+    return Scaffold(
+      appBar: AppBar(title: const Text('Sign Up'), centerTitle: true),
+      body: SafeArea(
+        child: Form(
           key: _formKey,
           child: Center(
             child: ListView(
@@ -242,6 +242,7 @@ class _SignupPageState extends State<SignupPage> {
                         }
                       });
                     },
+                    borderColor: Theme.of(context).colorScheme.primary,
                     borderRadius: BorderRadius.circular(8),
                     selectedColor: Theme.of(context).colorScheme.onPrimary,
                     fillColor: Theme.of(context).colorScheme.primary,
