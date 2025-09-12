@@ -70,12 +70,33 @@ class _VetPageControllerState extends State<VetPageController>
   }
 
   Widget _customNavigationBar(BuildContext context) {
-    return NavigationBar(
+  return Container(
+    decoration: const BoxDecoration(
+      gradient: LinearGradient(
+        colors: [
+          Color(0xFF0D1C5A), // dark blue
+          Color(0xFF1B2A68), // lighter blue
+        ],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black26,
+          blurRadius: 8,
+          offset: Offset(0, -2),
+        ),
+      ],
+    ),
+    child: NavigationBar(
+      backgroundColor: Colors.transparent, // Transparent to show gradient
+      elevation: 0,
       selectedIndex: _tabController.index,
       onDestinationSelected: (int index) {
         _tabController.animateTo(index);
       },
       destinations: _navigationDestination,
-    );
-  }
+    ),
+  );
+}
 }
