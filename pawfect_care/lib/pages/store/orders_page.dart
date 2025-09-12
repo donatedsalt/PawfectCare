@@ -1,65 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:pawfect_care/pages/vet/home_page.dart';
 
-class OrdersPageAppBar extends StatefulWidget implements PreferredSizeWidget {
-  const OrdersPageAppBar({super.key});
+class OrdersPageStore extends StatelessWidget {
+  const OrdersPageStore({super.key});
 
-  @override
-  State<OrdersPageAppBar> createState() => _OrdersPageAppBarState();
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
-}
-
-class _OrdersPageAppBarState extends State<OrdersPageAppBar> {
-  @override
-  Widget build(BuildContext context) {
-    return AppBar(title: const Text('Orders'));
-  }
-}
-
-class OrdersPage extends StatelessWidget {
-  const OrdersPage({super.key});
+  final List<Map<String, dynamic>> orders = const [
+    {'id': '#001', 'status': 'Pending'},
+    {'id': '#002', 'status': 'Shipped'},
+    {'id': '#003', 'status': 'Delivered'},
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        // Welcome user
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 32),
-          child: Text(
-            "Store Orders Page",
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    return ListView.builder(
+      padding: const EdgeInsets.all(12),
+      itemCount: orders.length,
+      itemBuilder: (_, index) {
+        final order = orders[index];
+        return Container(
+          margin: const EdgeInsets.symmetric(vertical: 6),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+                colors: [BrandColors.primaryBlue, BrandColors.cardBlue]),
+            borderRadius: BorderRadius.circular(16),
           ),
-        ),
-      ],
-    );
-  }
-}
-
-class OrdersPageFloatingActionButton extends StatelessWidget {
-  const OrdersPageFloatingActionButton({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox();
-  }
-}
-
-class OrdersPageNavigationDestination extends StatelessWidget {
-  const OrdersPageNavigationDestination({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return NavigationDestination(
-      icon: const Icon(Icons.check_box_outlined),
-      selectedIcon: Icon(
-        Icons.check_box,
-        color: Theme.of(context).colorScheme.primary,
-      ),
-      label: "Orders",
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(order['id'],
+                  style: const TextStyle(
+                      color: BrandColors.textWhite,
+                      fontWeight: FontWeight.bold)),
+              Text(order['status'],
+                  style: const TextStyle(
+                      color: BrandColors.accentGreen,
+                      fontWeight: FontWeight.w600)),
+            ],
+          ),
+        );
+      },
     );
   }
 }
