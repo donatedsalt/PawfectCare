@@ -1,7 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:pawfect_care/pages/store/add_product_page.dart';
+
+import 'package:pawfect_care/pages/store/add_Product_page.dart';
 import 'package:pawfect_care/pages/store/all_products_page.dart';
 
 class BrandColors {
@@ -48,11 +49,7 @@ class HomePageStore extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(child: _buildCompletedOrderCountCard()),
-          ],
-        ),
+        Row(children: [Expanded(child: _buildCompletedOrderCountCard())]),
         const SizedBox(height: 16),
 
         // 🔹 Only Add Product Quick Action (Full Width)
@@ -82,7 +79,9 @@ class HomePageStore extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const AllProductsPage()),
+                MaterialPageRoute(
+                  builder: (context) => const AllProductsPage(),
+                ),
               );
             },
             child: _summaryCard("Products", 0, Icons.shopping_bag),
@@ -117,7 +116,11 @@ class HomePageStore extends StatelessWidget {
           return status != 'Delivered';
         }).toList();
 
-        return _summaryCard("Active Orders", activeOrders.length, Icons.receipt_long);
+        return _summaryCard(
+          "Active Orders",
+          activeOrders.length,
+          Icons.receipt_long,
+        );
       },
     );
   }
@@ -137,7 +140,11 @@ class HomePageStore extends StatelessWidget {
           return status == 'Delivered';
         }).toList();
 
-        return _summaryCard("Completed Orders", completedOrders.length, Icons.check_circle);
+        return _summaryCard(
+          "Completed Orders",
+          completedOrders.length,
+          Icons.check_circle,
+        );
       },
     );
   }

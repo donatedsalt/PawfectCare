@@ -10,6 +10,7 @@ class AccountProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     return CircleAvatar(
       radius: 48,
+      backgroundColor: Theme.of(context).colorScheme.primary,
       foregroundImage: imageURL != null ? NetworkImage(imageURL!) : null,
       child: Text(
         user != null && user!.isNotEmpty ? user![0].toUpperCase() : 'U',
