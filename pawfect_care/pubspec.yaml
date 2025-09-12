@@ -21,6 +21,7 @@ dependencies:
   table_calendar: ^3.0.9
   file_picker: ^5.4.0
   collection: ^1.19.1
+  carousel_slider: ^5.0.0
 
 dev_dependencies:
   flutter_test:

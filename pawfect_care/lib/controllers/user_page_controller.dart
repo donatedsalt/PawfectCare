@@ -20,33 +20,47 @@ class _UserPageControllerState extends State<UserPageController>
   final List<Widget> _pages = const [
     HomePage(),
     AppointmentPage(),
-    StorePage(),
+    StorePage(), // StorePage apna FAB khud rakhega
     AdoptPage(),
     MorePage(),
   ];
 
-  final List<PreferredSizeWidget> _appBars = const [
-    HomePageAppBar(),
-    AppointmentPageAppBar(),
-    StorePageAppBar(),
-    AdoptPageAppBar(),
-    MorePageAppBar(),
-  ];
-
+  // ✅ FABs (StorePage ke liye empty)
   final List<Widget> _floatingActionButtons = const [
     HomePageFloatingActionButton(),
     AppointmentPageFloatingActionButton(),
-    StorePageFloatingActionButton(),
+    SizedBox.shrink(), // StorePage => apna FAB handle karega
     AdoptPageFloatingActionButton(),
     MorePageFloatingActionButton(),
   ];
 
-  final List<Widget> _navigationDestination = const [
-    HomePageNavigationDestination(),
-    AppointmentPageNavigationDestination(),
-    StorePageNavigationDestination(),
-    AdoptPageNavigationDestination(),
-    MorePageNavigationDestination(),
+  // ✅ Navigation Destinations
+  final List<NavigationDestination> _navigationDestinations = const [
+    NavigationDestination(
+      icon: Icon(Icons.home_outlined),
+      selectedIcon: Icon(Icons.home),
+      label: "Home",
+    ),
+    NavigationDestination(
+      icon: Icon(Icons.calendar_today_outlined),
+      selectedIcon: Icon(Icons.calendar_today),
+      label: "Appointments",
+    ),
+    NavigationDestination(
+      icon: Icon(Icons.storefront_outlined),
+      selectedIcon: Icon(Icons.storefront),
+      label: "Store",
+    ),
+    NavigationDestination(
+      icon: Icon(Icons.pets_outlined),
+      selectedIcon: Icon(Icons.pets),
+      label: "Adopt",
+    ),
+    NavigationDestination(
+      icon: Icon(Icons.more_horiz_outlined),
+      selectedIcon: Icon(Icons.more_horiz),
+      label: "More",
+    ),
   ];
 
   @override
@@ -54,7 +68,7 @@ class _UserPageControllerState extends State<UserPageController>
     super.initState();
     _tabController = TabController(length: _pages.length, vsync: this);
     _tabController.addListener(() {
-      setState(() {});
+      setState(() {}); // UI update when tab changes
     });
   }
 
@@ -68,21 +82,32 @@ class _UserPageControllerState extends State<UserPageController>
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: _appBars[_tabController.index],
-        body: TabBarView(controller: _tabController, children: _pages),
-        bottomNavigationBar: customNavigationBar(context),
+        body: TabBarView(
+          controller: _tabController,
+          children: _pages,
+        ),
+        // ✅ NavigationBar Theme add kiya
+        bottomNavigationBar: NavigationBarTheme(
+          data: NavigationBarThemeData(
+            backgroundColor: const Color(0xFF0D1C5A), // Dark blue
+            indicatorColor: Colors.white24, // Selected item ka halka sa glow
+            labelTextStyle: WidgetStateProperty.all(
+              const TextStyle(color: Colors.white),
+            ),
+            iconTheme: WidgetStateProperty.all(
+              const IconThemeData(color: Colors.white),
+            ),
+          ),
+          child: NavigationBar(
+            selectedIndex: _tabController.index,
+            onDestinationSelected: (int index) {
+              _tabController.animateTo(index);
+            },
+            destinations: _navigationDestinations,
+          ),
+        ),
         floatingActionButton: _floatingActionButtons[_tabController.index],
       ),
-    );
-  }
-
-  Widget customNavigationBar(BuildContext context) {
-    return NavigationBar(
-      selectedIndex: _tabController.index,
-      onDestinationSelected: (int index) {
-        _tabController.animateTo(index);
-      },
-      destinations: _navigationDestination,
     );
   }
 }

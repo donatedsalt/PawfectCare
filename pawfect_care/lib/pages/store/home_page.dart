@@ -2,15 +2,20 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pawfect_care/pages/store/add_product_page.dart';
-import 'package:pawfect_care/pages/vet/home_page.dart';
+import 'package:pawfect_care/pages/store/all_products_page.dart';
+
+class BrandColors {
+  static const Color primaryBlue = Color(0xFF0D1C5A);
+  static const Color accentGreen = Color(0xFF32C48D);
+  static const Color darkBackground = Color.fromARGB(255, 196, 255, 232);
+  static const Color cardBlue = Color(0xFF1B2A68);
+  static const Color textWhite = Color(0xFFFFFFFF);
+  static const Color textGrey = Color(0xFFC5C6C7);
+  static const Color fabGreen = Color(0xFF32C48D);
+}
 
 class HomePageStore extends StatelessWidget {
   const HomePageStore({super.key});
-
-  static final List<Map<String, dynamic>> quickActions = [
-    {'title': 'Add Product', 'icon': Icons.add_box},
-    {'title': 'New Order', 'icon': Icons.shopping_cart},
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +28,7 @@ class HomePageStore extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 24),
           child: Text(
-            "Welcome back, ${user?.displayName}!",
+            "Welcome back, ${user?.displayName ?? "Store Owner"}!",
             style: const TextStyle(
               color: BrandColors.accentGreen,
               fontSize: 22,
@@ -34,69 +39,105 @@ class HomePageStore extends StatelessWidget {
         ),
         const SizedBox(height: 20),
 
-        // 🔹 Dynamic Summary Cards
+        // 🔹 Dynamic Summary Cards (3 cards in 2 rows)
         Row(
           children: [
-            Expanded(child: _buildProductCountCard()),
+            Expanded(child: _buildProductCountCard(context)),
             const SizedBox(width: 12),
-            Expanded(child: _buildOrderCountCard()),
+            Expanded(child: _buildActiveOrderCountCard()),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(child: _buildCompletedOrderCountCard()),
           ],
         ),
         const SizedBox(height: 16),
 
-        // 🔹 Quick Actions
-        GridView.count(
-          crossAxisCount: 2,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-          childAspectRatio: 1.1,
-          children: quickActions.map((action) {
-            return GestureDetector(
-              onTap: () {
-                if (action['title'] == 'Add Product') {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const AddProductPage(),
-                    ),
-                  );
-                }
-                // Future: New Order page
-              },
-              child: _quickActionCard(action['title'], action['icon']),
+        // 🔹 Only Add Product Quick Action (Full Width)
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const AddProductPage()),
             );
-          }).toList(),
+          },
+          child: SizedBox(
+            width: double.infinity,
+            child: _quickActionCard("Add Product", Icons.add_box),
+          ),
         ),
       ],
     );
   }
 
   /// 🔹 Product Count
-  Widget _buildProductCountCard() {
+  Widget _buildProductCountCard(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('products').snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return _summaryCard("Products", 0, Icons.shopping_bag);
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AllProductsPage()),
+              );
+            },
+            child: _summaryCard("Products", 0, Icons.shopping_bag),
+          );
         }
         final count = snapshot.data!.docs.length;
-        return _summaryCard("Products", count, Icons.shopping_bag);
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const AllProductsPage()),
+            );
+          },
+          child: _summaryCard("Products", count, Icons.shopping_bag),
+        );
       },
     );
   }
 
-  /// 🔹 Order Count
-  Widget _buildOrderCountCard() {
+  /// 🔹 Active Orders (Pending + Shipped)
+  Widget _buildActiveOrderCountCard() {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('orders').snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return _summaryCard("Orders", 0, Icons.receipt_long);
+          return _summaryCard("Active Orders", 0, Icons.receipt_long);
         }
-        final count = snapshot.data!.docs.length;
-        return _summaryCard("Orders", count, Icons.receipt_long);
+
+        final activeOrders = snapshot.data!.docs.where((doc) {
+          final data = doc.data() as Map<String, dynamic>;
+          final status = data['status'] ?? 'Pending';
+          return status != 'Delivered';
+        }).toList();
+
+        return _summaryCard("Active Orders", activeOrders.length, Icons.receipt_long);
+      },
+    );
+  }
+
+  /// 🔹 Completed Orders (Delivered only)
+  Widget _buildCompletedOrderCountCard() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('orders').snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return _summaryCard("Completed Orders", 0, Icons.check_circle);
+        }
+
+        final completedOrders = snapshot.data!.docs.where((doc) {
+          final data = doc.data() as Map<String, dynamic>;
+          final status = data['status'] ?? 'Pending';
+          return status == 'Delivered';
+        }).toList();
+
+        return _summaryCard("Completed Orders", completedOrders.length, Icons.check_circle);
       },
     );
   }
@@ -145,6 +186,7 @@ class HomePageStore extends StatelessWidget {
   /// Quick Action Card
   Widget _quickActionCard(String title, IconData icon) {
     return Container(
+      padding: const EdgeInsets.symmetric(vertical: 20),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [BrandColors.primaryBlue, BrandColors.cardBlue],

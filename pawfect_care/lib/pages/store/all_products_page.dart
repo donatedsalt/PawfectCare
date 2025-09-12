@@ -3,8 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pawfect_care/pages/store/home_page.dart';
 
 
-class ProductsDetailPage extends StatelessWidget {
-  const ProductsDetailPage({super.key});
+class AllProductsPage extends StatelessWidget {
+  const AllProductsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +14,7 @@ class ProductsDetailPage extends StatelessWidget {
       backgroundColor: BrandColors.darkBackground,
       body: Column(
         children: [
-          // 🌈 Gradient Header
+          // 🌈 Gradient Header with Back Button
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 16),
@@ -36,14 +36,31 @@ class ProductsDetailPage extends StatelessWidget {
                 ),
               ],
             ),
-            child: Text(
-              "Products",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: BrandColors.textWhite,
-              ),
+            child: Row(
+              children: [
+                // 🔙 Back Button
+                IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                const SizedBox(width: 8),
+
+                // 📝 Title
+                const Expanded(
+                  child: Text(
+                    "All Products",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: BrandColors.textWhite,
+                    ),
+                  ),
+                ),
+
+                // Placeholder for symmetry (optional, keeps title centered)
+                const SizedBox(width: 48),
+              ],
             ),
           ),
 
@@ -129,7 +146,7 @@ class ProductsDetailPage extends StatelessWidget {
                                       ? Image.network(
                                           imageUrl,
                                           fit: BoxFit
-                                              .contain, // ✅ keep aspect ratio, no stretch
+                                              .contain, // ✅ keep aspect ratio
                                           width: double.infinity,
                                           loadingBuilder:
                                               (context, child, progress) {

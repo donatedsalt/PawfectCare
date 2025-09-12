@@ -4,15 +4,6 @@ import 'package:pawfect_care/pages/store/home_page.dart';
 import 'package:pawfect_care/pages/store/orders_page.dart';
 import 'package:pawfect_care/pages/store/products_page.dart';
 
-// Brand Colors (like Vet UI)
-class BrandColors {
-  static const Color primaryBlue = Color.fromRGBO(38, 49, 100, 1);
-  static const Color accentGreen = Color(0xFF32C48D);
-  static const Color darkBackground = Color.fromRGBO(222, 239, 255, 1);
-  static const Color cardBlue = Color.fromRGBO(38, 49, 100, 0.9);
-  static const Color textWhite = Color(0xFFFFFFFF);
-  static const Color textGrey = Color(0xFFC5C6C7);
-}
 
 // -------------------- Main Controller -------------------- //
 class StorePageController extends StatefulWidget {
@@ -30,7 +21,7 @@ class _StorePageControllerState extends State<StorePageController>
     HomePageStore(),
     ProductsDetailPage(),
     OrdersPageStore(),
-    MorePageStore(),
+    MorePage(),
   ];
 
   final List<String> _titles = ["Home", "Products", "Orders", "More"];

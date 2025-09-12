@@ -4,9 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-
 import 'package:pawfect_care/utils/context_extension.dart';
-import 'package:pawfect_care/pages/vet/home_page.dart'; // For BrandColors
+import 'package:pawfect_care/pages/store/home_page.dart';
 
 class AddProductPage extends StatefulWidget {
   const AddProductPage({super.key});
