@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'package:pawfect_care/utils/theme.dart';
 import 'package:pawfect_care/utils/firebase_options.dart';
 
 import 'package:pawfect_care/controllers/admin_page_controller.dart';
@@ -23,38 +24,6 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-final customColorScheme = ColorScheme.fromSeed(
-  seedColor: const Color(0xFF0D1C5A),
-);
-
-final theme = ThemeData(
-  colorScheme: customColorScheme,
-  useMaterial3: true,
-  navigationBarTheme: NavigationBarThemeData(
-    backgroundColor: customColorScheme.primary,
-    indicatorColor: customColorScheme.onPrimary.withAlpha(40),
-    iconTheme: WidgetStateProperty.resolveWith<IconThemeData>((states) {
-      if (states.contains(WidgetState.selected)) {
-        return IconThemeData(color: customColorScheme.onPrimary, size: 28);
-      }
-      return IconThemeData(color: customColorScheme.onPrimary, size: 24);
-    }),
-    labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((states) {
-      if (states.contains(WidgetState.selected)) {
-        return TextStyle(
-          color: customColorScheme.onPrimary,
-          fontWeight: FontWeight.bold,
-        );
-      }
-      return TextStyle(color: customColorScheme.onPrimary);
-    }),
-  ),
-  floatingActionButtonTheme: FloatingActionButtonThemeData(
-    backgroundColor: customColorScheme.primary,
-    foregroundColor: customColorScheme.onPrimary,
-  ),
-);
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -68,7 +37,7 @@ class MyApp extends StatelessWidget {
       },
       debugShowCheckedModeBanner: false,
       title: 'PawfectCare',
-      theme: theme,
+      theme: AppTheme.lightTheme,
       home: const AuthGate(),
     );
   }
