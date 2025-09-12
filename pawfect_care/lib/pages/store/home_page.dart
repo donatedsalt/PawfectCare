@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pawfect_care/pages/store/add_product_page.dart';
@@ -13,9 +14,26 @@ class HomePageStore extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
+        // 👋 Welcome
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24),
+          child: Text(
+            "Welcome back, ${user?.displayName}!",
+            style: const TextStyle(
+              color: BrandColors.accentGreen,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        const SizedBox(height: 20),
+
         // 🔹 Dynamic Summary Cards
         Row(
           children: [
@@ -41,7 +59,8 @@ class HomePageStore extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const AddProductPage()),
+                      builder: (context) => const AddProductPage(),
+                    ),
                   );
                 }
                 // Future: New Order page
@@ -94,22 +113,30 @@ class HomePageStore extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: const [
-          BoxShadow(color: Colors.black45, blurRadius: 10, offset: Offset(0, 6))
+          BoxShadow(
+            color: Colors.black45,
+            blurRadius: 10,
+            offset: Offset(0, 6),
+          ),
         ],
       ),
       child: Column(
         children: [
           Icon(icon, size: 30, color: BrandColors.textWhite),
           const SizedBox(height: 12),
-          Text('$count',
-              style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: BrandColors.textWhite)),
+          Text(
+            '$count',
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: BrandColors.textWhite,
+            ),
+          ),
           const SizedBox(height: 6),
-          Text(title,
-              style:
-                  const TextStyle(fontSize: 14, color: BrandColors.textGrey)),
+          Text(
+            title,
+            style: const TextStyle(fontSize: 14, color: BrandColors.textGrey),
+          ),
         ],
       ),
     );
@@ -127,9 +154,10 @@ class HomePageStore extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-              color: BrandColors.accentGreen.withOpacity(0.3),
-              blurRadius: 8,
-              spreadRadius: 1)
+            color: BrandColors.accentGreen.withOpacity(0.3),
+            blurRadius: 8,
+            spreadRadius: 1,
+          ),
         ],
       ),
       child: Column(
@@ -137,9 +165,13 @@ class HomePageStore extends StatelessWidget {
         children: [
           Icon(icon, size: 36, color: BrandColors.accentGreen),
           const SizedBox(height: 10),
-          Text(title,
-              style: const TextStyle(
-                  color: BrandColors.textWhite, fontWeight: FontWeight.w600)),
+          Text(
+            title,
+            style: const TextStyle(
+              color: BrandColors.textWhite,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ],
       ),
     );

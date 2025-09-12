@@ -28,7 +28,7 @@ class _StorePageControllerState extends State<StorePageController>
 
   final List<Widget> _pages = const [
     HomePageStore(),
-    ProductsPageStore(),
+    ProductsDetailPage(),
     OrdersPageStore(),
     MorePageStore(),
   ];
@@ -55,22 +55,8 @@ class _StorePageControllerState extends State<StorePageController>
       body: SafeArea(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-              child: Text(
-                _titles[_tabController.index],
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: BrandColors.primaryBlue,
-                ),
-              ),
-            ),
             Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: _pages,
-              ),
+              child: TabBarView(controller: _tabController, children: _pages),
             ),
           ],
         ),
@@ -86,28 +72,22 @@ class _StorePageControllerState extends State<StorePageController>
         indicatorColor: Colors.white.withOpacity(0.2),
 
         // ✅ Icon theme set
-        iconTheme: MaterialStateProperty.resolveWith<IconThemeData>(
-          (states) {
-            if (states.contains(MaterialState.selected)) {
-              return const IconThemeData(color: Colors.white, size: 28);
-            }
-            return const IconThemeData(color: Colors.white, size: 24);
-          },
-        ),
+        iconTheme: MaterialStateProperty.resolveWith<IconThemeData>((states) {
+          if (states.contains(MaterialState.selected)) {
+            return const IconThemeData(color: Colors.white, size: 28);
+          }
+          return const IconThemeData(color: Colors.white, size: 24);
+        }),
 
-        labelTextStyle: MaterialStateProperty.resolveWith<TextStyle>(
-          (states) {
-            if (states.contains(MaterialState.selected)) {
-              return const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              );
-            }
+        labelTextStyle: MaterialStateProperty.resolveWith<TextStyle>((states) {
+          if (states.contains(MaterialState.selected)) {
             return const TextStyle(
               color: Colors.white,
+              fontWeight: FontWeight.bold,
             );
-          },
-        ),
+          }
+          return const TextStyle(color: Colors.white);
+        }),
       ),
       child: NavigationBar(
         selectedIndex: _tabController.index,
