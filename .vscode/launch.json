@@ -1,0 +1,28 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "pawfect_care",
+            "cwd": "pawfect_care",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "pawfect_care (profile mode)",
+            "cwd": "pawfect_care",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "pawfect_care (release mode)",
+            "cwd": "pawfect_care",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}
