@@ -46,6 +46,10 @@ final theme = ThemeData(
       return TextStyle(color: customColorScheme.onPrimary);
     }),
   ),
+  floatingActionButtonTheme: FloatingActionButtonThemeData(
+    backgroundColor: customColorScheme.primary,
+    foregroundColor: customColorScheme.onPrimary,
+  ),
 );
 
 class MyApp extends StatelessWidget {
