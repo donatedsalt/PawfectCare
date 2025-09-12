@@ -66,9 +66,11 @@ class HomePage extends StatelessWidget {
                   child: StreamBuilder<QuerySnapshot>(
                     stream: appointmentsRef.snapshots(),
                     builder: (context, snapshot) {
-                      int count =
-                          snapshot.hasData ? snapshot.data!.docs.length : 0;
+                      int count = snapshot.hasData
+                          ? snapshot.data!.docs.length
+                          : 0;
                       return _summaryCard(
+                        context,
                         'Appointments',
                         count,
                         Icons.calendar_today,
@@ -81,9 +83,15 @@ class HomePage extends StatelessWidget {
                   child: StreamBuilder<QuerySnapshot>(
                     stream: patientsRef.snapshots(),
                     builder: (context, snapshot) {
-                      int count =
-                          snapshot.hasData ? snapshot.data!.docs.length : 0;
-                      return _summaryCard('Patients', count, Icons.pets);
+                      int count = snapshot.hasData
+                          ? snapshot.data!.docs.length
+                          : 0;
+                      return _summaryCard(
+                        context,
+                        'Patients',
+                        count,
+                        Icons.pets,
+                      );
                     },
                   ),
                 ),
@@ -101,49 +109,18 @@ class HomePage extends StatelessWidget {
                 }
                 final docs = snapshot.data!.docs;
                 if (docs.isEmpty) {
-                  return Card(
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [
-                            BrandColors.primaryBlue,
-                            BrandColors.cardBlue
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black45,
-                            blurRadius: 10,
-                            offset: Offset(0, 6),
-                          ),
-                        ],
-                      ),
-                      padding: const EdgeInsets.all(20),
-                      child: const Center(
-                        child: Text(
-                          "No appointments found.",
-                          style: TextStyle(
-                            color: BrandColors.textWhite,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
+                  return _emptyCard("No appointments found.");
                 }
 
                 return Column(
                   children: docs.map((doc) {
                     final data = doc.data() as Map<String, dynamic>;
-                    return _appointmentCard(doc.id, data, doc.reference);
+                    return _appointmentCard(
+                      context,
+                      doc.id,
+                      data,
+                      doc.reference,
+                    );
                   }).toList(),
                 );
               },
@@ -154,7 +131,6 @@ class HomePage extends StatelessWidget {
             // ⚡ Quick Actions
             Column(
               children: [
-                // Other Quick Action Cards in Grid (except Reports)
                 LayoutBuilder(
                   builder: (context, constraints) {
                     int crossAxisCount = 2;
@@ -214,9 +190,6 @@ class HomePage extends StatelessWidget {
 
                 const SizedBox(height: 14),
 
-                // Reports Card (Full Width)
-                // Reports Card (Full Width)
-                // Reports Card (Full Width & proper height)
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -225,8 +198,8 @@ class HomePage extends StatelessWidget {
                     );
                   },
                   child: SizedBox(
-                    width: double.infinity, // Full width
-                    height: 120, // Desired height (adjust as needed)
+                    width: double.infinity,
+                    height: 120,
                     child: _quickActionCard('Reports', Icons.bar_chart),
                   ),
                 ),
@@ -239,74 +212,74 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _summaryCard(String title, int count, IconData icon) {
+  Widget _summaryCard(
+    BuildContext context,
+    String title,
+    int count,
+    IconData icon,
+  ) {
     return TweenAnimationBuilder(
       tween: Tween<double>(begin: 0, end: 1),
       duration: const Duration(milliseconds: 800),
       builder: (context, double value, child) {
         return Transform.scale(
           scale: value,
-          child: MouseRegion(
-            cursor: SystemMouseCursors.click,
-            child: InkWell(
-              borderRadius: const BorderRadius.all(Radius.circular(16)),
-              onTap: () {
-                if (title == "Appointments") {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const AppointmentsDetailPage(),
-                    ),
-                  );
-                } else if (title == "Patients") {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const PatientsDetailPage(),
-                    ),
-                  );
-                }
-              },
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [BrandColors.primaryBlue, BrandColors.cardBlue],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+          child: InkWell(
+            borderRadius: const BorderRadius.all(Radius.circular(16)),
+            onTap: () {
+              if (title == "Appointments") {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const AppointmentsDetailPage(),
                   ),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black45,
-                      blurRadius: 10,
-                      offset: Offset(0, 6),
-                    ),
-                  ],
+                );
+              } else if (title == "Patients") {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const PatientsDetailPage()),
+                );
+              }
+            },
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [BrandColors.primaryBlue, BrandColors.cardBlue],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-                child: Column(
-                  children: [
-                    Icon(icon, size: 30, color: Colors.white),
-                    const SizedBox(height: 12),
-                    Text(
-                      '$count',
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black45,
+                    blurRadius: 10,
+                    offset: Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  Icon(icon, size: 30, color: Colors.white),
+                  const SizedBox(height: 12),
+                  Text(
+                    '$count',
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
-                    const SizedBox(height: 6),
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: BrandColors.textGrey,
-                      ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: BrandColors.textGrey,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -316,10 +289,16 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _appointmentCard(
+    BuildContext context,
     String id,
     Map<String, dynamic> data,
     DocumentReference ref,
   ) {
+    final date = (data['date'] as Timestamp?)?.toDate();
+    final dateStr = date != null
+        ? "${date.day}-${date.month}-${date.year}"
+        : "Unknown date";
+
     return TweenAnimationBuilder(
       tween: Tween<double>(begin: 0, end: 1),
       duration: const Duration(milliseconds: 700),
@@ -362,14 +341,14 @@ class HomePage extends StatelessWidget {
                     child: const Icon(Icons.pets, color: BrandColors.textWhite),
                   ),
                   title: Text(
-                    "${data['petName']} - ${data['type']}",
+                    "${data['petName'] ?? 'Unknown Pet'} - ${data['type'] ?? 'General'}",
                     style: const TextStyle(
                       fontWeight: FontWeight.w600,
                       color: BrandColors.textWhite,
                     ),
                   ),
                   subtitle: Text(
-                    "${data['ownerName']} • ${data['date']} • ${data['time']}",
+                    "${data['ownerName'] ?? 'Unknown Owner'} • $dateStr • ${data['time'] ?? ''}",
                     style: const TextStyle(color: BrandColors.textGrey),
                   ),
                   trailing: const Icon(
@@ -377,6 +356,14 @@ class HomePage extends StatelessWidget {
                     size: 16,
                     color: BrandColors.textGrey,
                   ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => AppointmentsDetailPage(),
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
@@ -427,6 +414,41 @@ class HomePage extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _emptyCard(String text) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [BrandColors.primaryBlue, BrandColors.cardBlue],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black45,
+              blurRadius: 10,
+              offset: Offset(0, 6),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.all(20),
+        child: Center(
+          child: Text(
+            text,
+            style: const TextStyle(
+              color: BrandColors.textWhite,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

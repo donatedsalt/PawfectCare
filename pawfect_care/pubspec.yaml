@@ -20,6 +20,7 @@ dependencies:
   google_fonts: ^5.0.0
   table_calendar: ^3.0.9
   file_picker: ^5.4.0
+  collection: ^1.19.1
 
 dev_dependencies:
   flutter_test:

@@ -23,11 +23,33 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
+final customColorScheme = ColorScheme.fromSeed(
+  seedColor: const Color.fromRGBO(40, 50, 100, 1),
+);
+
 final theme = ThemeData(
-  colorScheme: ColorScheme.fromSeed(
-    seedColor: const Color.fromRGBO(40, 50, 100, 1),
-  ),
+  colorScheme: customColorScheme,
   useMaterial3: true,
+  navigationBarTheme: NavigationBarThemeData(
+    backgroundColor: customColorScheme.primary,
+    indicatorColor: customColorScheme.onPrimary,
+    iconTheme: WidgetStateProperty.resolveWith<IconThemeData>((states) {
+      if (states.contains(WidgetState.selected)) {
+        return IconThemeData(color: customColorScheme.primary);
+      }
+      return IconThemeData(color: customColorScheme.onPrimary);
+    }),
+    labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((states) {
+      if (states.contains(WidgetState.selected)) {
+        return TextStyle(color: customColorScheme.onPrimary);
+      }
+      return TextStyle(color: customColorScheme.onPrimary);
+    }),
+  ),
+  floatingActionButtonTheme: FloatingActionButtonThemeData(
+    backgroundColor: customColorScheme.primary,
+    foregroundColor: customColorScheme.onPrimary,
+  ),
 );
 
 class MyApp extends StatelessWidget {
