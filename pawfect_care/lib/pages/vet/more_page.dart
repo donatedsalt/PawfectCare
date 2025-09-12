@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-/// 🎨 Brand Colors (HomePage theme)
+import 'package:pawfect_care/pages/user/profile_page.dart';
+import 'package:pawfect_care/utils/context_extension.dart';
+
 class BrandColors {
   static const Color primaryBlue = Color(0xFF0D1C5A);
   static const Color accentGreen = Color(0xFF32C48D);
@@ -24,44 +26,41 @@ class MorePage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // 🌈 Gradient Header with Back Button
-          Stack(
-            children: [
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 28),
-                margin: const EdgeInsets.only(bottom: 20),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [BrandColors.accentGreen, BrandColors.primaryBlue],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black54,
-                      blurRadius: 12,
-                      offset: Offset(0, 6),
-                    ),
-                  ],
+          // 🌈 Gradient Header
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 28),
+            margin: const EdgeInsets.only(bottom: 20),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [BrandColors.accentGreen, BrandColors.primaryBlue],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black54,
+                  blurRadius: 12,
+                  offset: Offset(0, 6),
                 ),
-                child: const Center(
-                  child: Text(
-                    "Profile & Settings",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: BrandColors.textWhite,
-                    ),
-                  ),
+              ],
+            ),
+            child: const Center(
+              child: Text(
+                "Vet Profile & Settings",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: BrandColors.textWhite,
                 ),
               ),
-            ],
+            ),
           ),
 
           // Profile Card
           Card(
+            margin: EdgeInsets.all(0),
             color: BrandColors.cardBlue,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
@@ -112,30 +111,34 @@ class MorePage extends StatelessWidget {
 
           const SizedBox(height: 24),
 
-          const SizedBox(height: 24),
-
           // Settings Section
-          _buildSectionTitle(context, "Settings"),
+          _buildSectionTitle("Settings"),
           _buildOptionCard(
-            context,
-            icon: Icons.settings,
-            title: "App Settings",
-            onTap: () {},
+            icon: Icons.person,
+            title: "Profile",
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfilePage()),
+              );
+            },
           ),
           _buildOptionCard(
-            context,
             icon: Icons.notifications,
             title: "Notifications",
             onTap: () {},
           ),
           _buildOptionCard(
-            context,
-            icon: Icons.info,
-            title: "About",
+            icon: Icons.help,
+            title: "Help & Support",
             onTap: () {},
           ),
           _buildOptionCard(
-            context,
+            icon: Icons.bug_report,
+            title: "Report a Bug",
+            onTap: () {},
+          ),
+          _buildOptionCard(
             icon: Icons.logout,
             title: "Logout",
             iconColor: Colors.red,
@@ -153,7 +156,7 @@ class MorePage extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionTitle(BuildContext context, String title) {
+  Widget _buildSectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: Text(
@@ -167,8 +170,7 @@ class MorePage extends StatelessWidget {
     );
   }
 
-  Widget _buildOptionCard(
-    BuildContext context, {
+  Widget _buildOptionCard({
     required IconData icon,
     required String title,
     required VoidCallback onTap,
@@ -193,7 +195,6 @@ class MorePage extends StatelessWidget {
   }
 }
 
-// ✅ FAB for MorePage
 class MorePageFloatingActionButton extends StatelessWidget {
   const MorePageFloatingActionButton({super.key});
 
@@ -203,7 +204,6 @@ class MorePageFloatingActionButton extends StatelessWidget {
       backgroundColor: BrandColors.fabGreen,
       child: const Icon(Icons.edit),
       onPressed: () {
-        // Show bottom sheet with quick actions
         showModalBottomSheet(
           context: context,
           backgroundColor: BrandColors.cardBlue,
@@ -222,30 +222,26 @@ class MorePageFloatingActionButton extends StatelessWidget {
                       color: BrandColors.textWhite,
                     ),
                     title: const Text(
-                      "Edit Profile",
+                      "Edit Vet Profile",
                       style: TextStyle(color: BrandColors.textWhite),
                     ),
                     onTap: () {
                       Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Edit Profile clicked")),
-                      );
+                      context.showSnackBar("Edit Vet Profile clicked");
                     },
                   ),
                   ListTile(
                     leading: const Icon(
-                      Icons.pets,
+                      Icons.event,
                       color: BrandColors.textWhite,
                     ),
                     title: const Text(
-                      "Add New Pet",
+                      "Manage Appointments",
                       style: TextStyle(color: BrandColors.textWhite),
                     ),
                     onTap: () {
                       Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Add New Pet clicked")),
-                      );
+                      context.showSnackBar("Manage Appointments clicked");
                     },
                   ),
                 ],
@@ -254,6 +250,22 @@ class MorePageFloatingActionButton extends StatelessWidget {
           },
         );
       },
+    );
+  }
+}
+
+class MorePageNavigationDestination extends StatelessWidget {
+  const MorePageNavigationDestination({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return NavigationDestination(
+      icon: const Icon(Icons.more_horiz),
+      selectedIcon: Icon(
+        Icons.more,
+        color: Theme.of(context).colorScheme.primary,
+      ),
+      label: "More",
     );
   }
 }

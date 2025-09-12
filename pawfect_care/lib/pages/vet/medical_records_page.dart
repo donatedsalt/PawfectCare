@@ -50,84 +50,90 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: BrandColors.darkBackground,
-      body: Column(
-        children: [
-          // 🌈 Gradient Header with Back Button
-          Stack(
-            children: [
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 28),
-                margin: const EdgeInsets.only(bottom: 20),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [BrandColors.accentGreen, BrandColors.primaryBlue],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black54,
-                      blurRadius: 12,
-                      offset: Offset(0, 6),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            // 🌈 Gradient Header with Back Button
+            Stack(
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 28),
+                  margin: const EdgeInsets.only(bottom: 20),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [
+                        BrandColors.accentGreen,
+                        BrandColors.primaryBlue
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
-                  ],
-                ),
-                child: const Center(
-                  child: Text(
-                    "Medical Records",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: BrandColors.textWhite,
-                    ),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black54,
+                        blurRadius: 12,
+                        offset: Offset(0, 6),
+                      ),
+                    ],
                   ),
-                ),
-              ),
-            ],
-          ),
-
-          // 📋 Medical Records List
-          Expanded(
-            child: _records.isEmpty
-                ? const Center(
+                  child: const Center(
                     child: Text(
-                      "No medical records available",
-                      style: TextStyle(color: BrandColors.textWhite),
+                      "Medical Records",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: BrandColors.textWhite,
+                      ),
                     ),
-                  )
-                : ListView.builder(
-                    itemCount: _records.length,
-                    itemBuilder: (context, index) {
-                      final record = _records[index];
-                      return Card(
-                        color: BrandColors.cardBlue,
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        child: ListTile(
-                          title: Text(
-                            record['petName']!,
-                            style: const TextStyle(
-                              color: BrandColors.textWhite,
+                  ),
+                ),
+              ],
+            ),
+
+            // 📋 Medical Records List
+            Expanded(
+              child: _records.isEmpty
+                  ? const Center(
+                      child: Text(
+                        "No medical records available",
+                        style: TextStyle(color: BrandColors.textWhite),
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: _records.length,
+                      itemBuilder: (context, index) {
+                        final record = _records[index];
+                        return Card(
+                          color: BrandColors.cardBlue,
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 6,
+                          ),
+                          child: ListTile(
+                            title: Text(
+                              record['petName']!,
+                              style: const TextStyle(
+                                color: BrandColors.textWhite,
+                              ),
+                            ),
+                            subtitle: Text(
+                              "${record['diagnosis']} - ${record['treatment']}\nDate: ${record['date']}",
+                              style:
+                                  const TextStyle(color: BrandColors.textGrey),
+                            ),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () => _deleteRecord(index),
                             ),
                           ),
-                          subtitle: Text(
-                            "${record['diagnosis']} - ${record['treatment']}\nDate: ${record['date']}",
-                            style: const TextStyle(color: BrandColors.textGrey),
-                          ),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () => _deleteRecord(index),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-          ),
-        ],
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
       ),
 
       // ➕ Add Medical Record FAB
@@ -224,6 +230,22 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
           );
         },
       ),
+    );
+  }
+}
+
+class MedicalRecordsPageNavigationDestination extends StatelessWidget {
+  const MedicalRecordsPageNavigationDestination({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return NavigationDestination(
+      icon: const Icon(Icons.folder_open_outlined),
+      selectedIcon: Icon(
+        Icons.folder_open,
+        color: Theme.of(context).colorScheme.primary,
+      ),
+      label: "Records",
     );
   }
 }

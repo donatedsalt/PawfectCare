@@ -9,10 +9,10 @@ import 'package:pawfect_care/pages/vet/patients_detail_page.dart';
 import 'package:pawfect_care/pages/vet/reports_page.dart';
 
 class BrandColors {
-  static const Color primaryBlue = Color(0xFF0D1C5A);
+  static const Color primaryBlue = Color.fromRGBO(38, 49, 100, 1);
   static const Color accentGreen = Color(0xFF32C48D);
-  static const Color darkBackground = Color.fromARGB(255, 196, 255, 232);
-  static const Color cardBlue = Color(0xFF1B2A68);
+  static const Color darkBackground = Color.fromRGBO(222, 239, 255, 1);
+  static const Color cardBlue = Color.fromRGBO(38, 49, 100, 0.9);
   static const Color textWhite = Color(0xFFFFFFFF);
   static const Color textGrey = Color(0xFFC5C6C7);
   static const Color fabGreen = Color(0xFF32C48D);
@@ -44,14 +44,17 @@ class HomePage extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           children: [
             // 👋 Welcome
-            Text(
-              "Welcome back, Dr. $userName 👋",
-              style: const TextStyle(
-                color: BrandColors.accentGreen,
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              child: Text(
+                "Welcome back, Dr. $userName 👋",
+                style: const TextStyle(
+                  color: BrandColors.accentGreen,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
 
@@ -63,9 +66,8 @@ class HomePage extends StatelessWidget {
                   child: StreamBuilder<QuerySnapshot>(
                     stream: appointmentsRef.snapshots(),
                     builder: (context, snapshot) {
-                      int count = snapshot.hasData
-                          ? snapshot.data!.docs.length
-                          : 0;
+                      int count =
+                          snapshot.hasData ? snapshot.data!.docs.length : 0;
                       return _summaryCard(
                         'Appointments',
                         count,
@@ -79,9 +81,8 @@ class HomePage extends StatelessWidget {
                   child: StreamBuilder<QuerySnapshot>(
                     stream: patientsRef.snapshots(),
                     builder: (context, snapshot) {
-                      int count = snapshot.hasData
-                          ? snapshot.data!.docs.length
-                          : 0;
+                      int count =
+                          snapshot.hasData ? snapshot.data!.docs.length : 0;
                       return _summaryCard('Patients', count, Icons.pets);
                     },
                   ),
@@ -89,17 +90,55 @@ class HomePage extends StatelessWidget {
               ],
             ),
 
-            const SizedBox(height: 30),
+            const SizedBox(height: 16),
 
             // 📅 Appointments List
             StreamBuilder<QuerySnapshot>(
               stream: appointmentsRef.orderBy('date').snapshots(),
               builder: (context, snapshot) {
-                if (!snapshot.hasData)
+                if (!snapshot.hasData) {
                   return const Center(child: CircularProgressIndicator());
+                }
                 final docs = snapshot.data!.docs;
-                if (docs.isEmpty)
-                  return const Center(child: Text("No appointments found."));
+                if (docs.isEmpty) {
+                  return Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [
+                            BrandColors.primaryBlue,
+                            BrandColors.cardBlue
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black45,
+                            blurRadius: 10,
+                            offset: Offset(0, 6),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(20),
+                      child: const Center(
+                        child: Text(
+                          "No appointments found.",
+                          style: TextStyle(
+                            color: BrandColors.textWhite,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }
 
                 return Column(
                   children: docs.map((doc) {
@@ -110,7 +149,7 @@ class HomePage extends StatelessWidget {
               },
             ),
 
-            const SizedBox(height: 30),
+            const SizedBox(height: 16),
 
             // ⚡ Quick Actions
             Column(
@@ -120,10 +159,11 @@ class HomePage extends StatelessWidget {
                   builder: (context, constraints) {
                     int crossAxisCount = 2;
                     double width = constraints.maxWidth;
-                    if (width > 1200)
+                    if (width > 1200) {
                       crossAxisCount = 4;
-                    else if (width > 800)
+                    } else if (width > 800) {
                       crossAxisCount = 3;
+                    }
 
                     final otherActions = quickActions
                         .where((a) => a['title'] != 'Reports')
@@ -415,10 +455,11 @@ class _HomePageFloatingActionButtonExpandedState
   }
 
   void toggleMenu() {
-    if (isOpen)
+    if (isOpen) {
       _controller.reverse();
-    else
+    } else {
       _controller.forward();
+    }
     setState(() => isOpen = !isOpen);
   }
 
@@ -477,12 +518,12 @@ class _HomePageFloatingActionButtonExpandedState
           FloatingActionButton(
             heroTag: "home_main_fab",
             backgroundColor: BrandColors.accentGreen,
+            onPressed: toggleMenu,
             child: AnimatedIcon(
               icon: AnimatedIcons.menu_close,
               progress: _controller,
               color: BrandColors.textWhite,
             ),
-            onPressed: toggleMenu,
           ),
         ],
       ),
@@ -493,5 +534,21 @@ class _HomePageFloatingActionButtonExpandedState
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+}
+
+class HomePageNavigationDestination extends StatelessWidget {
+  const HomePageNavigationDestination({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return NavigationDestination(
+      icon: const Icon(Icons.home_outlined),
+      selectedIcon: Icon(
+        Icons.home_rounded,
+        color: Theme.of(context).colorScheme.primary,
+      ),
+      label: "Home",
+    );
   }
 }

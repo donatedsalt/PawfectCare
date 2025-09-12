@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'package:pawfect_care/utils/context_extension.dart';
+
 import 'package:pawfect_care/pages/vet/home_page.dart';
 
 class AddPatientPage extends StatefulWidget {
@@ -70,14 +72,11 @@ class _AddPatientPageState extends State<AddPatientPage>
           'createdAt': FieldValue.serverTimestamp(),
         });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              "Patient '${_petNameController.text}' added successfully!",
-            ),
-            backgroundColor: BrandColors.accentGreen,
-          ),
-        );
+        if (mounted) {
+          context.showSnackBar(
+            "Patient '${_petNameController.text}' added successfully!",
+          );
+        }
 
         _formKey.currentState!.reset();
         _petNameController.clear();
@@ -85,12 +84,9 @@ class _AddPatientPageState extends State<AddPatientPage>
         _ageController.clear();
         _speciesController.clear();
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Error adding patient: $e"),
-            backgroundColor: Colors.red,
-          ),
-        );
+        if (mounted) {
+          context.showSnackBar("Error adding patient: $e");
+        }
       }
     }
   }
@@ -227,9 +223,8 @@ class _AddPatientPageState extends State<AddPatientPage>
             return TextFormField(
               controller: controller,
               focusNode: focusNode,
-              keyboardType: isNumber
-                  ? TextInputType.number
-                  : TextInputType.text,
+              keyboardType:
+                  isNumber ? TextInputType.number : TextInputType.text,
               decoration: _inputDecoration(
                 label,
                 isFocused: focusNode.hasFocus,

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'package:pawfect_care/utils/context_extension.dart';
+
 import 'package:pawfect_care/pages/vet/home_page.dart';
 
 class NewAppointmentPage extends StatefulWidget {
@@ -28,8 +30,8 @@ class _NewAppointmentPageState extends State<NewAppointmentPage>
   final CollectionReference petsRef = FirebaseFirestore.instance.collection(
     'pets',
   ); // pet collection
-  final CollectionReference appointmentsRef = FirebaseFirestore.instance
-      .collection('appointments');
+  final CollectionReference appointmentsRef =
+      FirebaseFirestore.instance.collection('appointments');
 
   List<String> petList = [];
 
@@ -148,9 +150,9 @@ class _NewAppointmentPageState extends State<NewAppointmentPage>
         'createdAt': FieldValue.serverTimestamp(),
       });
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Appointment Saved")));
+      if (mounted) {
+        context.showSnackBar("Appointment Saved");
+      }
 
       _formKey.currentState!.reset();
       setState(() {
@@ -161,9 +163,9 @@ class _NewAppointmentPageState extends State<NewAppointmentPage>
       });
       notesController.clear();
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Error: $e")));
+      if (mounted) {
+        context.showSnackBar("Error: $e");
+      }
     }
   }
 
@@ -304,18 +306,17 @@ class _NewAppointmentPageState extends State<NewAppointmentPage>
                   DropdownButtonFormField<String>(
                     decoration: _inputDecoration("Select Pet"),
                     dropdownColor: BrandColors.cardBlue,
-                    items:
-                        ["Fluffy", "Bella", "Max"] // <-- Static list
-                            .map(
-                              (pet) => DropdownMenuItem(
-                                value: pet,
-                                child: Text(
-                                  pet,
-                                  style: const TextStyle(color: Colors.white),
-                                ),
-                              ),
-                            )
-                            .toList(),
+                    items: ["Fluffy", "Bella", "Max"] // <-- Static list
+                        .map(
+                          (pet) => DropdownMenuItem(
+                            value: pet,
+                            child: Text(
+                              pet,
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        )
+                        .toList(),
                     value: selectedPet,
                     onChanged: (val) => setState(() => selectedPet = val),
                     validator: (val) => val == null ? "Select a pet" : null,

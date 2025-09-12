@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+
 import 'package:pawfect_care/pages/vet/home_page.dart';
-import 'package:pawfect_care/pages/vet/calendar_page.dart';
+import 'package:pawfect_care/pages/vet/appointments_page.dart';
 import 'package:pawfect_care/pages/vet/medical_records_page.dart';
 import 'package:pawfect_care/pages/vet/more_page.dart';
 
@@ -17,7 +18,7 @@ class _VetPageControllerState extends State<VetPageController>
 
   final List<Widget> _pages = const [
     HomePage(),
-    CalendarPage(),
+    AppointmentsPage(),
     MedicalRecordsPage(),
     MorePage(),
   ];
@@ -27,6 +28,13 @@ class _VetPageControllerState extends State<VetPageController>
     SizedBox.shrink(), // Calendar page ke liye empty FAB
     SizedBox.shrink(), // Records page ke liye empty FAB
     MorePageFloatingActionButton(),
+  ];
+
+  final List<Widget> _navigationDestination = const [
+    HomePageNavigationDestination(),
+    AppointmentsPageNavigationDestination(),
+    MedicalRecordsPageNavigationDestination(),
+    MorePageNavigationDestination(),
   ];
 
   @override
@@ -67,40 +75,7 @@ class _VetPageControllerState extends State<VetPageController>
       onDestinationSelected: (int index) {
         _tabController.animateTo(index);
       },
-      destinations: [
-        NavigationDestination(
-          icon: const Icon(Icons.home_outlined),
-          selectedIcon: Icon(
-            Icons.home_rounded,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          label: "Home",
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.calendar_today_outlined),
-          selectedIcon: Icon(
-            Icons.calendar_today_rounded,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          label: "Appointments",
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.folder_open_outlined),
-          selectedIcon: Icon(
-            Icons.folder_open,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          label: "Records",
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.more_horiz),
-          selectedIcon: Icon(
-            Icons.more,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          label: "More",
-        ),
-      ],
+      destinations: _navigationDestination,
     );
   }
 }
