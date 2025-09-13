@@ -14,7 +14,6 @@ class HomePageAppBar extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
 
-// A reusable widget for the grid sections (Popular Products and Stories/Blogs).
 class _GridSection extends StatelessWidget {
   final String title;
   final Widget child;

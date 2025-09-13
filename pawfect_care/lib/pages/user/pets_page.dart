@@ -40,7 +40,9 @@ class _PetsPageState extends State<PetsPage> {
           ),
           FilledButton(
             style: ButtonStyle(
-              backgroundColor: WidgetStatePropertyAll(Colors.red),
+              backgroundColor: WidgetStatePropertyAll(
+                Theme.of(context).colorScheme.error,
+              ),
             ),
             onPressed: () => Navigator.pop(context, true),
             child: const Text("Delete"),
@@ -85,43 +87,48 @@ class _PetsPageState extends State<PetsPage> {
                 }
 
                 final pets = snapshot.data!.docs;
-                return ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: pets.length,
-                  itemBuilder: (context, index) {
-                    final pet = pets[index].data() as Map<String, dynamic>;
-                    final petId = pets[index].id;
-                    final petName = pet['name'] ?? 'this pet';
+                return SafeArea(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: pets.length,
+                    itemBuilder: (context, index) {
+                      final pet = pets[index].data() as Map<String, dynamic>;
+                      final petId = pets[index].id;
+                      final petName = pet['name'] ?? 'this pet';
 
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: Dismissible(
-                        key: Key(petId),
-                        direction: DismissDirection.endToStart,
-                        background: Container(
-                          alignment: Alignment.centerRight,
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.circular(16),
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: Dismissible(
+                          key: Key(petId),
+                          direction: DismissDirection.endToStart,
+                          background: Container(
+                            alignment: Alignment.centerRight,
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.error,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: const Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ),
                           ),
-                          child: const Icon(Icons.delete, color: Colors.white),
+                          confirmDismiss: (direction) async {
+                            final confirm = await _confirmDelete(
+                              context,
+                              petName,
+                            );
+                            if (confirm == true) {
+                              await _deletePet(petId);
+                              return true;
+                            }
+                            return false;
+                          },
+                          child: _PetCard(pet: pet, petId: petId),
                         ),
-                        confirmDismiss: (direction) async {
-                          final confirm = await _confirmDelete(
-                            context,
-                            petName,
-                          );
-                          if (confirm == true) {
-                            await _deletePet(petId);
-                            return true;
-                          }
-                          return false;
-                        },
-                        child: _PetCard(pet: pet, petId: petId),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 );
               },
             ),

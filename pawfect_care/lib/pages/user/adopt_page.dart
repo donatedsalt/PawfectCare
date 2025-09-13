@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
+import 'package:pawfect_care/widgets/custom_app_bar.dart';
 
 class AdoptPageAppBar extends StatelessWidget implements PreferredSizeWidget {
   const AdoptPageAppBar({super.key});
@@ -18,19 +19,13 @@ class AdoptPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
-    final userName = user?.displayName ?? 'User';
-
-    return ListView(
-      padding: const EdgeInsets.all(16),
+    return Column(
       children: [
-        // Welcome user
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 32),
-          child: Text(
-            "Welcome, $userName! User Adopt Page",
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 24),
+        CustomAppBar("Start Adopting"),
+
+        Expanded(
+          child: ListView(padding: const EdgeInsets.all(16), children: [
+              ],
           ),
         ),
       ],

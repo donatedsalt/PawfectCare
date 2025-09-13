@@ -124,81 +124,82 @@ class _AddAppointmentPageState extends State<AddAppointmentPage> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(120),
-        child: CustomAppBar("Book Appointment", showBack: _isSubmitting ? false : true,
-        ),
+        child: CustomAppBar("Book Appointment", showBack: !_isSubmitting),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          DropdownButtonFormField<String>(
-            decoration: const InputDecoration(
-              labelText: "Select Pet",
-              border: OutlineInputBorder(),
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            DropdownButtonFormField<String>(
+              decoration: const InputDecoration(
+                labelText: "Select Pet",
+                border: OutlineInputBorder(),
+              ),
+              initialValue: _selectedPet,
+              items: _pets.map((pet) {
+                return DropdownMenuItem<String>(
+                  value: pet['id'],
+                  child: Text(pet['name'] ?? ''),
+                );
+              }).toList(),
+              onChanged: (val) => setState(() => _selectedPet = val),
             ),
-            initialValue: _selectedPet,
-            items: _pets.map((pet) {
-              return DropdownMenuItem<String>(
-                value: pet['id'],
-                child: Text(pet['name'] ?? ''),
-              );
-            }).toList(),
-            onChanged: (val) => setState(() => _selectedPet = val),
-          ),
 
-          const SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-          DropdownButtonFormField<String>(
-            decoration: const InputDecoration(
-              labelText: "Select Vet",
-              border: OutlineInputBorder(),
+            DropdownButtonFormField<String>(
+              decoration: const InputDecoration(
+                labelText: "Select Vet",
+                border: OutlineInputBorder(),
+              ),
+              initialValue: _selectedVet,
+              items: _vets.map((vet) {
+                return DropdownMenuItem<String>(
+                  value: vet['id'],
+                  child: Text(vet['name'] ?? ''),
+                );
+              }).toList(),
+              onChanged: (val) => setState(() => _selectedVet = val),
             ),
-            initialValue: _selectedVet,
-            items: _vets.map((vet) {
-              return DropdownMenuItem<String>(
-                value: vet['id'],
-                child: Text(vet['name'] ?? ''),
-              );
-            }).toList(),
-            onChanged: (val) => setState(() => _selectedVet = val),
-          ),
 
-          const SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text("Select Date"),
-            subtitle: Text(
-              _selectedDate == null
-                  ? "No date chosen"
-                  : "${_selectedDate!.day}-${_selectedDate!.month}-${_selectedDate!.year}",
-            ),
-            trailing: ElevatedButton(
-              onPressed: _pickDate,
-              child: const Text("Pick Date"),
-            ),
-          ),
-
-          const SizedBox(height: 30),
-
-          SizedBox(
-            height: 50,
-            child: FilledButton.icon(
-              onPressed: _isSubmitting ? null : _bookAppointment,
-              icon: _isSubmitting
-                  ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.check),
-              label: const Text("Book Appointment"),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                textStyle: const TextStyle(fontSize: 18),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text("Select Date"),
+              subtitle: Text(
+                _selectedDate == null
+                    ? "No date chosen"
+                    : "${_selectedDate!.day}-${_selectedDate!.month}-${_selectedDate!.year}",
+              ),
+              trailing: ElevatedButton(
+                onPressed: _pickDate,
+                child: const Text("Pick Date"),
               ),
             ),
-          ),
-        ],
+
+            const SizedBox(height: 30),
+
+            SizedBox(
+              height: 50,
+              child: FilledButton.icon(
+                onPressed: _isSubmitting ? null : _bookAppointment,
+                icon: _isSubmitting
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.check),
+                label: const Text("Book Appointment"),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  textStyle: const TextStyle(fontSize: 18),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

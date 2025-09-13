@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:pawfect_care/main.dart';
-import 'package:pawfect_care/pages/store/home_page.dart';
-import 'package:pawfect_care/utils/theme.dart'; // For BrandColors
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -36,47 +34,49 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [BrandColors.primaryBlue, BrandColors.cardBlue],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+      body: SafeArea(
+        child: Container(
+          decoration:  BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Theme.of(context).colorScheme.primary, Theme.of(context).colorScheme.primary.withAlpha(200)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
           ),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              AnimatedOpacity(
-                opacity: _opacity,
-                duration: const Duration(seconds: 1), // fade-in duration
-                curve: Curves.easeIn,
-                child: Image.asset(
-                  'assets/images/logo.png',
-                  width: 160,
-                  height: 160,
-                  fit: BoxFit.contain,
-                  color: Colors.white,
-                  colorBlendMode: BlendMode.srcIn,
-                ),
-              ),
-              const SizedBox(height: 20),
-              AnimatedOpacity(
-                opacity: _opacity,
-                duration: const Duration(seconds: 1),
-                curve: Curves.easeIn,
-                child: const Text(
-                  'Pawfect Care',
-                  style: TextStyle(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AnimatedOpacity(
+                  opacity: _opacity,
+                  duration: const Duration(seconds: 1), // fade-in duration
+                  curve: Curves.easeIn,
+                  child: Image.asset(
+                    'assets/images/logo.png',
+                    width: 160,
+                    height: 160,
+                    fit: BoxFit.contain,
                     color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.2,
+                    colorBlendMode: BlendMode.srcIn,
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 20),
+                AnimatedOpacity(
+                  opacity: _opacity,
+                  duration: const Duration(seconds: 1),
+                  curve: Curves.easeIn,
+                  child: const Text(
+                    'Pawfect Care',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

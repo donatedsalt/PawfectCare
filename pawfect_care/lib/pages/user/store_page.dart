@@ -4,30 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:pawfect_care/utils/context_extension.dart';
 
-import 'package:pawfect_care/pages/user/brand_colors.dart';
 import 'package:pawfect_care/pages/user/product_detail_page.dart';
-import 'package:pawfect_care/pages/user/cart_bottom_sheet.dart';
-
-class StorePageFloatingActionButton extends StatelessWidget {
-  final int itemCount;
-  final VoidCallback onPressed;
-
-  const StorePageFloatingActionButton({
-    super.key,
-    required this.itemCount,
-    required this.onPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return FloatingActionButton.extended(
-      backgroundColor: Theme.of(context).colorScheme.secondary,
-      onPressed: onPressed,
-      label: Text("Cart ($itemCount)"),
-      icon: const Icon(Icons.shopping_cart),
-    );
-  }
-}
+import 'package:pawfect_care/widgets/cart_bottom_sheet.dart';
 
 class StorePage extends StatefulWidget {
   const StorePage({super.key});
@@ -79,7 +57,7 @@ class _StorePageState extends State<StorePage> {
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("✅ Order placed successfully!")),
+        const SnackBar(content: Text("Order placed successfully!")),
       );
     }
   }
@@ -104,204 +82,207 @@ class _StorePageState extends State<StorePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          // appbar type thing
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
-              gradient: LinearGradient(
-                colors: [
-                  Theme.of(context).colorScheme.primary,
-                  Theme.of(context).colorScheme.primary.withAlpha(200),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // appbar type thing
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+                gradient: LinearGradient(
+                  colors: [
+                    Theme.of(context).colorScheme.primary,
+                    Theme.of(context).colorScheme.primary.withAlpha(200),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(24),
+                ),
               ),
-              borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "🛍 Store",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                // Search bar
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: TextField(
-                    decoration: const InputDecoration(
-                      hintText: "Search products...",
-                      prefixIcon: Icon(Icons.search, color: Colors.grey),
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.all(14),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "🛍 Store",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
                     ),
-                    onChanged: (value) {
-                      setState(
-                        () => searchQuery = value.toLowerCase(),
-                      ); // live filter
-                    },
                   ),
-                ),
-              ],
+                  const SizedBox(height: 16),
+                  // Search bar
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: TextField(
+                      decoration: const InputDecoration(
+                        hintText: "Search products...",
+                        prefixIcon: Icon(Icons.search, color: Colors.grey),
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.all(14),
+                      ),
+                      onChanged: (value) {
+                        setState(
+                          () => searchQuery = value.toLowerCase(),
+                        ); // live filter
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
 
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection("products")
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
-                        final cats = <String>{"All"};
-                        for (var doc in snapshot.data!.docs) {
-                          final data = doc.data() as Map<String, dynamic>;
-                          final cat = data['category'] as String?;
-                          if (cat != null && cat.isNotEmpty) cats.add(cat);
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection("products")
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData &&
+                            snapshot.data!.docs.isNotEmpty) {
+                          final cats = <String>{"All"};
+                          for (var doc in snapshot.data!.docs) {
+                            final data = doc.data() as Map<String, dynamic>;
+                            final cat = data['category'] as String?;
+                            if (cat != null && cat.isNotEmpty) cats.add(cat);
+                          }
+                          categories = cats.toList()..sort();
                         }
-                        categories = cats.toList()..sort();
-                      }
 
-                      return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              blurRadius: 5,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            value: selectedCategory,
-                            isExpanded: true,
-                            items: categories
-                                .map(
-                                  (cat) => DropdownMenuItem(
-                                    value: cat,
-                                    child: Text(cat),
-                                  ),
-                                )
-                                .toList(),
-                            onChanged: (value) {
-                              if (value != null) {
-                                setState(
-                                  () => selectedCategory = value,
-                                ); // live filter
-                              }
-                            },
+                        return Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 5,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
                           ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(width: 12),
-                ElevatedButton.icon(
-                  onPressed: () => _showPriceFilterDialog(),
-                  icon: const Icon(Icons.filter_alt),
-                  label: const Text("Filter"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: BrandColors.accentGreen,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // 📦 Products Grid
-          Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection("products")
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Center(child: Text("No products available"));
-                }
-
-                final products = snapshot.data!.docs.where((doc) {
-                  final data = doc.data() as Map<String, dynamic>;
-                  final name = (data['name'] ?? "").toString().toLowerCase();
-                  final category = (data['category'] ?? "").toString();
-                  final price = (data['price'] ?? 0).toDouble();
-
-                  final matchesSearch = name.contains(searchQuery);
-                  final matchesCategory =
-                      selectedCategory == "All" || category == selectedCategory;
-                  final matchesPrice = price >= minPrice && price <= maxPrice;
-
-                  return matchesSearch && matchesCategory && matchesPrice;
-                }).toList();
-
-                if (products.isEmpty) {
-                  return const Center(child: Text("No matching products"));
-                }
-
-                return GridView.builder(
-                  padding: const EdgeInsets.all(16),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: 0.72,
-                  ),
-                  itemCount: products.length,
-                  itemBuilder: (_, index) {
-                    final productData =
-                        products[index].data() as Map<String, dynamic>;
-                    final product = {"id": products[index].id, ...productData};
-
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => ProductDetailPage(
-                              product: product,
-                              onAddToCart: addToCart,
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              value: selectedCategory,
+                              isExpanded: true,
+                              items: categories
+                                  .map(
+                                    (cat) => DropdownMenuItem(
+                                      value: cat,
+                                      child: Text(cat),
+                                    ),
+                                  )
+                                  .toList(),
+                              onChanged: (value) {
+                                if (value != null) {
+                                  setState(
+                                    () => selectedCategory = value,
+                                  ); // live filter
+                                }
+                              },
                             ),
                           ),
                         );
                       },
-                      child: _buildProductCard(product),
-                    );
-                  },
-                );
-              },
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  FilledButton.icon(
+                    onPressed: () => _showPriceFilterDialog(),
+                    icon: const Icon(Icons.filter_alt),
+                    label: const Text("Filter"),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                      padding: const EdgeInsets.all(24),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+
+            // 📦 Products Grid
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection("products")
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return const Center(child: Text("No products available"));
+                  }
+
+                  final products = snapshot.data!.docs.where((doc) {
+                    final data = doc.data() as Map<String, dynamic>;
+                    final name = (data['name'] ?? "").toString().toLowerCase();
+                    final category = (data['category'] ?? "").toString();
+                    final price = (data['price'] ?? 0).toDouble();
+
+                    final matchesSearch = name.contains(searchQuery);
+                    final matchesCategory =
+                        selectedCategory == "All" ||
+                        category == selectedCategory;
+                    final matchesPrice = price >= minPrice && price <= maxPrice;
+
+                    return matchesSearch && matchesCategory && matchesPrice;
+                  }).toList();
+
+                  if (products.isEmpty) {
+                    return const Center(child: Text("No matching products"));
+                  }
+
+                  return GridView.builder(
+                    padding: const EdgeInsets.all(16),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                          childAspectRatio: 0.72,
+                        ),
+                    itemCount: products.length,
+                    itemBuilder: (_, index) {
+                      final productData =
+                          products[index].data() as Map<String, dynamic>;
+                      final product = {
+                        "id": products[index].id,
+                        ...productData,
+                      };
+
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ProductDetailPage(
+                                product: product,
+                                onAddToCart: addToCart,
+                              ),
+                            ),
+                          );
+                        },
+                        child: _buildProductCard(product),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: StorePageFloatingActionButton(
         itemCount: cartItemCount,
@@ -372,7 +353,7 @@ class _StorePageState extends State<StorePage> {
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.07),
+            color: Colors.black12,
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -390,7 +371,7 @@ class _StorePageState extends State<StorePage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -419,11 +400,11 @@ class _StorePageState extends State<StorePage> {
                   width: double.infinity,
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: BrandColors.accentGreen,
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(16),
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
                     onPressed: () => addToCart(product),
                     icon: const Icon(
@@ -462,5 +443,26 @@ class _StorePageState extends State<StorePage> {
         child: Icon(Icons.shopping_bag, color: Colors.green, size: 70),
       );
     }
+  }
+}
+
+class StorePageFloatingActionButton extends StatelessWidget {
+  final int itemCount;
+  final VoidCallback onPressed;
+
+  const StorePageFloatingActionButton({
+    super.key,
+    required this.itemCount,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton.extended(
+      backgroundColor: Theme.of(context).colorScheme.secondary,
+      onPressed: onPressed,
+      label: Text("Cart ($itemCount)"),
+      icon: const Icon(Icons.shopping_cart),
+    );
   }
 }

@@ -14,6 +14,10 @@ class BrandColors {
   static const Color textGrey = Color(0xFFC5C6C7);
   static const Color fabGreen = Color(0xFF32C48D);
 }
+import 'package:pawfect_care/widgets/custom_app_bar.dart';
+import 'package:pawfect_care/widgets/custom_card.dart';
+
+import 'package:pawfect_care/pages/store/add_product_page.dart';
 
 class HomePageStore extends StatelessWidget {
   const HomePageStore({super.key});
@@ -22,8 +26,7 @@ class HomePageStore extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
 
-    return ListView(
-      padding: const EdgeInsets.all(16),
+    return Column(
       children: [
         // 👋 Welcome
         Padding(
@@ -51,178 +54,100 @@ class HomePageStore extends StatelessWidget {
         const SizedBox(height: 12),
         Row(children: [Expanded(child: _buildCompletedOrderCountCard())]),
         const SizedBox(height: 16),
+        CustomAppBar("Welcome, ${user?.displayName ?? "Store Owner"}."),
 
-        // 🔹 Only Add Product Quick Action (Full Width)
-        GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const AddProductPage()),
-            );
-          },
-          child: SizedBox(
-            width: double.infinity,
-            child: _quickActionCard("Add Product", Icons.add_box),
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              Row(
+                children: [
+                  Expanded(child: _buildProductCountCard(context)),
+                  const SizedBox(width: 16),
+                  Expanded(child: _buildActiveOrderCountCard()),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(children: [Expanded(child: _buildCompletedOrderCountCard())]),
+              const SizedBox(height: 16),
+
+              CustomCard(
+                type: CustomCardType.quickAction,
+                title: "Add Product",
+                icon: Icons.add_box,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AddProductPage(),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
         ),
       ],
     );
   }
 
-  /// 🔹 Product Count
+  /// Product Count Card
   Widget _buildProductCountCard(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('products').snapshots(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const AllProductsPage(),
-                ),
-              );
-            },
-            child: _summaryCard("Products", 0, Icons.shopping_bag),
-          );
-        }
-        final count = snapshot.data!.docs.length;
-        return GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const AllProductsPage()),
-            );
-          },
-          child: _summaryCard("Products", count, Icons.shopping_bag),
+        final count = snapshot.hasData ? snapshot.data!.docs.length : 0;
+        return CustomCard(
+          type: CustomCardType.summary,
+          title: "Products",
+          count: count,
+          icon: Icons.shopping_bag,
         );
       },
     );
   }
 
-  /// 🔹 Active Orders (Pending + Shipped)
+  /// Active Orders Card
   Widget _buildActiveOrderCountCard() {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('orders').snapshots(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return _summaryCard("Active Orders", 0, Icons.receipt_long);
-        }
+        final activeOrders = snapshot.hasData
+            ? snapshot.data!.docs.where((doc) {
+                final data = doc.data() as Map<String, dynamic>;
+                return (data['status'] ?? 'Pending') != 'Delivered';
+              }).toList()
+            : [];
 
-        final activeOrders = snapshot.data!.docs.where((doc) {
-          final data = doc.data() as Map<String, dynamic>;
-          final status = data['status'] ?? 'Pending';
-          return status != 'Delivered';
-        }).toList();
-
-        return _summaryCard(
-          "Active Orders",
-          activeOrders.length,
-          Icons.receipt_long,
+        return CustomCard(
+          type: CustomCardType.summary,
+          title: "Active Orders",
+          count: activeOrders.length,
+          icon: Icons.receipt_long,
         );
       },
     );
   }
 
-  /// 🔹 Completed Orders (Delivered only)
+  /// Completed Orders Card
   Widget _buildCompletedOrderCountCard() {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('orders').snapshots(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return _summaryCard("Completed Orders", 0, Icons.check_circle);
-        }
+        final completedOrders = snapshot.hasData
+            ? snapshot.data!.docs.where((doc) {
+                final data = doc.data() as Map<String, dynamic>;
+                return (data['status'] ?? 'Pending') == 'Delivered';
+              }).toList()
+            : [];
 
-        final completedOrders = snapshot.data!.docs.where((doc) {
-          final data = doc.data() as Map<String, dynamic>;
-          final status = data['status'] ?? 'Pending';
-          return status == 'Delivered';
-        }).toList();
-
-        return _summaryCard(
-          "Completed Orders",
-          completedOrders.length,
-          Icons.check_circle,
+        return CustomCard(
+          type: CustomCardType.summary,
+          title: "Completed Orders",
+          count: completedOrders.length,
+          icon: Icons.check_circle,
         );
       },
-    );
-  }
-
-  /// Summary Card UI
-  Widget _summaryCard(String title, int count, IconData icon) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [BrandColors.primaryBlue, BrandColors.cardBlue],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black45,
-            blurRadius: 10,
-            offset: Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Icon(icon, size: 30, color: BrandColors.textWhite),
-          const SizedBox(height: 12),
-          Text(
-            '$count',
-            style: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: BrandColors.textWhite,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            title,
-            style: const TextStyle(fontSize: 14, color: BrandColors.textGrey),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Quick Action Card
-  Widget _quickActionCard(String title, IconData icon) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 20),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [BrandColors.primaryBlue, BrandColors.cardBlue],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: BrandColors.accentGreen.withOpacity(0.3),
-            blurRadius: 8,
-            spreadRadius: 1,
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 36, color: BrandColors.accentGreen),
-          const SizedBox(height: 10),
-          Text(
-            title,
-            style: const TextStyle(
-              color: BrandColors.textWhite,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

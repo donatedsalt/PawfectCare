@@ -24,10 +24,10 @@ class _VetPageControllerState extends State<VetPageController>
   ];
 
   final List<Widget> _floatingActionButtons = const [
-    HomePageFloatingActionButtonExpanded(),
-    SizedBox.shrink(), // Calendar page ke liye empty FAB
-    SizedBox.shrink(), // Records page ke liye empty FAB
-    MorePageFloatingActionButton(),
+    HomePageFloatingActionButton(),
+    SizedBox.shrink(),
+    MedicalRecordsPageFloatingActionButton(),
+    SizedBox.shrink(),
   ];
 
   final List<Widget> _navigationDestination = const [
@@ -43,7 +43,7 @@ class _VetPageControllerState extends State<VetPageController>
     _tabController = TabController(length: _pages.length, vsync: this);
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
-        setState(() {}); // Refresh FAB
+        setState(() {});
       }
     });
   }
@@ -70,33 +70,12 @@ class _VetPageControllerState extends State<VetPageController>
   }
 
   Widget _customNavigationBar(BuildContext context) {
-  return Container(
-    decoration: const BoxDecoration(
-      gradient: LinearGradient(
-        colors: [
-          Color(0xFF0D1C5A), // dark blue
-          Color(0xFF1B2A68), // lighter blue
-        ],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black26,
-          blurRadius: 8,
-          offset: Offset(0, -2),
-        ),
-      ],
-    ),
-    child: NavigationBar(
-      backgroundColor: Colors.transparent, // Transparent to show gradient
-      elevation: 0,
+    return NavigationBar(
       selectedIndex: _tabController.index,
       onDestinationSelected: (int index) {
         _tabController.animateTo(index);
       },
       destinations: _navigationDestination,
-    ),
-  );
-}
+    );
+  }
 }

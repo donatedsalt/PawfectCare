@@ -20,21 +20,19 @@ class _UserPageControllerState extends State<UserPageController>
   final List<Widget> _pages = const [
     HomePage(),
     AppointmentPage(),
-    StorePage(), // StorePage apna FAB khud rakhega
+    StorePage(),
     AdoptPage(),
     MorePage(),
   ];
 
-  // ✅ FABs (StorePage ke liye empty)
   final List<Widget> _floatingActionButtons = const [
     HomePageFloatingActionButton(),
     AppointmentPageFloatingActionButton(),
-    SizedBox.shrink(), // StorePage => apna FAB handle karega
+    SizedBox.shrink(),
     AdoptPageFloatingActionButton(),
     MorePageFloatingActionButton(),
   ];
 
-  // ✅ Navigation Destinations
   final List<NavigationDestination> _navigationDestinations = const [
     NavigationDestination(
       icon: Icon(Icons.home_outlined),
@@ -68,7 +66,7 @@ class _UserPageControllerState extends State<UserPageController>
     super.initState();
     _tabController = TabController(length: _pages.length, vsync: this);
     _tabController.addListener(() {
-      setState(() {}); // UI update when tab changes
+      setState(() {});
     });
   }
 

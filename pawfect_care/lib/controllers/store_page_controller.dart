@@ -39,7 +39,6 @@ class _StorePageControllerState extends State<StorePageController>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: BrandColors.darkBackground,
       body: SafeArea(
         child: Column(
           children: [
@@ -56,7 +55,7 @@ class _StorePageControllerState extends State<StorePageController>
   Widget _buildNavigationBar() {
     return NavigationBarTheme(
       data: NavigationBarThemeData(
-        backgroundColor: BrandColors.primaryBlue,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         indicatorColor: Colors.white.withOpacity(0.2),
 
         // ✅ Icon theme set
