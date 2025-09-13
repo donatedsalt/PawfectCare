@@ -263,10 +263,16 @@ class _SignupPageState extends State<SignupPage> {
                 SizedBox(
                   height: 50,
                   child: FilledButton(
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStatePropertyAll(
+                        Theme.of(context).colorScheme.primary,
+                      ),
+                      foregroundColor: WidgetStatePropertyAll(
+                        Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
                     onPressed: _isLoading ? null : _signUp,
-                    child: _isLoading
-                        ? CircularProgressIndicator()
-                        : const Text('Sign Up'),
+                    child: Text(_isLoading ? 'Loading...' : 'Sign Up'),
                   ),
                 ),
                 const SizedBox(height: 16),

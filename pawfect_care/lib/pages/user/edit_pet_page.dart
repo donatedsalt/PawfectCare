@@ -11,7 +11,7 @@ import 'package:pawfect_care/services/image_service.dart';
 import 'package:pawfect_care/widgets/custom_app_bar.dart';
 import 'package:pawfect_care/widgets/action_buttons.dart';
 
-import 'package:pawfect_care/pages/common/loading_screen.dart';
+import 'package:pawfect_care/pages/common/splash_screen.dart';
 
 // This page allows the user to edit a pet's details.
 class EditPetPage extends StatefulWidget {

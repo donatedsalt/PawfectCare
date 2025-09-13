@@ -161,6 +161,14 @@ class _SigninPageState extends State<SigninPage> {
                 SizedBox(
                   height: 50,
                   child: FilledButton(
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStatePropertyAll(
+                        Theme.of(context).colorScheme.primary,
+                      ),
+                      foregroundColor: WidgetStatePropertyAll(
+                        Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
                     onPressed: _isLoading ? null : _signIn,
                     child: Text(_isLoading ? 'Loading...' : 'Sign In'),
                   ),

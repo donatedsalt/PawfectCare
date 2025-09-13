@@ -12,7 +12,7 @@ import 'package:pawfect_care/services/email_update_service.dart';
 import 'package:pawfect_care/widgets/custom_app_bar.dart';
 import 'package:pawfect_care/widgets/action_buttons.dart';
 
-import 'package:pawfect_care/pages/common/loading_screen.dart';
+import 'package:pawfect_care/pages/common/splash_screen.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});

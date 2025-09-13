@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pawfect_care/pages/common/splash_screen.dart';
 
 import 'package:pawfect_care/utils/theme.dart';
 import 'package:pawfect_care/utils/firebase_options.dart';
@@ -12,7 +13,6 @@ import 'package:pawfect_care/controllers/store_page_controller.dart';
 import 'package:pawfect_care/controllers/user_page_controller.dart';
 import 'package:pawfect_care/controllers/vet_page_controller.dart';
 
-import 'package:pawfect_care/pages/common/loading_screen.dart';
 import 'package:pawfect_care/pages/common/signin_page.dart';
 import 'package:pawfect_care/pages/common/signup_page.dart';
 
