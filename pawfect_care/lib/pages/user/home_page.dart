@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pawfect_care/pages/store/home_page.dart';
+import 'package:pawfect_care/pages/user/product_detail_page.dart';
+import 'package:pawfect_care/pages/user/store_page.dart';
 import 'package:pawfect_care/widgets/custom_app_bar.dart';
 
 class HomePageAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -38,63 +42,93 @@ class _GridSection extends StatelessWidget {
   }
 }
 
-// A reusable widget for a single product grid item.
+// Product Grid Item (Dynamic & Tappable)
 class _ProductGridItem extends StatelessWidget {
-  const _ProductGridItem();
+  final String productId;
+  final String name;
+  final String imageUrl;
+  final double price;
+  final Map<String, dynamic> fullData;
+
+  const _ProductGridItem({
+    required this.productId,
+    required this.name,
+    required this.imageUrl,
+    required this.price,
+    required this.fullData,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade200,
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(16),
-              ),
-              child: Container(
-                color: Colors.grey[200],
-                child: const Center(
-                  child: Icon(
-                    Icons.shopping_bag_outlined,
-                    size: 40,
-                    color: Colors.grey,
-                  ),
-                ),
-              ),
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ProductDetailPage(
+              product: fullData,
+              onAddToCart: (product) {
+                // Handle adding to cart here
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("${product['name']} added to cart")),
+                );
+              },
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Product Name', style: TextStyle(fontSize: 16)),
-                SizedBox(height: 4),
-                Text('\$19.99', style: TextStyle(color: Colors.green)),
-              ],
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.shade200,
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: const Offset(0, 3),
             ),
-          ),
-        ],
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                child: imageUrl.isNotEmpty
+                    ? Image.network(imageUrl, fit: BoxFit.cover)
+                    : Container(
+                        color: Colors.grey[200],
+                        child: const Center(
+                          child: Icon(
+                            Icons.shopping_bag_outlined,
+                            size: 40,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(name, style: const TextStyle(fontSize: 16)),
+                  const SizedBox(height: 4),
+                  Text('\$${price.toStringAsFixed(2)}', style: const TextStyle(color: Colors.green)),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-// A reusable widget for a single blog/story grid item.
+// Blog Grid Item (Static)
 class _BlogGridItem extends StatelessWidget {
   const _BlogGridItem();
 
@@ -118,17 +152,11 @@ class _BlogGridItem extends StatelessWidget {
         children: [
           Expanded(
             child: ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(16),
-              ),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
               child: Container(
                 color: Colors.blue[50],
                 child: const Center(
-                  child: Icon(
-                    Icons.article_outlined,
-                    size: 40,
-                    color: Colors.blue,
-                  ),
+                  child: Icon(Icons.article_outlined, size: 40, color: Colors.blue),
                 ),
               ),
             ),
@@ -153,6 +181,7 @@ class _BlogGridItem extends StatelessWidget {
   }
 }
 
+// Adoption List Item (Static)
 class _AdoptionListItem extends StatelessWidget {
   const _AdoptionListItem();
 
@@ -191,6 +220,7 @@ class _AdoptionListItem extends StatelessWidget {
   }
 }
 
+// Main HomePage
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -202,12 +232,11 @@ class HomePage extends StatelessWidget {
     return Column(
       children: [
         CustomAppBar("Welcome, $userName!"),
-
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              // New Adoption section
+              // Adoption Section
               const Text('Pets for Adoption', style: TextStyle(fontSize: 18)),
               const SizedBox(height: 16),
               SizedBox(
@@ -216,32 +245,71 @@ class HomePage extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   itemCount: 5,
                   padding: const EdgeInsets.all(8.0),
-                  itemBuilder: (context, index) {
-                    return _AdoptionListItem();
+                  itemBuilder: (context, index) => const _AdoptionListItem(),
+                ),
+              ),
+              const SizedBox(height: 32),
+
+              // Popular Products Section
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Popular Products', style: TextStyle(fontSize: 18)),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const StorePage()),
+                      );
+                    },
+                    child: const Text('See All'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              SizedBox(
+                height: 480,
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance.collection('products').snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    final products = snapshot.data!.docs;
+                    if (products.isEmpty) {
+                      return const Center(child: Text('No products available.'));
+                    }
+
+                    return GridView.count(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: products.map((doc) {
+                        final data = doc.data() as Map<String, dynamic>;
+                        final List<dynamic>? images = data['images'];
+                        final String imageUrl = (images != null && images.isNotEmpty)
+                            ? images.first.toString()
+                            : '';
+
+                        return _ProductGridItem(
+                          productId: doc.id,
+                          name: data['name'] ?? 'No Name',
+                          imageUrl: imageUrl,
+                          price: (data['price'] ?? 0).toDouble(),
+                          fullData: data,
+                        );
+                      }).toList(),
+                    );
                   },
                 ),
               ),
-              const SizedBox(height: 32),
-
-              // Reusable section for Popular Products
-              _GridSection(
-                title: 'Popular Products',
-                height: 480,
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: List.generate(
-                    4,
-                    (index) => const _ProductGridItem(),
-                  ),
-                ),
-              ),
 
               const SizedBox(height: 32),
 
-              // Reusable section for Stories/Blogs
+              // Blogs Section
               _GridSection(
                 title: 'Stories & Blogs',
                 height: 480,
@@ -253,7 +321,6 @@ class HomePage extends StatelessWidget {
                   children: List.generate(4, (index) => const _BlogGridItem()),
                 ),
               ),
-
               const SizedBox(height: 32),
             ],
           ),
@@ -279,7 +346,7 @@ class HomePageNavigationDestination extends StatelessWidget {
   Widget build(BuildContext context) {
     return NavigationDestination(
       icon: const Icon(Icons.home_outlined),
-      selectedIcon: Icon(Icons.home_rounded),
+      selectedIcon: const Icon(Icons.home_rounded),
       label: "Home",
     );
   }
