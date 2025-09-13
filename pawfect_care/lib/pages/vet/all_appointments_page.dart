@@ -9,6 +9,8 @@ class AllAppointmentsPage extends StatelessWidget {
   const AllAppointmentsPage({super.key});
 
   @override
+
+
   Widget build(BuildContext context) {
     final appointmentsRef = FirebaseFirestore.instance.collection(
       'appointments',
