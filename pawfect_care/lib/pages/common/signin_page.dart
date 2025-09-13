@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:pawfect_care/main.dart';
 
 import 'package:pawfect_care/utils/context_extension.dart';
 
 import 'package:pawfect_care/widgets/custom_app_bar.dart';
+
+import 'package:pawfect_care/pages/common/complete_profile_page.dart';
 
 class SigninPage extends StatefulWidget {
   const SigninPage({super.key});
@@ -20,60 +26,117 @@ class _SigninPageState extends State<SigninPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    clientId:
+        "937488511257-7i38ca1nb845skefudu9ohdnk4t98pu1.apps.googleusercontent.com",
+  );
+
   Future<void> _signIn() async {
-    if (_formKey.currentState!.validate()) {
-      try {
-        setState(() {
-          _isLoading = true;
-        });
+    if (!_formKey.currentState!.validate()) return;
 
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim(),
-        );
+    try {
+      setState(() => _isLoading = true);
 
-        if (mounted) {
-          context.showSnackBar(
-            'Signed in successfully!',
-            theme: SnackBarTheme.success,
-          );
-        }
-      } on FirebaseAuthException catch (e) {
-        if (mounted) {
-          String errorMessage;
-          switch (e.code) {
-            case 'user-not-found':
-              errorMessage = 'No user found for that email.';
-              break;
-            case 'wrong-password':
-              errorMessage = 'Wrong password provided for that user.';
-              break;
-            case 'invalid-email':
-              errorMessage = 'The email address is not valid.';
-              break;
-            case 'user-disabled':
-              errorMessage = 'This user has been disabled.';
-              break;
-            default:
-              errorMessage =
-                  'Authentication failed. Please check your credentials.';
-          }
-          context.showSnackBar(errorMessage, theme: SnackBarTheme.error);
-        }
-      } catch (e) {
-        if (mounted) {
-          context.showSnackBar(
-            'An unexpected error occurred.',
-            theme: SnackBarTheme.error,
-          );
-        }
-      } finally {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
+      await _auth.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      await _handlePostSignIn(_auth.currentUser!);
+    } on FirebaseAuthException catch (e) {
+      String errorMessage;
+      switch (e.code) {
+        case 'user-not-found':
+          errorMessage = 'No user found for that email.';
+          break;
+        case 'wrong-password':
+          errorMessage = 'Wrong password provided for that user.';
+          break;
+        case 'invalid-email':
+          errorMessage = 'The email address is not valid.';
+          break;
+        case 'user-disabled':
+          errorMessage = 'This user has been disabled.';
+          break;
+        default:
+          errorMessage =
+              'Authentication failed. Please check your credentials.';
       }
+      if (mounted) {
+        context.showSnackBar(errorMessage, theme: SnackBarTheme.error);
+      }
+    } catch (e) {
+      if (mounted) {
+        context.showSnackBar(
+          'An unexpected error occurred.',
+          theme: SnackBarTheme.error,
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _signInWithGoogle() async {
+    try {
+      setState(() => _isLoading = true);
+
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) return;
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final userCredential = await _auth.signInWithCredential(credential);
+
+      await _handlePostSignIn(userCredential.user!);
+    } catch (e) {
+      if (mounted) {
+        context.showSnackBar(
+          'Google Sign-In failed: $e',
+          theme: SnackBarTheme.error,
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _handlePostSignIn(User user) async {
+    final userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+
+    if (!userDoc.exists ||
+        !(userDoc.data()?.containsKey('completedProfile') ?? false)) {
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const CompleteProfilePage()),
+        );
+      }
+    } else {
+      if (mounted) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const AuthGate()),
+          (route) => false,
+        );
+      }
+    }
+
+    if (mounted) {
+      context.showSnackBar(
+        'Signed in successfully!',
+        theme: SnackBarTheme.success,
+      );
     }
   }
 
@@ -87,7 +150,7 @@ class _SigninPageState extends State<SigninPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
+      appBar: const PreferredSize(
         preferredSize: Size.fromHeight(120),
         child: CustomAppBar("Sign In"),
       ),
@@ -134,9 +197,7 @@ class _SigninPageState extends State<SigninPage> {
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
                       onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
+                        setState(() => _obscurePassword = !_obscurePassword);
                       },
                       icon: Icon(
                         _obscurePassword
@@ -161,23 +222,28 @@ class _SigninPageState extends State<SigninPage> {
                 SizedBox(
                   height: 50,
                   child: FilledButton(
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStatePropertyAll(
-                        Theme.of(context).colorScheme.primary,
-                      ),
-                      foregroundColor: WidgetStatePropertyAll(
-                        Theme.of(context).colorScheme.onPrimary,
-                      ),
-                    ),
                     onPressed: _isLoading ? null : _signIn,
                     child: Text(_isLoading ? 'Loading...' : 'Sign In'),
                   ),
                 ),
                 const SizedBox(height: 16),
+                ElevatedButton.icon(
+                  onPressed: _isLoading ? null : _signInWithGoogle,
+                  icon: Image.asset(
+                    'assets/images/google_logo.png',
+                    height: 24,
+                    width: 24,
+                  ),
+                  label: const Text("Sign in with Google"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black,
+                    minimumSize: const Size(double.infinity, 50),
+                  ),
+                ),
+                const SizedBox(height: 16),
                 TextButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, "/signup");
-                  },
+                  onPressed: () => Navigator.pushNamed(context, "/signup"),
                   child: const Text("Don't have an account? Sign Up"),
                 ),
               ],
