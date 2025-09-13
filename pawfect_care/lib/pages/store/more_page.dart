@@ -25,8 +25,11 @@ class MorePage extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 28),
             margin: const EdgeInsets.only(bottom: 20),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [BrandColors.accentGreen, BrandColors.primaryBlue],
+              gradient: LinearGradient(
+                colors: [
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.primary.withAlpha(200),
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -157,7 +160,7 @@ class MorePage extends StatelessWidget {
       child: Text(
         title,
         style: const TextStyle(
-          color: BrandColors.accentGreen,
+          color: BrandColors.primaryBlue,
           fontSize: 16,
           fontWeight: FontWeight.bold,
         ),

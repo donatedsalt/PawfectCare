@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pawfect_care/pages/store/home_page.dart';
 
-
 class ProductsDetailPage extends StatelessWidget {
   const ProductsDetailPage({super.key});
 
@@ -19,8 +18,11 @@ class ProductsDetailPage extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 16),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [BrandColors.accentGreen, BrandColors.primaryBlue],
+              gradient: LinearGradient(
+                colors: [
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.primary.withAlpha(200),
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),

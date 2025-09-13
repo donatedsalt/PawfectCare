@@ -18,11 +18,14 @@ class OrdersPageStore extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 28),
           margin: const EdgeInsets.only(bottom: 20),
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [BrandColors.accentGreen, BrandColors.primaryBlue],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            gradient: LinearGradient(
+                colors: [
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.primary.withAlpha(200),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
             borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(20),
               bottomRight: Radius.circular(20),

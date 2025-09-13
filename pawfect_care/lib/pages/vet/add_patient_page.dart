@@ -95,7 +95,7 @@ class _AddPatientPageState extends State<AddPatientPage>
     return InputDecoration(
       labelText: label,
       labelStyle: TextStyle(
-        color: isFocused ? BrandColors.accentGreen : BrandColors.textWhite,
+        color: isFocused ? BrandColors.textWhite : BrandColors.textWhite,
         fontWeight: FontWeight.w500,
       ),
       filled: true,
@@ -107,7 +107,7 @@ class _AddPatientPageState extends State<AddPatientPage>
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: BrandColors.accentGreen, width: 2),
+        borderSide: const BorderSide(color: BrandColors.primaryBlue, width: 2),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
     );
@@ -133,10 +133,12 @@ class _AddPatientPageState extends State<AddPatientPage>
                       padding: const EdgeInsets.symmetric(vertical: 28),
                       margin: const EdgeInsets.only(bottom: 20),
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
+                        gradient: LinearGradient(
                           colors: [
-                            BrandColors.accentGreen,
-                            BrandColors.primaryBlue,
+                            Theme.of(context).colorScheme.primary,
+                            Theme.of(
+                              context,
+                            ).colorScheme.primary.withAlpha(200),
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
@@ -223,8 +225,9 @@ class _AddPatientPageState extends State<AddPatientPage>
             return TextFormField(
               controller: controller,
               focusNode: focusNode,
-              keyboardType:
-                  isNumber ? TextInputType.number : TextInputType.text,
+              keyboardType: isNumber
+                  ? TextInputType.number
+                  : TextInputType.text,
               decoration: _inputDecoration(
                 label,
                 isFocused: focusNode.hasFocus,
@@ -272,8 +275,11 @@ class _AddPatientPageState extends State<AddPatientPage>
               child: Container(
                 height: 56,
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [BrandColors.accentGreen, BrandColors.primaryBlue],
+                  gradient: LinearGradient(
+                    colors: [
+                      Theme.of(context).colorScheme.primary,
+                      Theme.of(context).colorScheme.primary.withAlpha(200),
+                    ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),

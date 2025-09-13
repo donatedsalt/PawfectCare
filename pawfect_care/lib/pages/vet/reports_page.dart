@@ -59,7 +59,7 @@ class _ReportsPageState extends State<ReportsPage>
   InputDecoration _inputDecoration(String label) {
     return InputDecoration(
       labelText: label,
-      labelStyle: const TextStyle(color: BrandColors.accentGreen),
+      labelStyle: const TextStyle(color: BrandColors.textWhite),
       filled: true,
       fillColor: BrandColors.cardBlue.withOpacity(0.9),
       border: OutlineInputBorder(
@@ -68,7 +68,7 @@ class _ReportsPageState extends State<ReportsPage>
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: BrandColors.accentGreen, width: 2),
+        borderSide: const BorderSide(color: BrandColors.primaryBlue, width: 2),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
     );
@@ -91,7 +91,8 @@ class _ReportsPageState extends State<ReportsPage>
   Future<String> _uploadFileToFirebase(PlatformFile file) async {
     try {
       final storageRef = FirebaseStorage.instance.ref().child(
-          'reports/${DateTime.now().millisecondsSinceEpoch}_${file.name}');
+        'reports/${DateTime.now().millisecondsSinceEpoch}_${file.name}',
+      );
 
       UploadTask uploadTask;
 
@@ -209,8 +210,11 @@ class _ReportsPageState extends State<ReportsPage>
           child: Container(
             height: 56,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [BrandColors.accentGreen, BrandColors.primaryBlue],
+              gradient: LinearGradient(
+                colors: [
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.primary.withAlpha(200),
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -289,10 +293,12 @@ class _ReportsPageState extends State<ReportsPage>
                       padding: const EdgeInsets.symmetric(vertical: 28),
                       margin: const EdgeInsets.only(bottom: 20),
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
+                        gradient: LinearGradient(
                           colors: [
-                            BrandColors.accentGreen,
-                            BrandColors.primaryBlue,
+                            Theme.of(context).colorScheme.primary,
+                            Theme.of(
+                              context,
+                            ).colorScheme.primary.withAlpha(200),
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
@@ -352,7 +358,7 @@ class _ReportsPageState extends State<ReportsPage>
                 Text(
                   "Upload X-rays / Reports",
                   style: TextStyle(
-                    color: BrandColors.accentGreen,
+                    color: BrandColors.primaryBlue,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -378,7 +384,7 @@ class _ReportsPageState extends State<ReportsPage>
                             ),
                             child: const Icon(
                               Icons.add,
-                              color: BrandColors.accentGreen,
+                              color: BrandColors.textWhite,
                               size: 36,
                             ),
                           ),
@@ -401,7 +407,7 @@ class _ReportsPageState extends State<ReportsPage>
                                         image: kIsWeb
                                             ? MemoryImage(file.bytes!)
                                             : FileImage(File(file.path!))
-                                                as ImageProvider,
+                                                  as ImageProvider,
                                         fit: BoxFit.cover,
                                       ),
                               ),

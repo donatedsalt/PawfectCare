@@ -8,7 +8,7 @@ import 'package:pawfect_care/pages/store/all_products_page.dart';
 class BrandColors {
   static const Color primaryBlue = Color(0xFF0D1C5A);
   static const Color accentGreen = Color(0xFF32C48D);
-  static const Color darkBackground = Color.fromARGB(255, 196, 255, 232);
+  static const Color darkBackground = Color(0xFFD6E3FF);
   static const Color cardBlue = Color(0xFF1B2A68);
   static const Color textWhite = Color(0xFFFFFFFF);
   static const Color textGrey = Color(0xFFC5C6C7);
@@ -31,7 +31,7 @@ class HomePageStore extends StatelessWidget {
           child: Text(
             "Welcome back, ${user?.displayName ?? "Store Owner"}!",
             style: const TextStyle(
-              color: BrandColors.accentGreen,
+              color: BrandColors.primaryBlue,
               fontSize: 22,
               fontWeight: FontWeight.bold,
             ),

@@ -259,7 +259,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) return const LoadingScreen();
+    if (_isLoading) return const SplashScreen();
 
     return Scaffold(
       appBar: PreferredSize(

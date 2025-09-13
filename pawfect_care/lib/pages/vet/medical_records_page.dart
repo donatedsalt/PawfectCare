@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class BrandColors {
   static const Color primaryBlue = Color(0xFF0D1C5A);
   static const Color accentGreen = Color(0xFF32C48D);
-  static const Color darkBackground = Color.fromARGB(255, 196, 255, 232);
+  static const Color darkBackground = Color(0xFFD6E3FF);
   static const Color cardBlue = Color(0xFF1B2A68);
   static const Color textWhite = Color(0xFFFFFFFF);
   static const Color textGrey = Color(0xFFC5C6C7);
@@ -62,10 +62,10 @@ class _MedicalRecordsPageState extends State<MedicalRecordsPage> {
                   padding: const EdgeInsets.symmetric(vertical: 28),
                   margin: const EdgeInsets.only(bottom: 20),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
+                    gradient: LinearGradient(
                       colors: [
-                        BrandColors.accentGreen,
-                        BrandColors.primaryBlue,
+                        Theme.of(context).colorScheme.primary,
+                        Theme.of(context).colorScheme.primary.withAlpha(200),
                       ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,

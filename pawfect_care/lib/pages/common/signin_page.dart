@@ -89,7 +89,7 @@ class _SigninPageState extends State<SigninPage> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(120),
-        child: CustomAppBar("Sign Up"),
+        child: CustomAppBar("Sign In"),
       ),
       body: SafeArea(
         child: Form(

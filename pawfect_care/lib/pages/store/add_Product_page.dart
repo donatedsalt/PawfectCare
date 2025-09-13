@@ -58,7 +58,7 @@ class _AddProductPageState extends State<AddProductPage>
   InputDecoration _inputDecoration(String label) {
     return InputDecoration(
       labelText: label,
-      labelStyle: const TextStyle(color: BrandColors.accentGreen),
+      labelStyle: const TextStyle(color: BrandColors.textWhite),
       filled: true,
       fillColor: BrandColors.cardBlue.withOpacity(0.9),
       border: OutlineInputBorder(
@@ -67,7 +67,7 @@ class _AddProductPageState extends State<AddProductPage>
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: BrandColors.accentGreen, width: 2),
+        borderSide: const BorderSide(color: BrandColors.primaryBlue, width: 2),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
     );
@@ -89,7 +89,8 @@ class _AddProductPageState extends State<AddProductPage>
 
   Future<String> _uploadFileToFirebase(PlatformFile file) async {
     final storageRef = FirebaseStorage.instance.ref().child(
-        'products/${DateTime.now().millisecondsSinceEpoch}_${file.name}');
+      'products/${DateTime.now().millisecondsSinceEpoch}_${file.name}',
+    );
     UploadTask uploadTask;
 
     if (kIsWeb) {
@@ -147,8 +148,11 @@ class _AddProductPageState extends State<AddProductPage>
     }
   }
 
-  Widget _animatedField(TextEditingController controller, String label,
-      {TextInputType type = TextInputType.text}) {
+  Widget _animatedField(
+    TextEditingController controller,
+    String label, {
+    TextInputType type = TextInputType.text,
+  }) {
     return TweenAnimationBuilder(
       tween: Tween<double>(begin: 0, end: 1),
       duration: const Duration(milliseconds: 600),
@@ -193,8 +197,11 @@ class _AddProductPageState extends State<AddProductPage>
           child: Container(
             height: 56,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [BrandColors.accentGreen, BrandColors.primaryBlue],
+              gradient: LinearGradient(
+                colors: [
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.primary.withAlpha(200),
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -245,10 +252,12 @@ class _AddProductPageState extends State<AddProductPage>
                       padding: const EdgeInsets.symmetric(vertical: 28),
                       margin: const EdgeInsets.only(bottom: 20),
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
+                        gradient: LinearGradient(
                           colors: [
-                            BrandColors.accentGreen,
-                            BrandColors.primaryBlue,
+                            Theme.of(context).colorScheme.primary,
+                            Theme.of(
+                              context,
+                            ).colorScheme.primary.withAlpha(200),
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
@@ -277,8 +286,11 @@ class _AddProductPageState extends State<AddProductPage>
                       left: 12,
                       top: 12,
                       child: IconButton(
-                        icon: const Icon(Icons.arrow_back,
-                            color: Colors.white, size: 28),
+                        icon: const Icon(
+                          Icons.arrow_back,
+                          color: Colors.white,
+                          size: 28,
+                        ),
                         onPressed: () => Navigator.pop(context),
                       ),
                     ),
@@ -289,17 +301,23 @@ class _AddProductPageState extends State<AddProductPage>
                 const SizedBox(height: 16),
                 _animatedField(_categoryController, "Category"),
                 const SizedBox(height: 16),
-                _animatedField(_priceController, "Price",
-                    type: TextInputType.number),
+                _animatedField(
+                  _priceController,
+                  "Price",
+                  type: TextInputType.number,
+                ),
                 const SizedBox(height: 16),
-                _animatedField(_stockController, "Stock Quantity",
-                    type: TextInputType.number),
+                _animatedField(
+                  _stockController,
+                  "Stock Quantity",
+                  type: TextInputType.number,
+                ),
 
                 const SizedBox(height: 16),
                 Text(
                   "Upload Product Images",
                   style: TextStyle(
-                    color: BrandColors.accentGreen,
+                    color: BrandColors.primaryBlue,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -319,11 +337,15 @@ class _AddProductPageState extends State<AddProductPage>
                             decoration: BoxDecoration(
                               color: BrandColors.cardBlue,
                               borderRadius: BorderRadius.circular(16),
-                              border:
-                                  Border.all(color: BrandColors.accentGreen),
+                              border: Border.all(
+                                color: BrandColors.primaryBlue,
+                              ),
                             ),
-                            child: const Icon(Icons.add,
-                                color: BrandColors.accentGreen, size: 36),
+                            child: const Icon(
+                              Icons.add,
+                              color: BrandColors.textWhite,
+                              size: 36,
+                            ),
                           ),
                         );
                       } else {
@@ -339,7 +361,7 @@ class _AddProductPageState extends State<AddProductPage>
                                   image: kIsWeb
                                       ? MemoryImage(file.bytes!)
                                       : FileImage(File(file.path!))
-                                          as ImageProvider,
+                                            as ImageProvider,
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -358,8 +380,11 @@ class _AddProductPageState extends State<AddProductPage>
                                     color: Colors.black54,
                                     shape: BoxShape.circle,
                                   ),
-                                  child: const Icon(Icons.close,
-                                      color: Colors.white, size: 20),
+                                  child: const Icon(
+                                    Icons.close,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
                                 ),
                               ),
                             ),

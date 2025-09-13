@@ -10,7 +10,9 @@ class AppointmentsDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appointmentsRef = FirebaseFirestore.instance.collection('appointments');
+    final appointmentsRef = FirebaseFirestore.instance.collection(
+      'appointments',
+    );
     final user = FirebaseAuth.instance.currentUser;
     final userId = user?.uid ?? '';
 
@@ -23,8 +25,11 @@ class AppointmentsDetailPage extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 16),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [BrandColors.accentGreen, BrandColors.primaryBlue],
+              gradient: LinearGradient(
+                colors: [
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.primary.withAlpha(200),
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -44,7 +49,11 @@ class AppointmentsDetailPage extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () => Navigator.pop(context),
-                  child: const Icon(Icons.arrow_back, color: BrandColors.textWhite, size: 28),
+                  child: const Icon(
+                    Icons.arrow_back,
+                    color: BrandColors.textWhite,
+                    size: 28,
+                  ),
                 ),
                 const SizedBox(width: 16),
                 const Text(
@@ -64,7 +73,10 @@ class AppointmentsDetailPage extends StatelessWidget {
           // 📋 Appointments List
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: appointmentsRef.where('vetId', isEqualTo: userId).orderBy('date').snapshots(),
+              stream: appointmentsRef
+                  .where('vetId', isEqualTo: userId)
+                  .orderBy('date')
+                  .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return const Center(
@@ -96,7 +108,9 @@ class AppointmentsDetailPage extends StatelessWidget {
                     final data = docs[index].data() as Map<String, dynamic>;
 
                     // ✅ Format date-time nicely
-                    Timestamp? ts = data['date'] is Timestamp ? data['date'] as Timestamp : null;
+                    Timestamp? ts = data['date'] is Timestamp
+                        ? data['date'] as Timestamp
+                        : null;
                     final date = ts?.toDate();
                     final dateStr = date != null
                         ? DateFormat('dd MMM yyyy, hh:mm a').format(date)
@@ -110,10 +124,18 @@ class AppointmentsDetailPage extends StatelessWidget {
                       margin: const EdgeInsets.symmetric(vertical: 8),
                       elevation: 4,
                       child: ListTile(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                         leading: CircleAvatar(
-                          backgroundColor: BrandColors.accentGreen.withOpacity(0.3),
-                          child: const Icon(Icons.pets, color: BrandColors.textWhite),
+                          backgroundColor: BrandColors.accentGreen.withOpacity(
+                            0.3,
+                          ),
+                          child: const Icon(
+                            Icons.pets,
+                            color: BrandColors.textWhite,
+                          ),
                         ),
                         title: Text(
                           "${data['petName'] ?? 'Unknown Pet'}",
@@ -126,7 +148,11 @@ class AppointmentsDetailPage extends StatelessWidget {
                           "${data['ownerName'] ?? 'Unknown Owner'} • $dateStr",
                           style: const TextStyle(color: BrandColors.textGrey),
                         ),
-                        trailing: const Icon(Icons.arrow_forward_ios, color: BrandColors.textGrey, size: 16),
+                        trailing: const Icon(
+                          Icons.arrow_forward_ios,
+                          color: BrandColors.textGrey,
+                          size: 16,
+                        ),
                         onTap: () {
                           // Optional: Navigate to detailed appointment page
                         },

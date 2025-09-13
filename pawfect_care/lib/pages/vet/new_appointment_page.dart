@@ -30,8 +30,8 @@ class _NewAppointmentPageState extends State<NewAppointmentPage>
   final CollectionReference petsRef = FirebaseFirestore.instance.collection(
     'pets',
   ); // pet collection
-  final CollectionReference appointmentsRef =
-      FirebaseFirestore.instance.collection('appointments');
+  final CollectionReference appointmentsRef = FirebaseFirestore.instance
+      .collection('appointments');
 
   List<String> petList = [];
 
@@ -69,7 +69,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage>
   InputDecoration _inputDecoration(String label) {
     return InputDecoration(
       labelText: label,
-      labelStyle: const TextStyle(color: BrandColors.accentGreen),
+      labelStyle: const TextStyle(color: BrandColors.textWhite),
       filled: true,
       fillColor: BrandColors.cardBlue.withOpacity(0.9),
       border: OutlineInputBorder(
@@ -78,7 +78,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage>
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: BrandColors.accentGreen, width: 2),
+        borderSide: const BorderSide(color: BrandColors.primaryBlue, width: 2),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
     );
@@ -208,8 +208,11 @@ class _NewAppointmentPageState extends State<NewAppointmentPage>
           child: Container(
             height: 56,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [BrandColors.accentGreen, BrandColors.primaryBlue],
+              gradient: LinearGradient(
+                colors: [
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.primary.withAlpha(200),
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -258,10 +261,12 @@ class _NewAppointmentPageState extends State<NewAppointmentPage>
                       padding: const EdgeInsets.symmetric(vertical: 28),
                       margin: const EdgeInsets.only(bottom: 20),
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
+                        gradient: LinearGradient(
                           colors: [
-                            BrandColors.accentGreen,
-                            BrandColors.primaryBlue,
+                            Theme.of(context).colorScheme.primary,
+                            Theme.of(
+                              context,
+                            ).colorScheme.primary.withAlpha(200),
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
@@ -306,17 +311,18 @@ class _NewAppointmentPageState extends State<NewAppointmentPage>
                   DropdownButtonFormField<String>(
                     decoration: _inputDecoration("Select Pet"),
                     dropdownColor: BrandColors.cardBlue,
-                    items: ["Fluffy", "Bella", "Max"] // <-- Static list
-                        .map(
-                          (pet) => DropdownMenuItem(
-                            value: pet,
-                            child: Text(
-                              pet,
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        )
-                        .toList(),
+                    items:
+                        ["Fluffy", "Bella", "Max"] // <-- Static list
+                            .map(
+                              (pet) => DropdownMenuItem(
+                                value: pet,
+                                child: Text(
+                                  pet,
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            )
+                            .toList(),
                     value: selectedPet,
                     onChanged: (val) => setState(() => selectedPet = val),
                     validator: (val) => val == null ? "Select a pet" : null,

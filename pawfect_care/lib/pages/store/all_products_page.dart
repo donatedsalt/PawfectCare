@@ -19,8 +19,11 @@ class AllProductsPage extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 16),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [BrandColors.accentGreen, BrandColors.primaryBlue],
+              gradient: LinearGradient(
+                colors: [
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.primary.withAlpha(200),
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),

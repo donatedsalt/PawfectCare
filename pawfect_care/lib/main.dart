@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.light,
-      home: const AuthGate(),
+      home: const SplashScreen(),
     );
   }
 }
@@ -54,7 +54,7 @@ class AuthGate extends StatelessWidget {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const LoadingScreen();
+          return const SplashScreen();
         }
         if (snapshot.data == null) {
           return const SigninPage();
@@ -67,7 +67,7 @@ class AuthGate extends StatelessWidget {
                 .get(),
             builder: (context, roleSnapshot) {
               if (roleSnapshot.connectionState == ConnectionState.waiting) {
-                return const LoadingScreen();
+                return const SplashScreen();
               }
               if (roleSnapshot.hasData) {
                 final userRole = roleSnapshot.data!.get('role');
