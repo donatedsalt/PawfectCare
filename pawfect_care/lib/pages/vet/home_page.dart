@@ -1,35 +1,28 @@
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart';
-import 'package:pawfect_care/pages/vet/add_patient_page.dart';
-import 'package:pawfect_care/pages/vet/appointments_detail_page.dart';
-import 'package:pawfect_care/pages/vet/new_appointment_page.dart';
-import 'package:pawfect_care/pages/vet/patients_detail_page.dart';
-import 'package:pawfect_care/pages/vet/reports_page.dart';
 
-class BrandColors {
-  static const Color primaryBlue = Color.fromRGBO(38, 49, 100, 1);
-  static const Color accentGreen = Color(0xFF32C48D);
-  static const Color darkBackground = Color.fromRGBO(222, 239, 255, 1);
-  static const Color cardBlue = Color.fromRGBO(38, 49, 100, 0.9);
-  static const Color textWhite = Color(0xFFFFFFFF);
-  static const Color textGrey = Color(0xFFC5C6C7);
-}
+import 'package:pawfect_care/widgets/custom_app_bar.dart';
+import 'package:pawfect_care/widgets/custom_card.dart';
+import 'package:pawfect_care/widgets/slide_fade_in.dart';
+
+import 'package:pawfect_care/pages/vet/all_patients_page.dart';
+import 'package:pawfect_care/pages/vet/add_appointment_page.dart';
+import 'package:pawfect_care/pages/vet/all_appointments_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  static final List<Map<String, dynamic>> quickActions = [
-    {'title': 'Add Patient', 'icon': Icons.person_add},
-    {'title': 'New Appointment', 'icon': Icons.add_box},
-    {'title': 'Reports', 'icon': Icons.bar_chart},
-  ];
-
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-    final userId = user!.uid;
+
+    if (user == null) {
+      return const Center(child: Text("Please log in first."));
+    }
+
+    final userId = user.uid;
     final userName = user.displayName ?? 'User';
 
     final appointmentsRef = FirebaseFirestore.instance.collection(
@@ -37,511 +30,331 @@ class HomePage extends StatelessWidget {
     );
     final patientsRef = FirebaseFirestore.instance.collection('patients');
 
-    return Scaffold(
-      backgroundColor: BrandColors.darkBackground,
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            // 👋 Welcome
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 24),
-              child: Text(
-                "Welcome back, Dr. $userName 👋",
-                style: const TextStyle(
-                  color: BrandColors.accentGreen,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(height: 20),
+    return Column(
+      children: [
+        _buildWelcomeBanner(context, userName),
 
-            // 📊 Summary Cards
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: StreamBuilder<QuerySnapshot>(
-                    stream: appointmentsRef
-                        .where('vetId', isEqualTo: userId)
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      int count = snapshot.hasData
-                          ? snapshot.data!.docs.length
-                          : 0;
-                      return _summaryCard(
-                        context,
-                        'Appointments',
-                        count,
-                        Icons.calendar_today,
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: StreamBuilder<QuerySnapshot>(
-                    stream: patientsRef.snapshots(),
-                    builder: (context, snapshot) {
-                      int count = snapshot.hasData
-                          ? snapshot.data!.docs.length
-                          : 0;
-                      return _summaryCard(
-                        context,
-                        'Patients',
-                        count,
-                        Icons.pets,
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-
-            // 📅 Appointments for this vet (date filter removed)
-            StreamBuilder<QuerySnapshot>(
-              stream: appointmentsRef
-                  .where('vetId', isEqualTo: userId) // ✅ sirf vetId filter
-                  .orderBy('date') // optional: order by date
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return _emptyCard("No appointments found.");
-                }
-
-                final docs = snapshot.data!.docs;
-
-                return Column(
-                  children: docs.map((doc) {
-                    final data = doc.data() as Map<String, dynamic>;
-
-                    // Ensure date is Timestamp
-                    Timestamp? ts = data['date'] is Timestamp
-                        ? data['date'] as Timestamp
-                        : null;
-                    final date = ts?.toDate();
-
-                    // ✅ Format date-time nicely
-                    final dateStr = date != null
-                        ? DateFormat('dd MMM yyyy, hh:mm a').format(date)
-                        : "Unknown date";
-
-                    return TweenAnimationBuilder(
-                      tween: Tween<double>(begin: 0, end: 1),
-                      duration: const Duration(milliseconds: 700),
-                      builder: (context, double value, child) {
-                        return Transform.translate(
-                          offset: Offset(0, 50 * (1 - value)),
-                          child: Opacity(
-                            opacity: value,
-                            child: Dismissible(
-                              key: Key(doc.id),
-                              direction: DismissDirection.endToStart,
-                              background: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 20,
-                                ),
-                                alignment: Alignment.centerRight,
-                                decoration: BoxDecoration(
-                                  color: Colors.redAccent,
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                                child: const Icon(
-                                  Icons.delete,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              onDismissed: (_) => doc.reference.delete(),
-                              child: Container(
-                                margin: const EdgeInsets.symmetric(vertical: 6),
-                                decoration: BoxDecoration(
-                                  color: BrandColors.cardBlue,
-                                  borderRadius: BorderRadius.circular(14),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.3),
-                                      blurRadius: 6,
-                                      offset: const Offset(0, 3),
-                                    ),
-                                  ],
-                                ),
-                                child: ListTile(
-                                  leading: CircleAvatar(
-                                    backgroundColor: BrandColors.accentGreen
-                                        .withOpacity(0.25),
-                                    child: const Icon(
-                                      Icons.pets,
-                                      color: BrandColors.textWhite,
-                                    ),
-                                  ),
-                                  title: Text(
-                                    "${data['petName'] ?? 'Unknown Pet'} - ${data['type'] ?? 'General'}",
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: BrandColors.textWhite,
-                                    ),
-                                  ),
-                                  subtitle: Text(
-                                    "${data['ownerName'] ?? 'Unknown Owner'} • $dateStr",
-                                    style: const TextStyle(
-                                      color: BrandColors.textGrey,
-                                    ),
-                                  ),
-                                  trailing: const Icon(
-                                    Icons.arrow_forward_ios,
-                                    size: 16,
-                                    color: BrandColors.textGrey,
-                                  ),
-                                  onTap: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          const AppointmentsDetailPage(),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  }).toList(),
-                );
-              },
-            ),
-
-            const SizedBox(height: 16),
-
-            // ⚡ Quick Actions
-            Column(
-              children: [
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    int crossAxisCount = 2;
-                    double width = constraints.maxWidth;
-                    if (width > 1200)
-                      crossAxisCount = 4;
-                    else if (width > 800)
-                      crossAxisCount = 3;
-
-                    final otherActions = quickActions
-                        .where((a) => a['title'] != 'Reports')
-                        .toList();
-
-                    return GridView.count(
-                      crossAxisCount: crossAxisCount,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      crossAxisSpacing: 14,
-                      mainAxisSpacing: 14,
-                      childAspectRatio: 1.1,
-                      children: otherActions.map((action) {
-                        return MouseRegion(
-                          cursor: SystemMouseCursors.click,
-                          child: GestureDetector(
-                            onTap: () {
-                              switch (action['title']) {
-                                case 'Add Patient':
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => const AddPatientPage(),
-                                    ),
-                                  );
-                                  break;
-                                case 'New Appointment':
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          const NewAppointmentPage(),
-                                    ),
-                                  );
-                                  break;
-                              }
-                            },
-                            child: _quickActionCard(
-                              action['title'],
-                              action['icon'],
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    );
-                  },
-                ),
-
-                const SizedBox(height: 14),
-
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const ReportsPage()),
-                    );
-                  },
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 120,
-                    child: _quickActionCard('Reports', Icons.bar_chart),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: const HomePageFloatingActionButtonExpanded(),
-    );
-  }
-
-  Widget _summaryCard(
-    BuildContext context,
-    String title,
-    int count,
-    IconData icon,
-  ) {
-    return TweenAnimationBuilder(
-      tween: Tween<double>(begin: 0, end: 1),
-      duration: const Duration(milliseconds: 800),
-      builder: (context, double value, child) {
-        return Transform.scale(
-          scale: value,
-          child: InkWell(
-            borderRadius: const BorderRadius.all(Radius.circular(16)),
-            onTap: () {
-              if (title == "Appointments") {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const AppointmentsDetailPage(),
-                  ),
-                );
-              } else if (title == "Patients") {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const PatientsDetailPage()),
-                );
-              }
-            },
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [BrandColors.primaryBlue, BrandColors.cardBlue],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black45,
-                    blurRadius: 10,
-                    offset: Offset(0, 6),
-                  ),
-                ],
-              ),
-              child: Column(
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              // Summary cards row with animation
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(icon, size: 30, color: Colors.white),
-                  const SizedBox(height: 12),
-                  Text(
-                    '$count',
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                  Expanded(
+                    child: SlideFadeIn(
+                      beginOffset: const Offset(-0.3, 0),
+                      delayMs: 100,
+                      child: StreamBuilder<QuerySnapshot>(
+                        stream: appointmentsRef
+                            .where('vetId', isEqualTo: userId)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CustomCard(
+                              type: CustomCardType.summary,
+                              title: "Appointments",
+                              count: 0,
+                              icon: Icons.calendar_today,
+                            );
+                          }
+                          final count = snapshot.hasData
+                              ? snapshot.data!.docs.length
+                              : 0;
+                          return CustomCard(
+                            type: CustomCardType.summary,
+                            title: "Appointments",
+                            count: count,
+                            icon: Icons.calendar_today,
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const AllAppointmentsPage(),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 6),
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: BrandColors.textGrey,
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: SlideFadeIn(
+                      beginOffset: const Offset(0.3, 0),
+                      delayMs: 200,
+                      child: StreamBuilder<QuerySnapshot>(
+                        stream: patientsRef.snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CustomCard(
+                              type: CustomCardType.summary,
+                              title: "Patients",
+                              count: 0,
+                              icon: Icons.pets,
+                            );
+                          }
+                          final count = snapshot.hasData
+                              ? snapshot.data!.docs.length
+                              : 0;
+                          return CustomCard(
+                            type: CustomCardType.summary,
+                            title: "Patients",
+                            count: count,
+                            icon: Icons.pets,
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const AllPatientsPage(),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ],
               ),
-            ),
+              const SizedBox(height: 16),
+
+              // Appointments list with stagger animation
+              _buildAppointmentsList(context, appointmentsRef, userId),
+              const SizedBox(height: 16),
+
+              // Quick actions with pop animation
+              Column(
+                children: [
+                  SlideFadeIn(
+                    beginOffset: const Offset(0, 0.3),
+                    delayMs: 300,
+                    child: GestureDetector(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const AddAppointmentPage(),
+                        ),
+                      ),
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: 120,
+                        child: const CustomCard(
+                          type: CustomCardType.quickAction,
+                          title: 'New Appointment',
+                          icon: Icons.add_box,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        );
-      },
+        ),
+      ],
     );
   }
 
-  Widget _quickActionCard(String title, IconData icon) {
+  Widget _buildWelcomeBanner(BuildContext context, String userName) {
     return TweenAnimationBuilder(
       tween: Tween<double>(begin: 0, end: 1),
-      duration: const Duration(milliseconds: 900),
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.elasticOut,
       builder: (context, double value, child) {
+        final safeValue = value.clamp(0.0, 1.0);
         return Transform.scale(
           scale: value,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [BrandColors.primaryBlue, BrandColors.cardBlue],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: const BorderRadius.all(Radius.circular(16)),
-              boxShadow: [
-                BoxShadow(
-                  color: BrandColors.accentGreen.withOpacity(0.3),
-                  blurRadius: 8,
-                  spreadRadius: 1,
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(icon, size: 36, color: BrandColors.accentGreen),
-                const SizedBox(height: 10),
-                Text(
-                  title,
-                  style: const TextStyle(
-                    color: BrandColors.textWhite,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
+          child: Transform.translate(
+            offset: Offset(0, (1 - value) * -30),
+            child: Opacity(opacity: safeValue, child: child),
           ),
+        );
+      },
+      child: CustomAppBar("Welcome, Dr. $userName."),
+    );
+  }
+
+  Widget _buildAppointmentsList(
+    BuildContext context,
+    CollectionReference appointmentsRef,
+    String userId,
+  ) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: appointmentsRef
+          .where('vetId', isEqualTo: userId)
+          .orderBy('date')
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return const CustomCard(
+            title: 'No appointments found.',
+            type: CustomCardType.empty,
+          );
+        }
+
+        final docs = snapshot.data!.docs;
+
+        return Column(
+          children: docs.asMap().entries.map((entry) {
+            final i = entry.key;
+            final doc = entry.value;
+            final data = doc.data() as Map<String, dynamic>;
+            final date = (data['date'] as Timestamp?)?.toDate();
+            final dateStr = date != null
+                ? DateFormat('dd MMM yyyy, hh:mm a').format(date)
+                : "Unknown date";
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Dismissible(
+                key: Key(doc.id),
+                direction: DismissDirection.endToStart,
+                background: _deleteBackground(context),
+                confirmDismiss: (_) async {
+                  await doc.reference.delete();
+                  return true;
+                },
+                child: StaggeredTile(
+                  index: i,
+                  child: _appointmentTile(context, data, dateStr),
+                ),
+              ),
+            );
+          }).toList(),
         );
       },
     );
   }
 
-  Widget _emptyCard(String text) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [BrandColors.primaryBlue, BrandColors.cardBlue],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+  Widget _appointmentTile(
+    BuildContext context,
+    Map<String, dynamic> data,
+    String dateStr,
+  ) {
+    return Container(
+      decoration: _tileDecoration(context),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: Theme.of(
+            context,
+          ).colorScheme.secondary.withAlpha(150),
+          child: Icon(
+            Icons.pets,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
-          borderRadius: BorderRadius.circular(16),
         ),
-        padding: const EdgeInsets.all(20),
-        child: Center(
-          child: Text(
-            text,
-            style: const TextStyle(
-              color: BrandColors.textWhite,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
+        title: Text(
+          "${data['petName'] ?? 'Unknown Pet'} - ${data['type'] ?? 'General'}",
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
+        ),
+        subtitle: Text(
+          "${data['ownerName'] ?? 'Unknown Owner'} • $dateStr",
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onPrimary.withAlpha(150),
+          ),
+        ),
+        trailing: Icon(
+          Icons.arrow_forward_ios,
+          size: 16,
+          color: Theme.of(context).colorScheme.onPrimary.withAlpha(150),
+        ),
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const AllAppointmentsPage()),
         ),
       ),
+    );
+  }
+
+  BoxDecoration _tileDecoration(BuildContext context) {
+    return BoxDecoration(
+      gradient: LinearGradient(
+        colors: [
+          Theme.of(context).colorScheme.primary,
+          Theme.of(context).colorScheme.primary.withAlpha(200),
+        ],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: const [
+        BoxShadow(color: Colors.black45, blurRadius: 10, offset: Offset(0, 6)),
+      ],
+    );
+  }
+
+  Widget _deleteBackground(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      alignment: Alignment.centerRight,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.error,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Icon(Icons.delete, color: Theme.of(context).colorScheme.onError),
     );
   }
 }
 
-// Floating Action Button
-class HomePageFloatingActionButtonExpanded extends StatefulWidget {
-  const HomePageFloatingActionButtonExpanded({super.key});
+class StaggeredTile extends StatefulWidget {
+  final Widget child;
+  final int index;
+  final int baseDelayMs;
+  final Duration duration;
+
+  const StaggeredTile({
+    super.key,
+    required this.child,
+    required this.index,
+    this.baseDelayMs = 100,
+    this.duration = const Duration(milliseconds: 400),
+  });
 
   @override
-  State<HomePageFloatingActionButtonExpanded> createState() =>
-      _HomePageFloatingActionButtonExpandedState();
+  StaggeredTileState createState() => StaggeredTileState();
 }
 
-class _HomePageFloatingActionButtonExpandedState
-    extends State<HomePageFloatingActionButtonExpanded>
+class StaggeredTileState extends State<StaggeredTile>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  bool isOpen = false;
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
-    );
-  }
+    _controller = AnimationController(vsync: this, duration: widget.duration);
+    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
 
-  void toggleMenu() {
-    if (isOpen)
-      _controller.reverse();
-    else
-      _controller.forward();
-    setState(() => isOpen = !isOpen);
+    Future.delayed(
+      Duration(milliseconds: widget.index * widget.baseDelayMs),
+      () {
+        if (mounted) _controller.forward();
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 56,
-      height: isOpen ? 200 : 56,
-      child: Stack(
-        alignment: Alignment.bottomRight,
-        clipBehavior: Clip.none,
-        children: [
-          Positioned(
-            bottom: 70,
-            right: 0,
-            child: ScaleTransition(
-              scale: _controller,
-              child: FloatingActionButton(
-                heroTag: "home_add_patient_fab",
-                mini: true,
-                backgroundColor: BrandColors.accentGreen,
-                child: const Icon(
-                  Icons.person_add,
-                  color: BrandColors.textWhite,
-                ),
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const AddPatientPage()),
-                ),
-              ),
-            ),
+    return AnimatedBuilder(
+      animation: _animation,
+      child: widget.child,
+      builder: (context, child) {
+        final v = _animation.value.clamp(0.0, 1.0);
+        return Opacity(
+          opacity: v,
+          child: Transform.translate(
+            offset: Offset(0, (1 - v) * 20),
+            child: child,
           ),
-          Positioned(
-            bottom: 130,
-            right: 0,
-            child: ScaleTransition(
-              scale: _controller,
-              child: FloatingActionButton(
-                heroTag: "home_new_appointment_fab",
-                mini: true,
-                backgroundColor: BrandColors.accentGreen,
-                child: const Icon(Icons.add_box, color: BrandColors.textWhite),
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const NewAppointmentPage()),
-                ),
-              ),
-            ),
-          ),
-          FloatingActionButton(
-            heroTag: "home_main_fab",
-            backgroundColor: BrandColors.accentGreen,
-            onPressed: toggleMenu,
-            child: AnimatedIcon(
-              icon: AnimatedIcons.menu_close,
-              progress: _controller,
-              color: BrandColors.textWhite,
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -552,13 +365,31 @@ class _HomePageFloatingActionButtonExpandedState
   }
 }
 
+class HomePageFloatingActionButton extends StatelessWidget {
+  const HomePageFloatingActionButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      onPressed: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const AddAppointmentPage()),
+      ),
+      child: Icon(
+        Icons.add_box,
+        color: Theme.of(context).colorScheme.onSecondary,
+      ),
+    );
+  }
+}
+
 class HomePageNavigationDestination extends StatelessWidget {
   const HomePageNavigationDestination({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return NavigationDestination(
-      icon: const Icon(Icons.home_outlined),
+    return const NavigationDestination(
+      icon: Icon(Icons.home_outlined),
       selectedIcon: Icon(Icons.home_rounded),
       label: "Home",
     );

@@ -147,118 +147,120 @@ class _BugReportPageState extends State<BugReportPage> {
           showBack: _isSubmitting ? false : true,
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              const SizedBox(height: 24),
-              TextFormField(
-                controller: _titleController,
-                decoration: const InputDecoration(
-                  labelText: 'Bug Title',
-                  border: OutlineInputBorder(),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              children: [
+                const SizedBox(height: 24),
+                TextFormField(
+                  controller: _titleController,
+                  decoration: const InputDecoration(
+                    labelText: 'Bug Title',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a bug title';
+                    }
+                    return null;
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a bug title';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 24),
-              TextFormField(
-                controller: _descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Bug Description',
-                  border: OutlineInputBorder(),
+                const SizedBox(height: 24),
+                TextFormField(
+                  controller: _descriptionController,
+                  decoration: const InputDecoration(
+                    labelText: 'Bug Description',
+                    border: OutlineInputBorder(),
+                  ),
+                  maxLines: 6,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please describe the bug';
+                    }
+                    return null;
+                  },
                 ),
-                maxLines: 6,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please describe the bug';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 24),
-              _buildToggleGroup(
-                label: 'Severity',
-                options: _severities,
-                selectedValue: _selectedSeverity,
-                onSelected: (val) => setState(() => _selectedSeverity = val),
-              ),
-              const SizedBox(height: 24),
-              _buildToggleGroup(
-                label: 'Category',
-                options: _categories,
-                selectedValue: _selectedCategory,
-                onSelected: (val) => setState(() => _selectedCategory = val),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'Attachments (max 3 images):',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: 16),
-              Wrap(
-                spacing: 16,
-                runSpacing: 16,
-                children: [
-                  ..._images.asMap().entries.map(
-                    (entry) => Stack(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.memory(
-                            entry.value,
-                            height: 100,
-                            width: 100,
-                            fit: BoxFit.cover,
+                const SizedBox(height: 24),
+                _buildToggleGroup(
+                  label: 'Severity',
+                  options: _severities,
+                  selectedValue: _selectedSeverity,
+                  onSelected: (val) => setState(() => _selectedSeverity = val),
+                ),
+                const SizedBox(height: 24),
+                _buildToggleGroup(
+                  label: 'Category',
+                  options: _categories,
+                  selectedValue: _selectedCategory,
+                  onSelected: (val) => setState(() => _selectedCategory = val),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  'Attachments (max 3 images):',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 16),
+                Wrap(
+                  spacing: 16,
+                  runSpacing: 16,
+                  children: [
+                    ..._images.asMap().entries.map(
+                      (entry) => Stack(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.memory(
+                              entry.value,
+                              height: 100,
+                              width: 100,
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                        ),
-                        Positioned(
-                          top: 0,
-                          right: 0,
-                          child: GestureDetector(
-                            onTap: () =>
-                                setState(() => _images.removeAt(entry.key)),
-                            child: Container(
-                              color: Colors.black54,
-                              child: const Icon(
-                                Icons.close,
-                                color: Colors.white,
-                                size: 20,
+                          Positioned(
+                            top: 0,
+                            right: 0,
+                            child: GestureDetector(
+                              onTap: () =>
+                                  setState(() => _images.removeAt(entry.key)),
+                              child: Container(
+                                color: Colors.black54,
+                                child: const Icon(
+                                  Icons.close,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (_images.length < 3)
-                    GestureDetector(
-                      onTap: _pickImage,
-                      child: Container(
-                        height: 100,
-                        width: 100,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.grey),
-                        ),
-                        child: const Icon(
-                          Icons.add_a_photo,
-                          size: 32,
-                          color: Colors.grey,
-                        ),
+                        ],
                       ),
                     ),
-                ],
-              ),
-              const SizedBox(height: 24),
-            ],
+                    if (_images.length < 3)
+                      GestureDetector(
+                        onTap: _pickImage,
+                        child: Container(
+                          height: 100,
+                          width: 100,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.grey),
+                          ),
+                          child: const Icon(
+                            Icons.add_a_photo,
+                            size: 32,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+              ],
+            ),
           ),
         ),
       ),

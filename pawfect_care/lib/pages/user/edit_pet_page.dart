@@ -159,85 +159,90 @@ class _EditPetPageState extends State<EditPetPage> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(120),
-        child: CustomAppBar("Edit Pet", showBack: _isSubmitting ? false : true),
+        child: CustomAppBar("Edit Pet", showBack: !_isSubmitting),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              Center(
-                child: Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: 64,
-                      backgroundColor: Colors.grey[200],
-                      foregroundImage: _petImage,
-                      child: const Icon(
-                        Icons.pets,
-                        size: 64,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: IconButton(
-                        icon: const Icon(Icons.camera_alt, color: Colors.white),
-                        onPressed: _pickImage,
-                        style: IconButton.styleFrom(
-                          backgroundColor: Theme.of(context).primaryColor,
-                          shape: const CircleBorder(),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              children: [
+                Center(
+                  child: Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 64,
+                        backgroundColor: Colors.grey[200],
+                        foregroundImage: _petImage,
+                        child: const Icon(
+                          Icons.pets,
+                          size: 64,
+                          color: Colors.grey,
                         ),
                       ),
-                    ),
-                  ],
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                          ),
+                          onPressed: _pickImage,
+                          style: IconButton.styleFrom(
+                            backgroundColor: Theme.of(context).primaryColor,
+                            shape: const CircleBorder(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 32),
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Pet Name',
-                  border: OutlineInputBorder(),
+                const SizedBox(height: 32),
+                TextFormField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Pet Name',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a name for your pet';
+                    }
+                    return null;
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a name for your pet';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 24.0),
-              TextFormField(
-                controller: _speciesController,
-                decoration: const InputDecoration(
-                  labelText: 'Species',
-                  border: OutlineInputBorder(),
+                const SizedBox(height: 24.0),
+                TextFormField(
+                  controller: _speciesController,
+                  decoration: const InputDecoration(
+                    labelText: 'Species',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter the pet\'s species';
+                    }
+                    return null;
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the pet\'s species';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 24.0),
-              TextFormField(
-                controller: _breedController,
-                decoration: const InputDecoration(
-                  labelText: 'Breed',
-                  border: OutlineInputBorder(),
+                const SizedBox(height: 24.0),
+                TextFormField(
+                  controller: _breedController,
+                  decoration: const InputDecoration(
+                    labelText: 'Breed',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter the pet\'s breed';
+                    }
+                    return null;
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the pet\'s breed';
-                  }
-                  return null;
-                },
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

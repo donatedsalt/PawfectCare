@@ -1,191 +1,107 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:pawfect_care/utils/context_extension.dart';
+
+import 'package:pawfect_care/widgets/custom_app_bar.dart';
+import 'package:pawfect_care/widgets/account_profile.dart';
 
 import 'package:pawfect_care/pages/common/bug_report_page.dart';
+import 'package:pawfect_care/pages/common/profile_page.dart';
 
-import 'package:pawfect_care/pages/store/profile_page.dart';
-import 'package:pawfect_care/pages/store/home_page.dart';
+class MorePageAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const MorePageAppBar({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(title: const Text('More'));
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}
 
 class MorePage extends StatelessWidget {
   const MorePage({super.key});
-
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
 
-    return Scaffold(
-      backgroundColor: BrandColors.darkBackground,
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          // 🌈 Gradient Header
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 28),
-            margin: const EdgeInsets.only(bottom: 20),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [BrandColors.accentGreen, BrandColors.primaryBlue],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black54,
-                  blurRadius: 12,
-                  offset: Offset(0, 6),
-                ),
-              ],
-            ),
-            child: const Center(
-              child: Text(
-                "Store Profile & Settings",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: BrandColors.textWhite,
-                ),
-              ),
-            ),
-          ),
+    return Column(
+      children: [
+        CustomAppBar("More Options"),
 
-          // Profile Card
-          Card(
-            margin: EdgeInsets.all(0),
-            color: BrandColors.cardBlue,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            elevation: 4,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 35,
-                    backgroundImage: user?.photoURL != null
-                        ? NetworkImage(user!.photoURL!)
-                        : null,
-                    child: user?.photoURL == null
-                        ? const Icon(
-                            Icons.person,
-                            size: 40,
-                            color: BrandColors.textWhite,
-                          )
-                        : null,
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          user?.displayName ?? "No Name",
-                          style: const TextStyle(
-                            color: BrandColors.textWhite,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          user?.email ?? "No Email",
-                          style: const TextStyle(color: BrandColors.textGrey),
-                        ),
-                      ],
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              // welcome user
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 64),
+                child: Column(
+                  children: [
+                    AccountProfile(
+                      user: user?.displayName,
+                      imageURL: user?.photoURL,
                     ),
+                    SizedBox(height: 16),
+                    Text(
+                      "Welcome, ${user?.displayName ?? 'User'}!",
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 24),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Settings header and list of settings
+              Column(
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.person),
+                    title: const Text("Profile"),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ProfilePage(),
+                        ),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.notifications),
+                    title: const Text("Notifications"),
+                    onTap: () {},
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.help),
+                    title: const Text("Help & Support"),
+                    onTap: () {},
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.bug_report),
+                    title: const Text("Report a Bug"),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const BugReportPage(),
+                        ),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.logout),
+                    title: const Text("Sign Out"),
+                    onTap: () {
+                      FirebaseAuth.instance.signOut();
+                    },
                   ),
                 ],
               ),
-            ),
+            ],
           ),
-
-          const SizedBox(height: 24),
-
-          // Settings Section
-          _buildSectionTitle("Settings"),
-          _buildOptionCard(
-            icon: Icons.person,
-            title: "Profile",
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const ProfilePage()),
-              );
-            },
-          ),
-          _buildOptionCard(
-            icon: Icons.notifications,
-            title: "Notifications",
-            onTap: () {},
-          ),
-          _buildOptionCard(
-            icon: Icons.help,
-            title: "Help & Support",
-            onTap: () {},
-          ),
-          _buildOptionCard(
-            icon: Icons.bug_report,
-            title: "Report a Bug",
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const BugReportPage()),
-              );
-            },
-          ),
-          _buildOptionCard(
-            icon: Icons.logout,
-            title: "Logout",
-            iconColor: Colors.red,
-            textColor: Colors.red,
-            onTap: () async {
-              await FirebaseAuth.instance.signOut();
-            },
-          ),
-        ],
-      ),
-      floatingActionButton: const MorePageFloatingActionButton(),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      child: Text(
-        title,
-        style: const TextStyle(
-          color: BrandColors.accentGreen,
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
         ),
-      ),
-    );
-  }
-
-  Widget _buildOptionCard({
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-    Color iconColor = BrandColors.accentGreen,
-    Color textColor = BrandColors.textWhite,
-  }) {
-    return Card(
-      color: BrandColors.cardBlue,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      margin: const EdgeInsets.symmetric(vertical: 6),
-      child: ListTile(
-        leading: Icon(icon, color: iconColor),
-        title: Text(title, style: TextStyle(color: textColor)),
-        trailing: const Icon(
-          Icons.arrow_forward_ios,
-          color: BrandColors.textGrey,
-          size: 16,
-        ),
-        onTap: onTap,
-      ),
+      ],
     );
   }
 }
@@ -195,43 +111,7 @@ class MorePageFloatingActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FloatingActionButton(
-      backgroundColor: BrandColors.fabGreen,
-      child: const Icon(Icons.edit),
-      onPressed: () {
-        showModalBottomSheet(
-          context: context,
-          backgroundColor: BrandColors.cardBlue,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-          ),
-          builder: (context) {
-            return Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ListTile(
-                    leading: const Icon(
-                      Icons.person,
-                      color: BrandColors.textWhite,
-                    ),
-                    title: const Text(
-                      "Edit Store Profile",
-                      style: TextStyle(color: BrandColors.textWhite),
-                    ),
-                    onTap: () {
-                      Navigator.pop(context);
-                      context.showSnackBar("Edit Store Profile clicked");
-                    },
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
+    return const SizedBox();
   }
 }
 
@@ -243,7 +123,7 @@ class MorePageNavigationDestination extends StatelessWidget {
     return NavigationDestination(
       icon: const Icon(Icons.more_horiz),
       selectedIcon: Icon(Icons.more),
-      label: "More",
+      label: 'More',
     );
   }
 }

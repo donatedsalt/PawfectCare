@@ -25,14 +25,6 @@ class _ShelterPageControllerState extends State<ShelterPageController>
     MorePage(),
   ];
 
-  final List<PreferredSizeWidget> _appBars = const [
-    HomePageAppBar(),
-    PetsPageAppBar(),
-    BlogsPageAppBar(),
-    ContactsPageAppBar(),
-    MorePageAppBar(),
-  ];
-
   final List<Widget> _floatingActionButtons = const [
     HomePageFloatingActionButton(),
     PetsPageFloatingActionButton(),
@@ -67,7 +59,6 @@ class _ShelterPageControllerState extends State<ShelterPageController>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appBars[_tabController.index],
       body: SafeArea(
         child: TabBarView(controller: _tabController, children: _pages),
       ),

@@ -1,22 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:pawfect_care/widgets/custom_app_bar.dart';
+import 'package:table_calendar/table_calendar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// 🎨 Brand Colors
-class BrandColors {
-  static const Color primaryBlue = Color(0xFF0D1C5A);
-  static const Color accentGreen = Color(0xFF32C48D);
-  static const Color darkBackground = Color.fromARGB(255, 196, 255, 232);
-  static const Color cardBlue = Color(0xFF1B2A68);
-  static const Color textWhite = Color(0xFFFFFFFF);
-  static const Color textGrey = Color(0xFFC5C6C7);
-}
-
-/// -----------------------------
-/// Appointments Page
-/// -----------------------------
 class AppointmentsPage extends StatefulWidget {
   const AppointmentsPage({super.key});
 
@@ -41,16 +29,23 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
     _fetchMonthAppointments(_focusedDay);
   }
 
-  /// 🔹 Fetch appointments for the visible month
   Future<void> _fetchMonthAppointments(DateTime focusedDay) async {
     try {
+      if (!mounted) return;
       setState(() {
         _hasError = false;
         _errorMessage = '';
       });
 
       final firstDay = DateTime(focusedDay.year, focusedDay.month, 1);
-      final lastDay = DateTime(focusedDay.year, focusedDay.month + 1, 0, 23, 59, 59);
+      final lastDay = DateTime(
+        focusedDay.year,
+        focusedDay.month + 1,
+        0,
+        23,
+        59,
+        59,
+      );
 
       final snapshot = await FirebaseFirestore.instance
           .collection('appointments')
@@ -58,6 +53,8 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
           .where('date', isGreaterThanOrEqualTo: firstDay)
           .where('date', isLessThanOrEqualTo: lastDay)
           .get();
+
+      if (!mounted) return;
 
       Map<DateTime, List<Map<String, dynamic>>> monthData = {};
 
@@ -74,6 +71,7 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
       });
     } catch (e) {
       debugPrint('Error fetching month appointments: $e');
+      if (!mounted) return;
       setState(() {
         _hasError = true;
         _errorMessage =
@@ -82,33 +80,45 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
     }
   }
 
-  /// 🔹 Delete Appointment
   Future<void> _deleteAppointment(String docId) async {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text("Delete Appointment"),
-        content: const Text("Are you sure you want to delete this appointment?"),
+        content: const Text(
+          "Are you sure you want to delete this appointment?",
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Cancel")),
-          ElevatedButton(onPressed: () => Navigator.pop(context, true), child: const Text("Delete")),
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text("Cancel"),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text("Delete"),
+          ),
         ],
       ),
     );
 
     if (confirm == true) {
-      await FirebaseFirestore.instance.collection('appointments').doc(docId).delete();
+      await FirebaseFirestore.instance
+          .collection('appointments')
+          .doc(docId)
+          .delete();
       _fetchMonthAppointments(_focusedDay);
     }
   }
 
-  /// 🔹 Edit Appointment Form
   void _showEditAppointmentDialog(Map<String, dynamic> editData) {
-    final _formKey = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
     String petName = editData['petName'];
     String ownerName = editData['ownerName'];
     DateTime appointmentDate = (editData['date'] as Timestamp).toDate();
-    TimeOfDay appointmentTime = TimeOfDay(hour: appointmentDate.hour, minute: appointmentDate.minute);
+    TimeOfDay appointmentTime = TimeOfDay(
+      hour: appointmentDate.hour,
+      minute: appointmentDate.minute,
+    );
     String? petId = editData['petId'];
     String? userId = editData['userId'];
     String vetId = currentVetId;
@@ -119,26 +129,32 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
         title: const Text("Edit Appointment"),
         content: StatefulBuilder(
           builder: (context, setStateDialog) => Form(
-            key: _formKey,
+            key: formKey,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextFormField(
                   initialValue: petName,
                   decoration: const InputDecoration(labelText: "Pet Name"),
-                  validator: (val) => val == null || val.isEmpty ? "Required" : null,
+                  validator: (val) =>
+                      val == null || val.isEmpty ? "Required" : null,
                   onSaved: (val) => petName = val!,
                 ),
                 TextFormField(
                   initialValue: ownerName,
                   decoration: const InputDecoration(labelText: "Owner Name"),
-                  validator: (val) => val == null || val.isEmpty ? "Required" : null,
+                  validator: (val) =>
+                      val == null || val.isEmpty ? "Required" : null,
                   onSaved: (val) => ownerName = val!,
                 ),
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Expanded(child: Text("Date: ${DateFormat('MMM dd, yyyy').format(appointmentDate)}")),
+                    Expanded(
+                      child: Text(
+                        "Date: ${DateFormat('MMM dd, yyyy').format(appointmentDate)}",
+                      ),
+                    ),
                     IconButton(
                       icon: const Icon(Icons.calendar_today),
                       onPressed: () async {
@@ -148,14 +164,18 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
                           firstDate: DateTime.now(),
                           lastDate: DateTime(2030),
                         );
-                        if (picked != null) setStateDialog(() => appointmentDate = picked);
+                        if (picked != null) {
+                          setStateDialog(() => appointmentDate = picked);
+                        }
                       },
                     ),
                   ],
                 ),
                 Row(
                   children: [
-                    Expanded(child: Text("Time: ${appointmentTime.format(context)}")),
+                    Expanded(
+                      child: Text("Time: ${appointmentTime.format(context)}"),
+                    ),
                     IconButton(
                       icon: const Icon(Icons.access_time),
                       onPressed: () async {
@@ -163,7 +183,9 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
                           context: context,
                           initialTime: appointmentTime,
                         );
-                        if (picked != null) setStateDialog(() => appointmentTime = picked);
+                        if (picked != null) {
+                          setStateDialog(() => appointmentTime = picked);
+                        }
                       },
                     ),
                   ],
@@ -173,11 +195,14 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
           ElevatedButton(
             onPressed: () async {
-              if (_formKey.currentState!.validate()) {
-                _formKey.currentState!.save();
+              if (formKey.currentState!.validate()) {
+                formKey.currentState!.save();
                 final appointmentDateTime = DateTime(
                   appointmentDate.year,
                   appointmentDate.month,
@@ -190,15 +215,15 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
                     .collection('appointments')
                     .doc(editData['docId'])
                     .update({
-                  'petName': petName,
-                  'ownerName': ownerName,
-                  'date': appointmentDateTime,
-                  'vetId': vetId,
-                  'userId': userId,
-                  'petId': petId,
-                });
+                      'petName': petName,
+                      'ownerName': ownerName,
+                      'date': appointmentDateTime,
+                      'vetId': vetId,
+                      'userId': userId,
+                      'petId': petId,
+                    });
 
-                Navigator.pop(context);
+                if (context.mounted) Navigator.pop(context);
                 _fetchMonthAppointments(_focusedDay);
               }
             },
@@ -209,18 +234,29 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
     );
   }
 
-  /// 🔹 Build Appointments List
   Widget _buildAppointmentsList(DateTime day) {
     if (_hasError) {
       return Center(
-        child: Text(_errorMessage, style: const TextStyle(color: BrandColors.textWhite), textAlign: TextAlign.center),
+        child: Text(
+          _errorMessage,
+          style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+          textAlign: TextAlign.center,
+        ),
       );
     }
 
-    final appointments = _monthAppointments[DateTime(day.year, day.month, day.day)] ?? [];
+    final appointments =
+        _monthAppointments[DateTime(day.year, day.month, day.day)] ?? [];
     if (appointments.isEmpty) {
-      return const Center(
-        child: Text("No appointments for this day", style: TextStyle(color: BrandColors.accentGreen)),
+      return Center(
+        child: Text(
+          "No appointments for this day",
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       );
     }
 
@@ -230,22 +266,34 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
         final data = appointments[index];
         final date = (data['date'] as Timestamp).toDate();
         return Card(
-          color: BrandColors.cardBlue,
+          color: Theme.of(context).colorScheme.primary,
           margin: const EdgeInsets.symmetric(vertical: 4),
           child: ListTile(
-            title: Text("${data['petName']} - ${data['ownerName']}",
-                style: const TextStyle(color: BrandColors.textWhite)),
-            subtitle: Text(DateFormat('MMM dd, yyyy hh:mm a').format(date),
-                style: const TextStyle(color: BrandColors.textGrey)),
+            title: Text(
+              "${data['petName']} - ${data['ownerName']}",
+              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+            ),
+            subtitle: Text(
+              DateFormat('MMM dd, yyyy hh:mm a').format(date),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onPrimary.withAlpha(150),
+              ),
+            ),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
-                  icon: const Icon(Icons.edit, color: BrandColors.accentGreen),
+                  icon: Icon(
+                    Icons.edit,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
                   onPressed: () => _showEditAppointmentDialog(data),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.redAccent),
+                  icon: Icon(
+                    Icons.delete,
+                    color: Theme.of(context).colorScheme.error,
+                  ),
                   onPressed: () => _deleteAppointment(data['docId']),
                 ),
               ],
@@ -258,93 +306,118 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: BrandColors.darkBackground,
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            // Gradient Header
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 28),
-              margin: const EdgeInsets.only(bottom: 20),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [BrandColors.accentGreen, BrandColors.primaryBlue],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: const [BoxShadow(color: Colors.black54, blurRadius: 12, offset: Offset(0, 6))],
-              ),
-              child: const Center(
-                child: Text("Appointments Calendar",
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: BrandColors.textWhite)),
-              ),
-            ),
+    return Column(
+      children: [
+        CustomAppBar("Appointments Calendar"),
 
-            // Table Calendar
-            TableCalendar(
-              firstDay: DateTime.utc(2023, 1, 1),
-              lastDay: DateTime.utc(2030, 12, 31),
-              focusedDay: _focusedDay,
-              calendarFormat: _calendarFormat,
-              selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-              calendarStyle: CalendarStyle(
-                defaultDecoration: BoxDecoration(color: BrandColors.cardBlue, borderRadius: BorderRadius.circular(8)),
-                weekendDecoration: BoxDecoration(color: BrandColors.cardBlue, borderRadius: BorderRadius.circular(8)),
-                todayDecoration: BoxDecoration(color: BrandColors.accentGreen, shape: BoxShape.circle),
-                selectedDecoration: BoxDecoration(color: BrandColors.primaryBlue, shape: BoxShape.circle),
-                defaultTextStyle: const TextStyle(color: BrandColors.textWhite),
-                weekendTextStyle: const TextStyle(color: BrandColors.textWhite),
-                outsideTextStyle: const TextStyle(color: BrandColors.textGrey),
-              ),
-              headerStyle: HeaderStyle(
-                formatButtonVisible: false,
-                titleCentered: true,
-                titleTextStyle:
-                    const TextStyle(color: BrandColors.accentGreen, fontSize: 18, fontWeight: FontWeight.bold),
-                leftChevronIcon: const Icon(Icons.chevron_left, color: BrandColors.accentGreen),
-                rightChevronIcon: const Icon(Icons.chevron_right, color: BrandColors.accentGreen),
-              ),
-              onDaySelected: (selectedDay, focusedDay) {
-                setState(() {
-                  _selectedDay = selectedDay;
-                  _focusedDay = focusedDay;
-                });
-              },
-              onFormatChanged: (format) => setState(() => _calendarFormat = format),
-              onPageChanged: (focusedDay) {
-                _focusedDay = focusedDay;
-                _fetchMonthAppointments(focusedDay);
-              },
-              calendarBuilders: CalendarBuilders(
-                markerBuilder: (context, day, events) {
-                  final date = DateTime(day.year, day.month, day.day);
-                  if (_monthAppointments.containsKey(date) && _monthAppointments[date]!.isNotEmpty) {
-                    return Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Container(width: 6, height: 6, decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.redAccent)),
-                    );
-                  }
-                  return null;
-                },
-              ),
-            ),
-
-            const SizedBox(height: 10),
-            Expanded(child: _buildAppointmentsList(_selectedDay ?? DateTime.now())),
-          ],
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          child: Divider(),
         ),
-      ),
+
+        // Table Calendar
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: TableCalendar(
+            firstDay: DateTime.utc(2023, 1, 1),
+            lastDay: DateTime.utc(2030, 12, 31),
+            focusedDay: _focusedDay,
+            calendarFormat: _calendarFormat,
+            selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+            calendarStyle: CalendarStyle(
+              defaultDecoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              weekendDecoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              todayDecoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.secondary,
+                shape: BoxShape.circle,
+              ),
+              selectedDecoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+                shape: BoxShape.circle,
+              ),
+              defaultTextStyle: TextStyle(
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
+              weekendTextStyle: TextStyle(
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
+              outsideTextStyle: TextStyle(
+                color: Theme.of(context).colorScheme.onPrimary.withAlpha(150),
+              ),
+            ),
+            headerStyle: HeaderStyle(
+              formatButtonVisible: false,
+              titleCentered: true,
+              titleTextStyle: TextStyle(
+                color: Theme.of(context).colorScheme.secondary,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+              leftChevronIcon: Icon(
+                Icons.chevron_left,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+              rightChevronIcon: Icon(
+                Icons.chevron_right,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+            onDaySelected: (selectedDay, focusedDay) {
+              setState(() {
+                _selectedDay = selectedDay;
+                _focusedDay = focusedDay;
+              });
+            },
+            onFormatChanged: (format) =>
+                setState(() => _calendarFormat = format),
+            onPageChanged: (focusedDay) {
+              _focusedDay = focusedDay;
+              _fetchMonthAppointments(focusedDay);
+            },
+            calendarBuilders: CalendarBuilders(
+              markerBuilder: (context, day, events) {
+                final date = DateTime(day.year, day.month, day.day);
+                if (_monthAppointments.containsKey(date) &&
+                    _monthAppointments[date]!.isNotEmpty) {
+                  return Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      width: 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    ),
+                  );
+                }
+                return null;
+              },
+            ),
+          ),
+        ),
+
+        Padding(padding: const EdgeInsets.all(16), child: Divider()),
+
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Expanded(
+              child: _buildAppointmentsList(_selectedDay ?? DateTime.now()),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
 
-/// -----------------------------
-/// Navigation Destination
-/// -----------------------------
 class AppointmentsPageNavigationDestination extends StatelessWidget {
   const AppointmentsPageNavigationDestination({super.key});
 
@@ -352,7 +425,7 @@ class AppointmentsPageNavigationDestination extends StatelessWidget {
   Widget build(BuildContext context) {
     return const NavigationDestination(
       icon: Icon(Icons.calendar_today_outlined),
-      selectedIcon: Icon(Icons.calendar_today_rounded),
+      selectedIcon: Icon(Icons.calendar_today),
       label: "Appointments",
     );
   }

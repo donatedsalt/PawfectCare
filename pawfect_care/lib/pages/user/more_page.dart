@@ -5,8 +5,8 @@ import 'package:pawfect_care/widgets/custom_app_bar.dart';
 import 'package:pawfect_care/widgets/account_profile.dart';
 
 import 'package:pawfect_care/pages/common/bug_report_page.dart';
+import 'package:pawfect_care/pages/common/profile_page.dart';
 
-import 'package:pawfect_care/pages/user/profile_page.dart';
 import 'package:pawfect_care/pages/user/pets_page.dart';
 
 class MorePageAppBar extends StatelessWidget implements PreferredSizeWidget {

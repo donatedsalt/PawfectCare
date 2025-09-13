@@ -182,80 +182,85 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           showBack: _isSubmitting ? false : true,
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Password must contain:',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Password must contain:',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text('- At least 6 characters long'),
+                    const Text('- A uppercase letter (A-Z)'),
+                    const Text('- A lowercase letter (a-z)'),
+                    const Text('- A number (0-9)'),
+                    const Text('- A symbol (!@#\$%&*)'),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                TextFormField(
+                  controller: _passwordController,
+                  decoration: const InputDecoration(
+                    labelText: 'New Password',
+                    border: OutlineInputBorder(),
                   ),
-                  const SizedBox(height: 8),
-                  const Text('- At least 6 characters long'),
-                  const Text('- A uppercase letter (A-Z)'),
-                  const Text('- A lowercase letter (a-z)'),
-                  const Text('- A number (0-9)'),
-                  const Text('- A symbol (!@#\$%&*)'),
-                ],
-              ),
-              const SizedBox(height: 24),
-              TextFormField(
-                controller: _passwordController,
-                decoration: const InputDecoration(
-                  labelText: 'New Password',
-                  border: OutlineInputBorder(),
+                  obscureText: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a new password';
+                    }
+                    if (value.length < 6) {
+                      return 'Password must be at least 6 characters long';
+                    }
+                    if (!value.contains(RegExp(r'[A-Z]'))) {
+                      return 'Password must contain an uppercase letter';
+                    }
+                    if (!value.contains(RegExp(r'[a-z]'))) {
+                      return 'Password must contain a lowercase letter';
+                    }
+                    if (!value.contains(RegExp(r'[0-9]'))) {
+                      return 'Password must contain a number';
+                    }
+                    if (!value.contains(RegExp(r'[\W_]'))) {
+                      return 'Password must contain a symbol';
+                    }
+                    return null;
+                  },
                 ),
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a new password';
-                  }
-                  if (value.length < 6) {
-                    return 'Password must be at least 6 characters long';
-                  }
-                  if (!value.contains(RegExp(r'[A-Z]'))) {
-                    return 'Password must contain an uppercase letter';
-                  }
-                  if (!value.contains(RegExp(r'[a-z]'))) {
-                    return 'Password must contain a lowercase letter';
-                  }
-                  if (!value.contains(RegExp(r'[0-9]'))) {
-                    return 'Password must contain a number';
-                  }
-                  if (!value.contains(RegExp(r'[\W_]'))) {
-                    return 'Password must contain a symbol';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 24),
-              FilledButton.icon(
-                onPressed: () {
-                  _isSubmitting
-                      ? context.showSnackBar("please wait...")
-                      : _changePassword();
-                },
-                icon: _isSubmitting
-                    ? SizedBox(
-                        height: 16.0,
-                        width: 16.0,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.5,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
-                      )
-                    : const Icon(Icons.check),
-                label: const Text('Change Password'),
-                style: const ButtonStyle(
-                  padding: WidgetStatePropertyAll(EdgeInsets.all(16)),
+                const SizedBox(height: 24),
+                FilledButton.icon(
+                  onPressed: () {
+                    _isSubmitting
+                        ? context.showSnackBar("please wait...")
+                        : _changePassword();
+                  },
+                  icon: _isSubmitting
+                      ? SizedBox(
+                          height: 16.0,
+                          width: 16.0,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                        )
+                      : const Icon(Icons.check),
+                  label: const Text('Change Password'),
+                  style: const ButtonStyle(
+                    padding: WidgetStatePropertyAll(EdgeInsets.all(16)),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

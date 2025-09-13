@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'brand_colors.dart';
 
 class CartBottomSheet extends StatefulWidget {
   final List<Map<String, dynamic>> cart;
@@ -56,33 +55,45 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text("🛒 Your Cart",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          const Text(
+            "🛒 Your Cart",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
           const Divider(),
 
           if (widget.cart.isEmpty)
             const Padding(
               padding: EdgeInsets.all(20),
-              child: Text("Your cart is empty 🛒",
-                  style: TextStyle(fontSize: 16, color: Colors.grey)),
+              child: Text(
+                "Your cart is empty 🛒",
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
             )
           else
             ...List.generate(widget.cart.length, (index) {
               final item = widget.cart[index];
               return ListTile(
-                leading: const Icon(Icons.pets, color: BrandColors.primaryBlue),
+                leading: Icon(
+                  Icons.pets,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
                 title: Text(item['name']),
                 subtitle: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.remove_circle, color: Colors.red),
+                      icon: Icon(
+                        Icons.remove_circle,
+                        color: Theme.of(context).colorScheme.error,
+                      ),
                       onPressed: () => decreaseQuantity(index),
                     ),
                     Text("x${item['quantity']}"),
                     IconButton(
-                      icon: const Icon(Icons.add_circle,
-                          color: BrandColors.accentGreen),
+                      icon: Icon(
+                        Icons.add_circle,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
                       onPressed: () => increaseQuantity(index),
                     ),
                   ],
@@ -95,8 +106,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     IconButton(
-                      icon:
-                          const Icon(Icons.delete, color: Colors.black54),
+                      icon: const Icon(Icons.delete, color: Colors.black54),
                       onPressed: () => removeItem(index),
                     ),
                   ],
@@ -106,9 +116,10 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
 
           if (widget.cart.isNotEmpty) ...[
             const Divider(),
-            Text("Total: \$${total.toStringAsFixed(2)}",
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            Text(
+              "Total: \$${total.toStringAsFixed(2)}",
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
             const SizedBox(height: 12),
             ElevatedButton.icon(
               onPressed: () {
@@ -117,7 +128,7 @@ class _CartBottomSheetState extends State<CartBottomSheet> {
               },
               icon: const Icon(Icons.check_circle, color: Colors.white),
               style: ElevatedButton.styleFrom(
-                backgroundColor: BrandColors.accentGreen,
+                backgroundColor: Theme.of(context).colorScheme.secondary,
               ),
               label: const Text("Checkout"),
             ),
