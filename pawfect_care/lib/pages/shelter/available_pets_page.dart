@@ -17,7 +17,9 @@ class AvailablePetsPage extends StatelessWidget {
             const SizedBox(height: 16),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: petsRef.where('status', isEqualTo: 'available').snapshots(),
+                stream: petsRef
+                    .where('status', isEqualTo: 'available')
+                    .snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return const Center(child: CircularProgressIndicator());
@@ -28,7 +30,9 @@ class AvailablePetsPage extends StatelessWidget {
                     return Center(
                       child: Text(
                         "No available pets.",
-                        style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
                       ),
                     );
                   }
@@ -45,7 +49,9 @@ class AvailablePetsPage extends StatelessWidget {
                             gradient: LinearGradient(
                               colors: [
                                 Theme.of(context).colorScheme.primary,
-                                Theme.of(context).colorScheme.primary.withAlpha(200),
+                                Theme.of(
+                                  context,
+                                ).colorScheme.primary.withAlpha(200),
                               ],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
@@ -60,15 +66,24 @@ class AvailablePetsPage extends StatelessWidget {
                             ],
                           ),
                           child: ListTile(
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                            leading: data['images'] != null && (data['images'] as List).isNotEmpty
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            leading:
+                                data['images'] != null &&
+                                    (data['images'] as List).isNotEmpty
                                 ? Image.network(
                                     data['images'][0],
                                     width: 60,
                                     height: 60,
                                     fit: BoxFit.cover,
                                   )
-                                : const Icon(Icons.pets, size: 40, color: Colors.white),
+                                : const Icon(
+                                    Icons.pets,
+                                    size: 40,
+                                    color: Colors.white,
+                                  ),
                             title: Text(
                               data['name'] ?? "Unknown Pet",
                               style: TextStyle(
@@ -79,7 +94,9 @@ class AvailablePetsPage extends StatelessWidget {
                             subtitle: Text(
                               "${data['type'] ?? ''}, Age: ${data['age'] ?? ''}",
                               style: TextStyle(
-                                color: Theme.of(context).colorScheme.onPrimary.withAlpha(150),
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onPrimary.withAlpha(150),
                               ),
                             ),
                           ),

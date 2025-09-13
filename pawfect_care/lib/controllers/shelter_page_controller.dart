@@ -29,7 +29,7 @@ class _ShelterPageControllerState extends State<ShelterPageController>
 
   // FABs
   final List<Widget> _fabs = [
-    const AddPetFAB(),
+    const SizedBox(),
     const SizedBox(),
     const AddStoryFAB(),
     const SizedBox(),
@@ -39,25 +39,30 @@ class _ShelterPageControllerState extends State<ShelterPageController>
   // Bottom Navigation Destinations
   final List<NavigationDestination> _navDestinations = const [
     NavigationDestination(
-        icon: Icon(Icons.pets_outlined),
-        selectedIcon: Icon(Icons.pets),
-        label: 'Pets'),
+      icon: Icon(Icons.pets_outlined),
+      selectedIcon: Icon(Icons.pets),
+      label: 'Pets',
+    ),
     NavigationDestination(
-        icon: Icon(Icons.list_alt_outlined),
-        selectedIcon: Icon(Icons.list_alt),
-        label: 'Requests'),
+      icon: Icon(Icons.list_alt_outlined),
+      selectedIcon: Icon(Icons.list_alt),
+      label: 'Requests',
+    ),
     NavigationDestination(
-        icon: Icon(Icons.emoji_emotions_outlined),
-        selectedIcon: Icon(Icons.emoji_emotions),
-        label: 'Stories'),
+      icon: Icon(Icons.emoji_emotions_outlined),
+      selectedIcon: Icon(Icons.emoji_emotions),
+      label: 'Stories',
+    ),
     NavigationDestination(
-        icon: Icon(Icons.contact_mail_outlined),
-        selectedIcon: Icon(Icons.contact_mail),
-        label: 'Contact'),
+      icon: Icon(Icons.contact_mail_outlined),
+      selectedIcon: Icon(Icons.contact_mail),
+      label: 'Contact',
+    ),
     NavigationDestination(
-        icon: Icon(Icons.more_horiz_outlined),
-        selectedIcon: Icon(Icons.more_horiz),
-        label: 'More'),
+      icon: Icon(Icons.more_horiz_outlined),
+      selectedIcon: Icon(Icons.more_horiz),
+      label: 'More',
+    ),
   ];
 
   @override
@@ -96,15 +101,15 @@ class AddPetFAB extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const AddPetPage()),
-          );
-        },
-        child: const Icon(Icons.add),
-        tooltip: "Add Pet",
+    onPressed: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const AddPetPage()),
       );
+    },
+    child: const Icon(Icons.add),
+    tooltip: "Add Pet",
+  );
 }
 
 class RespondRequestFAB extends StatelessWidget {
@@ -112,13 +117,14 @@ class RespondRequestFAB extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => FloatingActionButton(
-        onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Manage Adoption Requests")));
-        },
-        child: const Icon(Icons.checklist_rounded),
-        tooltip: "Manage Requests",
-      );
+    onPressed: () {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Manage Adoption Requests")));
+    },
+    child: const Icon(Icons.checklist_rounded),
+    tooltip: "Manage Requests",
+  );
 }
 
 class AddStoryFAB extends StatelessWidget {
@@ -126,15 +132,15 @@ class AddStoryFAB extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const AddStoryPage()),
-          );
-        },
-        child: const Icon(Icons.edit),
-        tooltip: "Add Story",
+    onPressed: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const AddStoryPage()),
       );
+    },
+    child: const Icon(Icons.edit),
+    tooltip: "Add Story",
+  );
 }
 
 class ContactVolunteerFAB extends StatelessWidget {
@@ -142,13 +148,14 @@ class ContactVolunteerFAB extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => FloatingActionButton(
-        onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Contact / Volunteer options")));
-        },
-        child: const Icon(Icons.contact_mail),
-        tooltip: "Contact / Volunteer",
+    onPressed: () {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Contact / Volunteer options")),
       );
+    },
+    child: const Icon(Icons.contact_mail),
+    tooltip: "Contact / Volunteer",
+  );
 }
 
 class MorePageFAB extends StatelessWidget {
@@ -156,11 +163,12 @@ class MorePageFAB extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => FloatingActionButton(
-        onPressed: () {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("More Options")));
-        },
-        child: const Icon(Icons.more_horiz),
-        tooltip: "More Options",
-      );
+    onPressed: () {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("More Options")));
+    },
+    child: const Icon(Icons.more_horiz),
+    tooltip: "More Options",
+  );
 }
