@@ -14,6 +14,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   double _opacity = 0.0;
+  Timer? _timer;
 
   @override
   void initState() {
@@ -25,11 +26,18 @@ class _SplashScreenState extends State<SplashScreen>
       });
     });
 
-    Timer(const Duration(seconds: 2), () {
+    _timer = Timer(const Duration(seconds: 2), () {
+      if (!mounted) return;
       Navigator.of(
         context,
       ).pushReplacement(MaterialPageRoute(builder: (_) => const AuthGate()));
     });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
