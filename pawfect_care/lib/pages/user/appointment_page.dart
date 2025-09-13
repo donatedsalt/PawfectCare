@@ -47,8 +47,10 @@ class _AppointmentPageState extends State<AppointmentPage> {
         final petName = data['petName'] ?? 'Unnamed Pet';
         final vetId = data['vetId'] ?? '';
 
-        final vetDoc =
-            await FirebaseFirestore.instance.collection('users').doc(vetId).get();
+        final vetDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(vetId)
+            .get();
         final vetName = vetDoc.data()?['name'] ?? 'Unnamed Vet';
 
         final appointmentDetails = {
@@ -76,19 +78,25 @@ class _AppointmentPageState extends State<AppointmentPage> {
   }
 
   Future<void> _confirmCancelAppointment(
-      DateTime day, Map<String, dynamic> appointment) async {
+    DateTime day,
+    Map<String, dynamic> appointment,
+  ) async {
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Cancel Appointment'),
-        content: const Text('Are you sure you want to cancel this appointment?'),
+        content: const Text(
+          'Are you sure you want to cancel this appointment?',
+        ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('No')),
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('No'),
+          ),
           ElevatedButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('Yes')),
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Yes'),
+          ),
         ],
       ),
     );
@@ -153,9 +161,9 @@ class _AppointmentPageState extends State<AppointmentPage> {
                     focusedDay: _focusedDay,
                     calendarFormat: _calendarFormat,
                     selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-                    eventLoader: (day) => _getAppointmentsForDay(day)
-                        .map((e) => e['display'] as String)
-                        .toList(),
+                    eventLoader: (day) => _getAppointmentsForDay(
+                      day,
+                    ).map((e) => e['display'] as String).toList(),
                     calendarStyle: CalendarStyle(
                       defaultDecoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.primary,
@@ -243,7 +251,9 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                   child: Text(
                                     "No appointments on this day",
                                     style: TextStyle(
-                                      color: Theme.of(context).colorScheme.surface,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.surface,
                                     ),
                                   ),
                                 );
@@ -253,19 +263,31 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                 itemBuilder: (context, index) {
                                   final appointment = appointments[index];
                                   return Card(
-                                    color: Theme.of(context).colorScheme.primary,
-                                    margin: const EdgeInsets.symmetric(vertical: 4),
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
+                                    margin: const EdgeInsets.symmetric(
+                                      vertical: 4,
+                                    ),
                                     child: ListTile(
                                       title: Text(
                                         appointment['display'],
                                         style: TextStyle(
-                                          color: Theme.of(context).colorScheme.surface,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.surface,
                                         ),
                                       ),
                                       trailing: IconButton(
-                                        icon: const Icon(Icons.cancel, color: Colors.red),
-                                        onPressed: () => _confirmCancelAppointment(
-                                            _selectedDay!, appointment),
+                                        icon: const Icon(
+                                          Icons.cancel,
+                                          color: Colors.red,
+                                        ),
+                                        onPressed: () =>
+                                            _confirmCancelAppointment(
+                                              _selectedDay!,
+                                              appointment,
+                                            ),
                                       ),
                                     ),
                                   );
@@ -280,7 +302,6 @@ class _AppointmentPageState extends State<AppointmentPage> {
           },
         ),
       ),
-      floatingActionButton: const AppointmentPageFloatingActionButton(),
     );
   }
 }

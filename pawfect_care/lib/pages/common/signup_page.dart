@@ -28,7 +28,6 @@ class _SignupPageState extends State<SignupPage> {
     'veterinarian',
     'animal shelter',
     'pet store',
-    'admin',
   ];
   late List<bool> _isSelected;
 

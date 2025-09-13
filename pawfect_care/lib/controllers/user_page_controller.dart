@@ -26,10 +26,10 @@ class _UserPageControllerState extends State<UserPageController>
   ];
 
   final List<Widget> _floatingActionButtons = const [
-    HomePageFloatingActionButton(),
+    SizedBox.shrink(),
     AppointmentPageFloatingActionButton(),
     SizedBox.shrink(),
-    AdoptPageFloatingActionButton(),
+    SizedBox.shrink(),
     MorePageFloatingActionButton(),
   ];
 

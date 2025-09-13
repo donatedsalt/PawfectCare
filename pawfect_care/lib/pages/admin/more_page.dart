@@ -53,16 +53,16 @@ class MorePage extends StatelessWidget {
               title: const Text("Profile"),
               onTap: () {},
             ),
-            ListTile(
-              leading: const Icon(Icons.notifications),
-              title: const Text("Notifications"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.help),
-              title: const Text("Help & Support"),
-              onTap: () {},
-            ),
+            // ListTile(
+            //   leading: const Icon(Icons.notifications),
+            //   title: const Text("Notifications"),
+            //   onTap: () {},
+            // ),
+            // ListTile(
+            //   leading: const Icon(Icons.help),
+            //   title: const Text("Help & Support"),
+            //   onTap: () {},
+            // ),
             ListTile(
               leading: const Icon(Icons.bug_report),
               title: const Text("Report a Bug"),
