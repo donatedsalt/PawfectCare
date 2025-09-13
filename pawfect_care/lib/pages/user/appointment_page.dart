@@ -6,19 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:pawfect_care/pages/user/add_appointment_page.dart';
 
-class AppointmentPageAppBar extends StatelessWidget
-    implements PreferredSizeWidget {
-  const AppointmentPageAppBar({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return AppBar(title: const Text('Book Appointment'));
-  }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
-}
-
 class AppointmentPage extends StatefulWidget {
   const AppointmentPage({super.key});
 
@@ -31,7 +18,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
-  Map<DateTime, List<String>> _appointments = {};
+  Map<DateTime, List<Map<String, dynamic>>> _appointments = {};
   late Future<void> _fetchAppointmentsFuture;
 
   @override
@@ -43,9 +30,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
 
   Future<void> _fetchAppointments() async {
     final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      return;
-    }
+    if (user == null) return;
 
     try {
       final snapshot = await FirebaseFirestore.instance
@@ -53,7 +38,8 @@ class _AppointmentPageState extends State<AppointmentPage> {
           .where('userId', isEqualTo: user.uid)
           .get();
 
-      final newAppointments = <DateTime, List<String>>{};
+      final newAppointments = <DateTime, List<Map<String, dynamic>>>{};
+
       for (var doc in snapshot.docs) {
         final data = doc.data();
         final date = (data['date'] as Timestamp).toDate();
@@ -61,14 +47,14 @@ class _AppointmentPageState extends State<AppointmentPage> {
         final petName = data['petName'] ?? 'Unnamed Pet';
         final vetId = data['vetId'] ?? '';
 
-        // Fetch vet's name
-        final vetDoc = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(vetId)
-            .get();
+        final vetDoc =
+            await FirebaseFirestore.instance.collection('users').doc(vetId).get();
         final vetName = vetDoc.data()?['name'] ?? 'Unnamed Vet';
 
-        final appointmentDetails = '$vetName - $petName';
+        final appointmentDetails = {
+          'id': doc.id,
+          'display': '$vetName - $petName',
+        };
 
         if (newAppointments.containsKey(normalizedDate)) {
           newAppointments[normalizedDate]!.add(appointmentDetails);
@@ -81,24 +67,70 @@ class _AppointmentPageState extends State<AppointmentPage> {
         _appointments = newAppointments;
       });
     } catch (e) {
-      // In a real app, you would want to handle this error more gracefully,
-      // maybe showing an error message to the user.
       print("Error fetching appointments: $e");
     }
   }
 
-  List<String> _getAppointmentsForDay(DateTime day) {
+  List<Map<String, dynamic>> _getAppointmentsForDay(DateTime day) {
     return _appointments[DateTime.utc(day.year, day.month, day.day)] ?? [];
+  }
+
+  Future<void> _confirmCancelAppointment(
+      DateTime day, Map<String, dynamic> appointment) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Cancel Appointment'),
+        content: const Text('Are you sure you want to cancel this appointment?'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('No')),
+          ElevatedButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Yes')),
+        ],
+      ),
+    );
+
+    if (result == true) {
+      // Optimistic update: remove from local list first for faster UI feedback
+      setState(() {
+        _appointments[day]?.remove(appointment);
+      });
+
+      try {
+        await FirebaseFirestore.instance
+            .collection('appointments')
+            .doc(appointment['id'])
+            .delete();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Appointment canceled successfully')),
+        );
+      } catch (e) {
+        // On failure, restore the appointment locally
+        setState(() {
+          if (_appointments[day] != null) {
+            _appointments[day]!.add(appointment);
+          } else {
+            _appointments[day] = [appointment];
+          }
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to cancel appointment: $e')),
+        );
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
+      appBar: const PreferredSize(
         preferredSize: Size.fromHeight(120),
         child: CustomAppBar("Book Appointment"),
       ),
-
       body: SafeArea(
         child: FutureBuilder(
           future: _fetchAppointmentsFuture,
@@ -121,7 +153,9 @@ class _AppointmentPageState extends State<AppointmentPage> {
                     focusedDay: _focusedDay,
                     calendarFormat: _calendarFormat,
                     selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-                    eventLoader: _getAppointmentsForDay,
+                    eventLoader: (day) => _getAppointmentsForDay(day)
+                        .map((e) => e['display'] as String)
+                        .toList(),
                     calendarStyle: CalendarStyle(
                       defaultDecoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.primary,
@@ -188,9 +222,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                       },
                     ),
                   ),
-
                   const SizedBox(height: 12),
-
                   Expanded(
                     child: _selectedDay == null
                         ? Center(
@@ -211,9 +243,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                   child: Text(
                                     "No appointments on this day",
                                     style: TextStyle(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.surface,
+                                      color: Theme.of(context).colorScheme.surface,
                                     ),
                                   ),
                                 );
@@ -221,21 +251,21 @@ class _AppointmentPageState extends State<AppointmentPage> {
                               return ListView.builder(
                                 itemCount: appointments.length,
                                 itemBuilder: (context, index) {
+                                  final appointment = appointments[index];
                                   return Card(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
-                                    margin: const EdgeInsets.symmetric(
-                                      vertical: 4,
-                                    ),
+                                    color: Theme.of(context).colorScheme.primary,
+                                    margin: const EdgeInsets.symmetric(vertical: 4),
                                     child: ListTile(
                                       title: Text(
-                                        appointments[index],
+                                        appointment['display'],
                                         style: TextStyle(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.surface,
+                                          color: Theme.of(context).colorScheme.surface,
                                         ),
+                                      ),
+                                      trailing: IconButton(
+                                        icon: const Icon(Icons.cancel, color: Colors.red),
+                                        onPressed: () => _confirmCancelAppointment(
+                                            _selectedDay!, appointment),
                                       ),
                                     ),
                                   );
@@ -250,6 +280,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
           },
         ),
       ),
+      floatingActionButton: const AppointmentPageFloatingActionButton(),
     );
   }
 }
@@ -278,7 +309,7 @@ class AppointmentPageNavigationDestination extends StatelessWidget {
   Widget build(BuildContext context) {
     return NavigationDestination(
       icon: const Icon(Icons.local_hospital_outlined),
-      selectedIcon: Icon(Icons.local_hospital),
+      selectedIcon: const Icon(Icons.local_hospital),
       label: "Appointment",
     );
   }
